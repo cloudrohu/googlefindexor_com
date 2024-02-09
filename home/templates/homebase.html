@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+{% load static %}
+<html dir="ltr" lang="en">
+<head>
+
+  {% for rs in setting %}
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="keywords" content="{% block keywords %}  {% endblock %}">
+<meta name="description" content="{% block description %} {% endblock %}">
+<meta name="CreativeLayers" content="ATFN">
+<!-- css file -->
+<link rel="stylesheet" href="{% static '' %}main/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static '' %}main/css/style.css">
+<!-- Responsive stylesheet -->
+<link rel="stylesheet" href="{% static '' %}main/css/responsive.css">
+<!-- Title -->
+<title>{% block title %} {{setting.title}} {% endblock %}</title>
+<!-- Favicon -->
+<link href="{{rs.icon.url}}" sizes="128x128" rel="shortcut icon" type="image/x-icon" />
+<link href="{{rs.icon.url}}" sizes="128x128" rel="shortcut icon" />
+{% endfor %}
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div class="wrapper">
+
+    
+    {% block header %} {% endblock %}
+    
+    {% block body %} {% endblock %}
+    {% include 'footer.html' %}
+    
+    {% block foot %} {% endblock %}
+</body>
+</body>
+</html>
