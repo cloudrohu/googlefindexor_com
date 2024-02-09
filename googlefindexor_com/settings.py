@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'product.apps.ProductConfig',
     'utility.apps.UtilityConfig',
+    'project.apps.ProjectConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',

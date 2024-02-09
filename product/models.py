@@ -84,6 +84,31 @@ class Locality(MPTTModel):
             k = k.parent
         return ' / '.join(full_path[::-1])
 
+class Society_Building(models.Model):
+    title = models.CharField(max_length=50)
+    city = models.ForeignKey(City, on_delete=models.CASCADE,null=True , blank=True) #many to one relation with Brand     
+    locality = models.ForeignKey(Locality, on_delete=models.CASCADE,null=True , blank=True) #many to one relation with Brand 
+    keywords = models.CharField(max_length=255)
+    description = models.TextField(max_length=255)
+    image=models.ImageField(blank=True,upload_to='images/')
+    slug = models.SlugField(unique=True , null=True , blank=True)
+    create_at=models.DateTimeField(auto_now_add=True)
+    update_at=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+    
+    def save(self , *args , **kwargs):
+        self.slug = slugify(self.title  + '--' + self.locality.title + '--' + self.city.title)
+        super(City ,self).save(*args , **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('building_detail', kwargs={'slug': self.slug})
+    
+    def image_tag(self):
+        return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
+
+
 class Category(MPTTModel):
     STATUS = (
         ('True', 'True'),
@@ -148,8 +173,10 @@ class Product(models.Model):
     find_form = models.ForeignKey(Find_Form, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     title = models.CharField(max_length=250,unique=True)
     contact_person = models.CharField(max_length=255,null=True , blank=True)
+    whatsapp = models.CharField(max_length=255,null=True , blank=True)
     contact_no = models.CharField(max_length=255,null=True , blank=True)
     email = models.EmailField(null=True,blank=True)
+    society_building = models.ForeignKey(Society_Building, on_delete=models.CASCADE) #many to one relation with Brand     
     city = models.ForeignKey(City, on_delete=models.CASCADE) #many to one relation with Brand     
     locality = models.ForeignKey(Locality, on_delete=models.CASCADE) #many to one relation with Brand 
     address = models.CharField(max_length=500,null=True , blank=True)
@@ -158,6 +185,11 @@ class Product(models.Model):
     google_map = models.CharField(max_length=1000,null=True , blank=True)
     description = models.TextField(max_length=5000,null=True , blank=True)
     image=models.ImageField(upload_to='images/')
+    facebook = models.CharField(max_length=255,null=True , blank=True)
+    twitter = models.CharField(max_length=255,null=True , blank=True)
+    instagram = models.CharField(max_length=255,null=True , blank=True)
+    pinterest = models.CharField(max_length=255,null=True , blank=True)
+    youtube = models.CharField(max_length=255,null=True , blank=True)
     slug = models.SlugField(unique=True , null=True , blank=True)
     variant=models.CharField(max_length=10,choices=VARIANTS, default='None')
     create_at=models.DateTimeField(auto_now_add=True)

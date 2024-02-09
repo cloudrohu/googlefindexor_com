@@ -11,22 +11,8 @@
 
 
 {% block body %}
-<br>
 
-<div id="breadcrumb">
-    <div class="container">
-        <ul class="breadcrumb">
-            <li>  <a href="/">Home</a> </span></li>
-            <li><a href="/category/{{ product.category.id }}/{{ product.category.slug }}">{{ product.category.title }}</a></li>
-            <li class="active">{{ product.title }} -- {{ product.locality }} -- {{ product.city }}</li>
-            
-        </ul>
-    </div>
-</div>
 <!-- /BREADCRUMB -->
-
-<br>
-
 	<div class="single_page_listing_style">
 		<div class="container-fluid p0">
 			<div class="row">
@@ -53,127 +39,338 @@
 			</div>
 		</div>
 	</div>
-	<section class="p0">
-		<div class="container">
-			<div class="row listing_single_row">
-				<div class="col-sm-6 col-lg-7 col-xl-8">
-					
-				</div>
-				<div class="col-sm-6 col-lg-5 col-xl-4">
-					<div class="single_property_social_share">
-						<div class="spss style2 mt10 text-right tal-400">
-							<ul class="mb0">
-								<li class="list-inline-item"><a href="#"><span class="flaticon-transfer-1"></span></a></li>
-								<li class="list-inline-item"><a href="#"><span class="flaticon-heart"></span></a></li>
-								<li class="list-inline-item"><a href="#"><span class="flaticon-share"></span></a></li>
-								<li class="list-inline-item"><a href="#"><span class="flaticon-printer"></span></a></li>
-							</ul>
+	
+
+<!-- Agent Single Grid View -->
+<section class="our-agent-single bgc-f7 pb30-991">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 col-lg-8">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="breadcrumb_content style2 mt30-767 mb30-767">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="/">Home</a></li>
+								<li class="breadcrumb-item active text-thm" aria-current="page">  <a href="/category/{{ product.category.id }}/{{ product.category.slug }}">{{ product.category.title }}</a> </li>
+							</ol>
+							<h3 class="breadcrumb_title">{{ product.title }} {{ product.locality }} {{ product.city }}</h3>
 						</div>
 					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<!-- Agent Single Grid View -->
-	<section class="our-agent-single bgc-f7 pb30-991">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-12 col-lg-8 mt50">
-					<div class="row">
-						<div class="col-lg-12">
-							<div class="listing_single_description2 mt30-767 mb30-767">
-								<div class="single_property_title">
-									<h2>{{ product.title }}</h2>
-									<p>{{product.address}}</p>
+					<div class="col-lg-12">
+						<div class="feat_property list style2 agent">
+							<div class="thumb">
+								<img class="img-whp" src="{{product.image.url}}" alt="11.jpg">
+								<div class="thmb_cntnt">
+									<ul class="tag mb0">
+										<li class="list-inline-item dn"></li>
+										<li class="list-inline-item"><a href="{{product.website}}">Connect</a></li>
+									</ul>
 								</div>
-								<div class="single_property_social_share style2">
-									<div class="price">
-										<h2><small>{{product.category}}</small></h2>
+							</div>
+							<div class="details">
+								<div class="tc_content">
+									<h4>{{product.contact_person }}</h4>
+									<p class="text-thm">{{ product.title }}</p>
+									<ul class="prop_details mb0">
+										<li><a href="#">Office: {{product.contact_no}}</a></li>
+										<li><a href="#">{{ product.address }}</a></li>
+										<li><a href="#">{{ product.locality }}</a></li>
+										<li><a href="#">{{ product.city }}</a></li>
+										<li><a href="{{product.website}}">{{product.website}}</a></li>										
+									</ul>
+								</div>
+								<div class="fp_footer">
+									<ul class="fp_meta float-left mb0">
+										<li class="list-inline-item"><a href="{{product.facebook}}"><i class="fa fa-facebook"></i></a></li>
+										<li class="list-inline-item"><a href="{{product.twitter}}"><i class="fa fa-twitter"></i></a></li>
+										<li class="list-inline-item"><a href="{{product.instagram}}"><i class="fa fa-instagram"></i></a></li>
+										<li class="list-inline-item"><a href="{{product.pinterest}}"><i class="fa fa-pinterest"></i></a></li>
+										<li class="list-inline-item"><a href="{{product.youtube}}"><i class="fa fa-youtube"></i></a></li>
+										<li class="list-inline-item"><a href="{{product.whatsapp}}"><i class="fa fa-whatsapp"></i></a></li>
+									</ul>
+									<div class="fp_pdate float-right text-thm">Go To My Website <i class="fa fa-angle-right"></i></div>
+								</div>
+							</div>
+						</div>
+						<div class="shop_single_tab_content style2 mt30">
+							<ul class="nav nav-tabs" id="myTab" role="tablist">
+								<li class="nav-item">
+									<a class="nav-link active" id="description-tab" data-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">Description</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="listing-tab" data-toggle="tab" href="#listing" role="tab" aria-controls="listing" aria-selected="false">Listing</a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" id="review-tab" data-toggle="tab" href="#review" role="tab" aria-controls="review" aria-selected="false">Reviews</a>
+								</li>
+							</ul>
+							<div class="tab-content" id="myTabContent2">
+								<div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+									<div class="product_single_content">
+										<div class="mbp_pagination_comments">
+											<div class="mbp_first media">
+												<div class="media-body">
+													<p>{{ product.description }}</p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="tab-pane fade row pl15 pl0-1199 pr15 pr0-1199" id="listing" role="tabpanel" aria-labelledby="listing-tab">
+									<div class="col-lg-12">
+										<div class="feat_property list style2 hvr-bxshd bdrrn mb10 mt20">
+											<div class="thumb">
+												<img class="img-whp" src="images/property/fp1.jpg" alt="fp1.jpg">
+												<div class="thmb_cntnt">
+													<ul class="icon mb0">
+														<li class="list-inline-item"><a href="#"><span class="flaticon-transfer-1"></span></a></li>
+														<li class="list-inline-item"><a href="#"><span class="flaticon-heart"></span></a></li>
+													</ul>
+												</div>
+											</div>
+											<div class="details">
+												<div class="tc_content">
+													<div class="dtls_headr">
+														<ul class="tag">
+															<li class="list-inline-item"><a href="#">For Rent</a></li>
+															<li class="list-inline-item"><a href="#">Featured</a></li>
+														</ul>
+														<a class="fp_price" href="#">$13,000<small>/mo</small></a>
+													</div>
+													<p class="text-thm">Apartment</p>
+													<h4>Renovated Apartment</h4>
+													<p><span class="flaticon-placeholder"></span> 1421 San Pedro St, Los Angeles, CA 90015</p>
+													<ul class="prop_details mb0">
+														<li class="list-inline-item"><a href="#">Beds: 4</a></li>
+														<li class="list-inline-item"><a href="#">Baths: 2</a></li>
+														<li class="list-inline-item"><a href="#">Sq Ft: 5280</a></li>
+													</ul>
+												</div>
+												<div class="fp_footer">
+													<ul class="fp_meta float-left mb0">
+														<li class="list-inline-item"><a href="#"><img src="images/property/pposter1.png" alt="pposter1.png"></a></li>
+														<li class="list-inline-item"><a href="#">Ali Tufan</a></li>
+													</ul>
+													<div class="fp_pdate float-right">4 years ago</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-lg-12">
+										<div class="feat_property list style2 hvr-bxshd bdrrn mb10">
+											<div class="thumb">
+												<img class="img-whp" src="images/property/fp3.jpg" alt="fp3.jpg">
+												<div class="thmb_cntnt">
+													<ul class="icon mb0">
+														<li class="list-inline-item"><a href="#"><span class="flaticon-transfer-1"></span></a></li>
+														<li class="list-inline-item"><a href="#"><span class="flaticon-heart"></span></a></li>
+													</ul>
+												</div>
+											</div>
+											<div class="details">
+												<div class="tc_content">
+													<div class="dtls_headr">
+														<ul class="tag">
+															<li class="list-inline-item"><a href="#">For Rent</a></li>
+															<li class="list-inline-item"><a href="#">Featured</a></li>
+														</ul>
+														<a class="fp_price" href="#">$13,000<small>/mo</small></a>
+													</div>
+													<p class="text-thm">Apartment</p>
+													<h4>Luxury Family Home</h4>
+													<p><span class="flaticon-placeholder"></span> 1421 San Pedro St, Los Angeles, CA 90015</p>
+													<ul class="prop_details mb0">
+														<li class="list-inline-item"><a href="#">Beds: 4</a></li>
+														<li class="list-inline-item"><a href="#">Baths: 2</a></li>
+														<li class="list-inline-item"><a href="#">Sq Ft: 5280</a></li>
+													</ul>
+												</div>
+												<div class="fp_footer">
+													<ul class="fp_meta float-left mb0">
+														<li class="list-inline-item"><a href="#"><img src="images/property/pposter1.png" alt="pposter1.png"></a></li>
+														<li class="list-inline-item"><a href="#">Ali Tufan</a></li>
+													</ul>
+													<div class="fp_pdate float-right">4 years ago</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="col-lg-12">
+										<div class="feat_property list style2 hvr-bxshd bdrrn">
+											<div class="thumb">
+												<img class="img-whp" src="images/property/fp2.jpg" alt="fp2.jpg">
+												<div class="thmb_cntnt">
+													<ul class="icon mb0">
+														<li class="list-inline-item"><a href="#"><span class="flaticon-transfer-1"></span></a></li>
+														<li class="list-inline-item"><a href="#"><span class="flaticon-heart"></span></a></li>
+													</ul>
+												</div>
+											</div>
+											<div class="details">
+												<div class="tc_content">
+													<div class="dtls_headr">
+														<ul class="tag">
+															<li class="list-inline-item"><a href="#">For Rent</a></li>
+															<li class="list-inline-item"><a href="#">Featured</a></li>
+														</ul>
+														<a class="fp_price" href="#">$13,000<small>/mo</small></a>
+													</div>
+													<p class="text-thm">Apartment</p>
+													<h4>Gorgeous Villa Bay View</h4>
+													<p><span class="flaticon-placeholder"></span> 1421 San Pedro St, Los Angeles, CA 90015</p>
+													<ul class="prop_details mb0">
+														<li class="list-inline-item"><a href="#">Beds: 4</a></li>
+														<li class="list-inline-item"><a href="#">Baths: 2</a></li>
+														<li class="list-inline-item"><a href="#">Sq Ft: 5280</a></li>
+													</ul>
+												</div>
+												<div class="fp_footer">
+													<ul class="fp_meta float-left mb0">
+														<li class="list-inline-item"><a href="#"><img src="images/property/pposter1.png" alt="pposter1.png"></a></li>
+														<li class="list-inline-item"><a href="#">Ali Tufan</a></li>
+													</ul>
+													<div class="fp_pdate float-right">4 years ago</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
+									<div class="product_single_content">
+										<div class="mbp_pagination_comments">
+											<ul class="total_reivew_view">
+												<li class="list-inline-item sub_titles">896 Reviews</li>
+												<li class="list-inline-item">
+													<ul class="star_list">
+														<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+														<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+														<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+														<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+														<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+													</ul>
+												</li>
+												<li class="list-inline-item avrg_review">( 4.5 out of 5 )</li>
+												<li class="list-inline-item write_review">Write a Review</li>
+											</ul>
+											<div class="mbp_first media">
+												<img src="images/testimonial/1.png" class="mr-3" alt="1.png">
+												<div class="media-body">
+													<h4 class="sub_title mt-0">Diana Cooper
+														<div class="sspd_review dif">
+															<ul class="ml10">
+																<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+																<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+																<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+																<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+																<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+																<li class="list-inline-item"></li>
+															</ul>
+														</div>
+													</h4>
+													<a class="sspd_postdate fz14" href="#">December 28, 2020</a>
+													<p class="mt10">Beautiful home, very picturesque and close to everything in jtree! A little warm for a hot weekend, but would love to come back during the cooler seasons!</p>
+												</div>
+											</div>
+											<div class="custom_hr"></div>
+											<div class="mbp_first media">
+												<img src="images/testimonial/2.png" class="mr-3" alt="2.png">
+												<div class="media-body">
+													<h4 class="sub_title mt-0">Ali Tufan
+														<div class="sspd_review dif">
+															<ul class="ml10">
+																<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+																<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+																<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+																<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+																<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+																<li class="list-inline-item"></li>
+															</ul>
+														</div>
+													</h4>
+													<a class="sspd_postdate fz14" href="#">December 28, 2020</a>
+													<p class="mt10">Beautiful home, very picturesque and close to everything in jtree! A little warm for a hot weekend, but would love to come back during the cooler seasons!</p>
+												</div>
+											</div>
+											<div class="custom_hr"></div>
+											<div class="mbp_comment_form style2">
+												<h4>Write a Review</h4>
+												<ul class="sspd_review">
+													<li class="list-inline-item">
+														<ul class="mb0">
+															<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+															<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+															<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+															<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+															<li class="list-inline-item"><a href="#"><i class="fa fa-star"></i></a></li>
+														</ul>
+													</li>
+													<li class="list-inline-item review_rating_para">Your Rating & Review</li>
+												</ul>
+												<form class="comments_form">
+													<div class="form-group">
+														<input type="text" class="form-control" id="exampleInputName1" aria-describedby="textHelp" placeholder="Review Title">
+													</div>
+													<div class="form-group">
+														<textarea class="form-control" id="exampleFormControlTextarea1" rows="12" placeholder="Your Review"></textarea>
+													</div>
+													<button type="submit" class="btn btn-thm">Submit Review <span class="flaticon-right-arrow-1"></span></button>
+												</form>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div class="col-lg-12">
-							<div class="listing_single_description style2">
-								<div class="lsd_list">
-									<ul class="mb0">
-										<li class="list-inline-item"><a href="#">Apartment</a></li>
-										<li class="list-inline-item"><a href="#">Beds: 4</a></li>
-										<li class="list-inline-item"><a href="#">Baths: 2</a></li>
-										<li class="list-inline-item"><a href="#">Sq Ft: 5280</a></li>
-									</ul>
-								</div>
-								<h4 class="mb30">Description</h4>
-						    	<p class="mb25">Evans Tower very high demand corner junior one bedroom plus a large balcony boasting full open NYC views. You need to see the views to believe them. Mint condition with new hardwood floors. Lots of closets plus washer and dryer.</p>
-						    	<p class="gpara second_para white_goverlay mt10 mb10">Fully furnished. Elegantly appointed condominium unit situated on premier location. PS6. The wide entry hall leads to a large living room with dining area. This expansive 2 bedroom and 2 renovated marble bathroom apartment has great windows. Despite the interior views, the apartments Southern and Eastern exposures allow for lovely natural light to fill every room. The master suite is surrounded by handcrafted milkwork and features incredible walk-in closet and storage space.</p>
-								<div class="collapse" id="collapseExample">
-								  	<div class="card card-body">
-								    	<p class="mt10 mb10">Fully furnished. Elegantly appointed condominium unit situated on premier location. PS6. The wide entry hall leads to a large living room with dining area. This expansive 2 bedroom and 2 renovated marble bathroom apartment has great windows. Despite the interior views, the apartments Southern and Eastern exposures allow for lovely natural light to fill every room. The master suite is surrounded by handcrafted milkwork and features incredible walk-in closet and storage space.</p>
-								    	<p class="mt10 mb10">Fully furnished. Elegantly appointed condominium unit situated on premier location. PS6. The wide entry hall leads to a large living room with dining area. This expansive 2 bedroom and 2 renovated marble bathroom apartment has great windows. Despite the interior views, the apartments Southern and Eastern exposures allow for lovely natural light to fill every room. The master suite is surrounded by handcrafted milkwork and features incredible walk-in closet and storage space.</p>
-								  	</div>
-								</div>
-								<p class="overlay_close">
-									<a class="text-thm fz14" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-								   	 Show More <span class="flaticon-download-1 fz12"></span>
-								  	</a>
-								</p>
-							</div>
-						</div>
-					
 					</div>
 				</div>
-				<div class="col-lg-4 col-xl-4 mt50">
+			</div>
+			<div class="col-lg-4 col-xl-4">
+				<div class="sidebar_listing_grid1">
 					<div class="sidebar_listing_list">
 						<div class="sidebar_advanced_search_widget">
-							<div class="sl_creator">
-								<h4 class="mb25">Listed By</h4>
-								<div class="media">
-									<a href="//wa.me/91{{product.contact_no}}">
-										<img class="mr-3" src="{% static '' %}main/images/whatsapp.jpeg" style="height: 60px;border-radius: 50%;" alt="lc1.png">
-									</a>
-									
-									<div class="media-body">
-								    	<h5 class="mt-0 mb0">{{product.contact_person}}</h5>									
-								    	<p class="mb0">{{product.contact_no}}</p>
-									    	<a class="text-thm" href="{{product.website}}">View Website</a>
-								  	</div>
-								</div>
-							</div>
+							<h4 class="mb25">Contact Christopher Pakulla</h4>
 							<ul class="sasw_list mb0">
 								<li class="search_area">
-								    <div class="form-group">
-								    	<input type="text" class="form-control" id="exampleInputName1" placeholder="Your Name">
-								    </div>
+									<div class="form-group">
+										<input type="text" class="form-control" id="exampleInputName1" placeholder="Your Name">
+									</div>
 								</li>
 								<li class="search_area">
-								    <div class="form-group">
-								    	<input type="number" class="form-control" id="exampleInputName2" placeholder="Phone">
-								    </div>
+									<div class="form-group">
+										<input type="number" class="form-control" id="exampleInputName2" placeholder="Phone">
+									</div>
 								</li>
 								<li class="search_area">
-								    <div class="form-group">
-								    	<input type="email" class="form-control" id="exampleInputEmail" placeholder="Email">
-								    </div>
+									<div class="form-group">
+										<input type="email" class="form-control" id="exampleInputEmail" placeholder="Email">
+									</div>
 								</li>
 								<li class="search_area">
-		                            <div class="form-group">
-		                                <textarea id="form_message" name="form_message" class="form-control required" rows="5" required="required" placeholder="I'm interest in [ Listing Single ]"></textarea>
-		                            </div>
+									<div class="form-group">
+										<textarea id="form_message" name="form_message" class="form-control required" rows="5" required="required" placeholder="Your Message"></textarea>
+									</div>
 								</li>
 								<li>
 									<div class="search_option_button">
-									    <button type="submit" class="btn btn-block btn-thm">Search</button>
+										<button type="submit" class="btn btn-block btn-thm">Search</button>
 									</div>
 								</li>
 							</ul>
 						</div>
-					</div>
-
+					</div>				
 				</div>
 			</div>
 		</div>
-	</section>
+	</div>
+</section>
+	<div class="container-fluid p0 mt50">
+		<div class="row">
+			<div class="col-lg-12">
+				{{product.google_map | safe}}
+			</div>
+		</div>
+	</div>
+
 
 
 
