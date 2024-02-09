@@ -100,7 +100,7 @@ class Society_Building(models.Model):
     
     def save(self , *args , **kwargs):
         self.slug = slugify(self.title  + '--' + self.locality.title + '--' + self.city.title)
-        super(City ,self).save(*args , **kwargs)
+        super(Society_Building ,self).save(*args , **kwargs)
 
     def get_absolute_url(self):
         return reverse('building_detail', kwargs={'slug': self.slug})
