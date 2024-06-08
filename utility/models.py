@@ -23,6 +23,17 @@ class Find_Form(models.Model):
         verbose_name_plural='1. Find_Form'
 
 
+class Googlemap_Status(models.Model):    
+    title = models.CharField(max_length=500,blank=True, null=True,)
+    create_at=models.DateTimeField(auto_now_add=True)
+    update_at=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title 
+    
+    class Meta:
+        verbose_name_plural='1. Find_Form'
+
 
 class Call_Status(models.Model):
     title = models.CharField(max_length=500,blank=True, null=True,)
