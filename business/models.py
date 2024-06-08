@@ -157,7 +157,7 @@ class Company(models.Model):
     google_map = models.CharField(max_length=1000,null=True , blank=True)
     description = models.TextField(max_length=5000,null=True , blank=True)
     image=models.ImageField(blank=True,upload_to='images/')
-    slug = models.SlugField(unique=True , null=True , blank=True)
+    slug = models.SlugField(max_length=500,null=True,blank=True)
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
     updated_by=models.ForeignKey(User, related_name='updated_by_user',on_delete=models.CASCADE,null=True,blank=True,)
@@ -173,7 +173,7 @@ class Company(models.Model):
         return self.title
     
     def save(self , *args , **kwargs):
-        self.slug = slugify(self.title + '--' + self.locality.title + '--' + self.city.title)
+        self.slug = slugify(self.category.title + '--' + self.title + '--' + self.locality.title + '--' + self.city.title)
         super(Company ,self).save(*args , **kwargs)
 
     class Meta:
