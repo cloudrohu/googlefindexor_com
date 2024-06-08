@@ -97,7 +97,7 @@ class FaqInline(admin.TabularInline):
     extra = 1
     show_change_link = True
 
-@admin_thumbnails.thumbnail('image')
+
 class ApproxAdmin(admin.ModelAdmin):
     list_display = ['id', 'category', 'locality','city', 'title', ]
     list_filter = [ 'category', 'locality','city', ]

@@ -185,9 +185,9 @@ class Company(models.Model):
         return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
 
 class Approx(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
-    city = models.ForeignKey(City, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
-    locality = models.ForeignKey(Locality, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
+    category = models.ForeignKey(Category, on_delete=models.CASCADE) #many to one relation with Brand
+    city = models.ForeignKey(City, on_delete=models.CASCADE) #many to one relation with Brand
+    locality = models.ForeignKey(Locality, on_delete=models.CASCADE,) #many to one relation with Brand
     title = models.CharField(max_length=50,unique=True)    
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
