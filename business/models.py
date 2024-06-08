@@ -73,7 +73,7 @@ class Locality(MPTTModel):
         return self.title + "_" + self.city
     
     def save(self , *args , **kwargs):
-        self.slug = slugify(self.title)
+        self.slug = slugify(self.title + '--' + self.city.title)
         super(Locality ,self).save(*args , **kwargs)
     
     
@@ -172,7 +172,7 @@ class Company(models.Model):
         return self.title
     
     def save(self , *args , **kwargs):
-        self.slug = slugify(self.title)
+        self.slug = slugify(self.title + '--' + self.locality.title + '--' + self.city.title)
         super(Company ,self).save(*args , **kwargs)
 
     class Meta:
