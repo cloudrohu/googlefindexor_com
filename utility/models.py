@@ -32,7 +32,7 @@ class Googlemap_Status(models.Model):
         return self.title 
     
     class Meta:
-        verbose_name_plural='1. Find_Form'
+        verbose_name_plural='4. Googlemap_Status'
 
 
 class Call_Status(models.Model):
