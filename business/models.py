@@ -182,7 +182,7 @@ class Company(models.Model):
         verbose_name_plural='1. Company'
 
     def get_absolute_url(self):
-        return reverse('company_detail', kwargs={'slug': self.slug})
+        return reverse('company_details', kwargs={'slug': self.slug})
     
     def image_tag(self):
         return mark_safe('<img src="%s" width="50" height="50" />' % (self.image.url))
