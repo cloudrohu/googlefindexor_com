@@ -151,6 +151,20 @@ class CompanyAdmin(admin.ModelAdmin):
     list_per_page = 30 
     inlines = [CompanySocialInline,CompanyErrorInline,Follow_UpInline,MeetingInline,VisitInline,ImagesInline,FaqInline]
 
+@admin_thumbnails.thumbnail('image')
+class MeetingAdmin(admin.ModelAdmin):
+    list_display = ['id', 'company', 'meeting','comment', 'create_at','update_at']    
+    
+    list_filter = ('meeting','create_at','update_at',) 
+    list_per_page = 30 
+
+
+@admin_thumbnails.thumbnail('image')
+class Follow_UpAdmin(admin.ModelAdmin):
+    list_display = ['id', 'company', 'follow_up','comment', 'create_at','update_at']    
+    
+    list_filter = ('follow_up','create_at','update_at',) 
+    list_per_page = 30 
 
 
 admin.site.register(SocialLink,SocialLinkAdmin)
@@ -160,8 +174,8 @@ admin.site.register(Locality,LocalityAdmin)
 admin.site.register(Category,CategoryAdmin)
 admin.site.register(Company,CompanyAdmin)
 
-admin.site.register(Follow_Up)
-admin.site.register(Meeting)
+admin.site.register(Follow_Up,Follow_UpAdmin)
+admin.site.register(Meeting,MeetingAdmin)
 admin.site.register(Visit)
 admin.site.register(Faq,FaqAdmin)
 admin.site.register(Images,imagesAdmin)
