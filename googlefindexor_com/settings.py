@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'business.apps.BusinessConfig',
     'utility.apps.UtilityConfig',
     'user.apps.UserConfig',
+    'visit.apps.VisitConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',

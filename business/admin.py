@@ -153,7 +153,7 @@ class CompanyAdmin(admin.ModelAdmin):
 
 @admin_thumbnails.thumbnail('image')
 class MeetingAdmin(admin.ModelAdmin):
-    list_display = ['id', 'company', 'meeting','comment', 'create_at','update_at']    
+    list_display = ['id', 'meeting','comment', 'company','create_at','update_at']    
     
     list_filter = ('meeting','create_at','update_at',) 
     list_per_page = 30 
@@ -161,7 +161,7 @@ class MeetingAdmin(admin.ModelAdmin):
 
 @admin_thumbnails.thumbnail('image')
 class Follow_UpAdmin(admin.ModelAdmin):
-    list_display = ['id', 'company', 'follow_up','comment', 'create_at','update_at']    
+    list_display = ['id',  'follow_up','comment','company', 'create_at','update_at']    
     
     list_filter = ('follow_up','create_at','update_at',) 
     list_per_page = 30 
