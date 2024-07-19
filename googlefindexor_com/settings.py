@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'utility.apps.UtilityConfig',
     'user.apps.UserConfig',
     'visit.apps.VisitConfig',
+    'response.apps.ResponseConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',
