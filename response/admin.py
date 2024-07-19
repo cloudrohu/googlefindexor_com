@@ -24,21 +24,21 @@ class ResponseAdmin(admin.ModelAdmin):
     
     list_filter = ['create_at','response_status','response_from',]
     search_fields = ['name','email_id','contact_no', 'description',]
-    list_per_page = 20 
+    list_per_page = 5
     inlines = [Follow_UpInline,MeetingInline]
 
 class MeetingAdmin(admin.ModelAdmin):
     list_display = ['id', 'meeting','comment', 'name','create_at','update_at']    
     
     list_filter = ('meeting','create_at','update_at',) 
-    list_per_page = 30 
+    list_per_page = 5
 
 
 class Follow_UpAdmin(admin.ModelAdmin):
     list_display = ['id',  'follow_up','comment','name', 'create_at','update_at']    
     
     list_filter = ('follow_up','create_at','update_at',) 
-    list_per_page = 30 
+    list_per_page = 5 
 
 
 
