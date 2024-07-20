@@ -20,11 +20,11 @@ class MeetingInline(admin.TabularInline):
 
 
 class ResponseAdmin(admin.ModelAdmin):
-    list_display = ['id', 'response_status','name','email_id','contact_no', 'description', 'call_comment','create_at','update_at','response_from',]    
+    list_display = ['id', 'response_status','name','email_id','contact_no', 'call_comment','description','create_at','update_at','response_from',]    
     
     list_filter = ['create_at','response_status','response_from',]
     search_fields = ['name','email_id','contact_no', 'description',]
-    list_editable = ['response_status',]
+    list_editable = ['response_status', 'call_comment',]
     list_per_page = 5
     inlines = [Follow_UpInline,MeetingInline]
 
