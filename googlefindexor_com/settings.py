@@ -19,6 +19,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [    
+    'adminlte3',
+    'adminlte3_theme',
     'home.apps.HomeConfig',
     'business.apps.BusinessConfig',
     'utility.apps.UtilityConfig',
