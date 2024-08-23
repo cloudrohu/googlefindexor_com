@@ -58,3 +58,20 @@ class SocialSite(models.Model):
 
     class Meta:
         verbose_name_plural='3. SocialSite'
+
+class City(models.Model):
+    title = models.CharField(max_length=500,unique=True)    
+    create_at=models.DateTimeField(auto_now_add=True)
+    update_at=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+class Locality(models.Model):
+    city = models.ForeignKey(City, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
+    title = models.CharField(max_length=500,unique=True)    
+    create_at=models.DateTimeField(auto_now_add=True)
+    update_at=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title + '--' + self.city.title

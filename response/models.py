@@ -11,7 +11,7 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from django.utils.text import slugify
 # Create your models here.
-from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status
+from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status,City,Locality
 
 class Response_From(models.Model):
     name = models.CharField(max_length=100,unique=True)
@@ -37,6 +37,8 @@ class Response_Status(models.Model):
 
 class Response(models.Model):
     response_from = models.ForeignKey(Response_From,blank=True, null=True , on_delete=models.CASCADE)
+    city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
+    locality = models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
     name = models.CharField(max_length=50,unique=True)
     email_id = models.EmailField(max_length=255,null=True , blank=True)
     contact_no = models.CharField(max_length=255,null=True , blank=True)
@@ -66,6 +68,8 @@ class Follow_Up(models.Model):
     name = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)
     follow_up = models.DateTimeField(blank=True, null=True,)
     comment = models.CharField(max_length=500,blank=True, null=True,)
+    city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
+    locality = models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
 
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
@@ -80,6 +84,8 @@ class Meeting(models.Model):
     name = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)
     meeting = models.DateTimeField(null=True, blank=True)
     comment = models.CharField(max_length=500,blank=True, null=True,)
+    city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
+    locality = models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
 
