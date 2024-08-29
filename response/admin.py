@@ -20,7 +20,7 @@ class MeetingInline(admin.TabularInline):
 
 
 class ResponseAdmin(admin.ModelAdmin):
-    list_display = ['id', 'response_status','name','email_id','contact_no', 'call_comment', 'city','locality','description','create_at','update_at','response_from',]    
+    list_display = ['id', 'response_status','name','contact_no', 'call_comment', 'city','locality','description','email_id','create_at','update_at','response_from',]    
     
     list_filter = ['create_at','response_status','response_from','city','locality',]
     search_fields = ['name','email_id','contact_no', 'description',]
