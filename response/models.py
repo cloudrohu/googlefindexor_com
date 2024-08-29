@@ -58,7 +58,7 @@ class Response(models.Model):
         return super().save_model(request, obj, form, change)
 
     def __str__(self):
-        return self.name + '--' + self.contact_no + '--' + self.email_id + '--' + self.locality 
+        return self.name + '--' + self.contact_no + '--' + self.email_id + '--' + self.locality.title
   
     class Meta:
         verbose_name_plural='1. Response'
