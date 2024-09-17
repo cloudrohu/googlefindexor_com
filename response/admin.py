@@ -25,7 +25,7 @@ class ResponseAdmin(admin.ModelAdmin):
     list_filter = ['create_at','response_status','response_from','city','locality',]
     search_fields = ['name','email_id','contact_no', 'description',]
     list_editable = ['response_status', 'call_comment','city','locality',]
-    list_per_page = 30
+    list_per_page = 10
     inlines = [Follow_UpInline,MeetingInline]
 
 class MeetingAdmin(admin.ModelAdmin):
