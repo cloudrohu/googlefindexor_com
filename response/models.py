@@ -44,6 +44,8 @@ class Response(models.Model):
     contact_no = models.CharField(max_length=255,null=True , blank=True)
     description = models.CharField(max_length=500,null=True , blank=True)
     response_status = models.ForeignKey(Response_Status,blank=True, null=True , on_delete=models.CASCADE)
+    meeting_follow_up = models.DateTimeField(blank=True, null=True,)
+
 
     call_comment = models.CharField(max_length=500,null=True , blank=True)
 
