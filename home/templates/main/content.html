@@ -1,0 +1,86 @@
+{% block body %} 
+{% load static %}
+
+<!-- Home Design -->
+<section class="home-seven" style="background-image: url({% static '' %}images/5.png) ;">
+    <div class="container">
+        <div class="row posr">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="home_content home7">
+                    <div class="home-text text-center">
+                        <h2 class="fz55"></h2>
+                        <p class="fz18 color-white">    </p>
+                    </div>
+                    <div class="home_adv_srch_opt home7" >
+                        <div class="home1-advnc-search home7">
+                            <ul class="h1ads_1st_list mb0 text-center">
+                                <li class="list-inline-item">
+                                    <div class="search_option_two">
+                                        <div class="candidate_revew_select">
+                                            <select class="selectpicker w100 show-tick">
+                                                <option>Select Cities</option>
+                                                {% for rs in city %}
+                                                <option>{{rs.title}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="list-inline-item">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="exampleInputName1" placeholder="Enter keyword...">
+                                    </div>
+                                </li>
+                                <li class="list-inline-item">
+                                    <div class="search_option_button">
+                                        <button type="submit" class="btn btn-thm">Search</button>
+                                    </div>
+                                </li>
+
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<br>
+<!-- Find Comfort Place -->
+<section id="comfort-place" class="comfort-place pb30 bb1">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="main-title text-center">
+                    <h2>Find a Place That Fits Your Comfort</h2>
+                    <p>Explore the greates places in the city. You won’t be disappointed.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">            
+            {% for rs in category %}
+            <div class="col-sm-2 col-lg-2">
+                <div class="icon_hvr_img_box" style="background-image: url({{rs.image.url}});">
+                    <div class="overlay">
+                        <div class="icon"><i class="{{rs.keywords}}"></i></div>
+                        <div class="details">
+                            <h4>{{rs.title}}</h4>
+                            <p>{{rs.description}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+        </div>
+    </div>
+</section>
+<br>
+<!-- Property Cities -->
+
+<br>
+{% endblock %}
