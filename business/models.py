@@ -172,7 +172,7 @@ class Company(models.Model):
         return super().save_model(request, obj, form, change)
 
     def __str__(self):
-        return self.title  + '--' + self.contact_person + '--' + self.contact_no
+        return self.title
     
     def save(self , *args , **kwargs):
         self.slug = slugify(self.category.title + '--' + self.title + '--' + self.address + '--' + self.locality.title + '--' + self.city.title)
