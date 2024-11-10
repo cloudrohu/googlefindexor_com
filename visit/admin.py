@@ -50,6 +50,7 @@ class Follow_UpAdmin(admin.ModelAdmin):
 admin.site.register(Follow_Up,Follow_UpAdmin)
 admin.site.register(Meeting,MeetingAdmin)
 admin.site.register(Today_Visit,Today_VisitAdmin)
+admin.site.register(Visit_Type)
 
 
 

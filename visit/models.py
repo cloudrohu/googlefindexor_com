@@ -15,9 +15,25 @@ from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status
 from business.models import Company,City,Locality
 
 
+class Visit_Type(models.Model):
+    title = models.CharField(max_length=500,blank=True, null=True,)
+
+    create_at=models.DateTimeField(auto_now_add=True)
+    update_at=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title 
+    
+    class Meta:
+        verbose_name_plural='4. Visit_Type'
+
 class Today_Visit(models.Model):
     image=models.ImageField(upload_to='images/')
+    visit_type = models.ForeignKey(Visit_Type, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
+    meet_by = models.CharField(max_length=100,null=True , blank=True)
+    contact_no = models.CharField(max_length=15,null=True , blank=True)
+
     locality = models.ForeignKey(Locality, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     city = models.ForeignKey(City, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     followup_meeting = models.DateTimeField(null=True, blank=True)
