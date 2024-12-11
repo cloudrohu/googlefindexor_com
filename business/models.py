@@ -145,7 +145,7 @@ class Company(models.Model):
     call_status = models.ForeignKey(Call_Status, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     find_form = models.ForeignKey(Find_Form, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     googlemap_status = models.ForeignKey(Googlemap_Status, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
-    title = models.CharField(max_length=50,unique=True)
+    company_name = models.CharField(max_length=50,unique=False)
     contact_person = models.CharField(max_length=255,null=True , blank=True)
     contact_no = models.CharField(max_length=255,null=True , blank=True)
     email = models.EmailField(null=True,blank=True)
@@ -175,7 +175,7 @@ class Company(models.Model):
         return self.title
     
     def save(self , *args , **kwargs):
-        self.slug = slugify(self.category.title + '--' + self.title + '--' + self.address + '--' + self.locality.title + '--' + self.city.title)
+        self.slug = slugify(self.category.title + '--' + self.company_name + '--' + self.address + '--' + self.locality.title + '--' + self.city.title)
         super(Company ,self).save(*args , **kwargs)
 
     class Meta:

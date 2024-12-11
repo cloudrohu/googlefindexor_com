@@ -39,7 +39,7 @@ class Response(models.Model):
     response_from = models.ForeignKey(Response_From,blank=True, null=True , on_delete=models.CASCADE)
     city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
     locality = models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
-    name = models.CharField(max_length=50,unique=True)
+    name = models.CharField(max_length=50,unique=False)
     email_id = models.EmailField(max_length=255,null=True , blank=True)
     contact_no = models.CharField(max_length=255,null=True , blank=True)
     description = models.CharField(max_length=500,null=True , blank=True)
@@ -60,7 +60,7 @@ class Response(models.Model):
         return super().save_model(request, obj, form, change)
 
     def __str__(self):
-        return self.name + '--' + self.contact_no + '--' + self.email_id 
+        return self.name + '--' + self.contact_no
   
     class Meta:
         verbose_name_plural='1. Response'
