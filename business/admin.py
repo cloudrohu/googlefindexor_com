@@ -148,7 +148,7 @@ class CompanyAdmin(admin.ModelAdmin):
     
     list_filter = ('locality','city','category','googlemap_status','call_status', 'find_form',) 
     search_fields = ['company_name','contact_person','contact_no', 'description','email','website',]
-    list_editable = ('locality','city','category','googlemap_status','call_status', 'find_form',)
+    list_editable = ('locality','city','category','googlemap_status','call_status','description', 'find_form',)
     list_per_page = 10 
     inlines = [CompanySocialInline,CompanyErrorInline,Follow_UpInline,MeetingInline,VisitInline,ImagesInline,FaqInline]
 
