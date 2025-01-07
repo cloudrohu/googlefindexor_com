@@ -143,6 +143,9 @@ class Category(MPTTModel):
 class Company(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     call_status = models.ForeignKey(Call_Status, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
+    call_comment = models.CharField(max_length=1000,null=True , blank=True)
+    followup_meeting = models.DateTimeField(null=True, blank=True)
+    
     find_form = models.ForeignKey(Find_Form, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     googlemap_status = models.ForeignKey(Googlemap_Status, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     company_name = models.CharField(max_length=50,unique=False)
