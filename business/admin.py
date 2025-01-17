@@ -144,7 +144,7 @@ class CategoryAdmin(DraggableMPTTAdmin):
 
 @admin_thumbnails.thumbnail('image')
 class CompanyAdmin(admin.ModelAdmin):
-    list_display = ['id', 'find_form', 'call_status','call_comment', 'followup_meeting','company_name','category', 'contact_person','contact_no', 'description','email','website','address', 'locality','city','googlemap_status',]    
+    list_display = ['id', 'image_thumbnail', 'find_form', 'call_status','call_comment', 'followup_meeting','company_name','category', 'contact_person','contact_no', 'description','email','website','address', 'locality','city','googlemap_status',]    
     
     list_filter = ('locality','city','category','followup_meeting','googlemap_status','call_status', 'find_form',) 
     search_fields = ['id','company_name','contact_person','contact_no', 'description','email','website',]
