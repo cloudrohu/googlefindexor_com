@@ -37,8 +37,7 @@ class Response_Status(models.Model):
 
 class Response(models.Model):
     response_from = models.ForeignKey(Response_From,blank=True, null=True , on_delete=models.CASCADE)
-    city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
-    locality = models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
+    locality_city = models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
     name = models.CharField(max_length=50,unique=False)
     contact_no = models.CharField(max_length=255,null=True , blank=True)
     email_id = models.EmailField(max_length=255,null=True , blank=True)
