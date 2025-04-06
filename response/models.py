@@ -45,10 +45,7 @@ class Response(models.Model):
     description = models.CharField(max_length=500,null=True , blank=True)
     response_status = models.ForeignKey(Response_Status,blank=True, null=True , on_delete=models.CASCADE)
     meeting_follow_up = models.DateTimeField(blank=True, null=True,)
-
-
     call_comment = models.CharField(max_length=500,null=True , blank=True)
-
 
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
@@ -60,7 +57,7 @@ class Response(models.Model):
         return super().save_model(request, obj, form, change)
 
     def __str__(self):
-        return self.name + '--' + self.contact_no
+        return self.name + ' ' + self.contact_no
   
     class Meta:
         verbose_name_plural='1. Response'
