@@ -28,19 +28,17 @@ class ResponseAdmin(admin.ModelAdmin):
     inlines = [Follow_UpInline,MeetingInline]
 
 class MeetingAdmin(admin.ModelAdmin):
-    list_display = ['id','meeting','comment', 'name','locality','city','create_at','update_at',]    
+    list_display = ['id', 'name','meeting','comment','locality','city','create_at','update_at',]    
     
     list_filter = ('meeting','create_at','update_at','city','locality',) 
-    list_editable = ['meeting', 'comment']
 
     list_per_page = 20
 
 
 class Follow_UpAdmin(admin.ModelAdmin):
-    list_display = ['id','follow_up','comment','name','locality','city', 'create_at','update_at']    
+    list_display = ['id','name','follow_up','comment','locality','city', 'create_at','update_at']    
     
     list_filter = ('follow_up','create_at','update_at','city','locality',) 
-    list_editable = ['follow_up', 'comment']
 
     list_per_page = 20 
 
