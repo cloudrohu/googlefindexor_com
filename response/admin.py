@@ -24,7 +24,7 @@ class ResponseAdmin(admin.ModelAdmin):
     
     list_filter = ['meeting_follow_up','response_status','response_from','city','locality']
     search_fields = ['id','name','email_id','contact_no', 'description',]
-    list_per_page = 10
+    list_per_page = 20
     inlines = [Follow_UpInline,MeetingInline]
 
 class MeetingAdmin(admin.ModelAdmin):
@@ -33,7 +33,7 @@ class MeetingAdmin(admin.ModelAdmin):
     list_filter = ('meeting','create_at','update_at','city','locality',) 
     list_editable = ['meeting', 'comment']
 
-    list_per_page = 30
+    list_per_page = 20
 
 
 class Follow_UpAdmin(admin.ModelAdmin):
@@ -42,7 +42,7 @@ class Follow_UpAdmin(admin.ModelAdmin):
     list_filter = ('follow_up','create_at','update_at','city','locality',) 
     list_editable = ['follow_up', 'comment']
 
-    list_per_page = 30 
+    list_per_page = 20 
 
 
 
