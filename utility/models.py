@@ -74,7 +74,7 @@ class Locality(models.Model):
     update_at=models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.title + '--' + self.city.title
+        return self.title + ' ' + self.city.title
 
 
 class Meeting_Followup_Type(models.Model):
