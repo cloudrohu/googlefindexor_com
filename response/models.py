@@ -57,7 +57,7 @@ class Response(models.Model):
         return super().save_model(request, obj, form, change)
 
     def __str__(self):
-        return self.name + ' ' + self.contact_no  + ' ' + self.locality.title + ' ' + self.city.title 
+        return self.name + ' ' + self.contact_no 
   
     class Meta:
         verbose_name_plural='1. Response'
@@ -67,8 +67,7 @@ class Follow_Up(models.Model):
     name = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)
     follow_up = models.DateTimeField(blank=True, null=True,)
     comment = models.CharField(max_length=500,blank=True, null=True,)
-    city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
-    locality = models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
+    locality_city= models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
 
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
@@ -83,8 +82,7 @@ class Meeting(models.Model):
     name = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)
     meeting = models.DateTimeField(null=True, blank=True)
     comment = models.CharField(max_length=500,blank=True, null=True,)
-    city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
-    locality = models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
+    locality_city= models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
 
