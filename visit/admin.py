@@ -21,11 +21,11 @@ class MeetingInline(admin.TabularInline):
 
 @admin_thumbnails.thumbnail('image')
 class Today_VisitAdmin(admin.ModelAdmin):
-    list_display = ['id', 'image_thumbnail', 'company',  'status', 'description', 'followup_meeting','locality','city', 'create_at','update_at']    
+    list_display = ['id', 'image_thumbnail', 'company',  'status', 'description', 'followup_meeting','locality_city','create_at','update_at']    
     
-    list_filter = ['create_at','locality','city','status','followup_meeting']
+    list_filter = ['create_at','locality_city','status','followup_meeting']
     search_fields = ['company','description']
-    list_editable = ['followup_meeting','locality','city','status','description']
+    list_editable = ['followup_meeting','locality_city','status','description']
     list_per_page = 20
     inlines = [Follow_UpInline,MeetingInline]
 

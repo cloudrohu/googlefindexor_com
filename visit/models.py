@@ -33,9 +33,7 @@ class Today_Visit(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     meet_by = models.CharField(max_length=100,null=True , blank=True)
     contact_no = models.CharField(max_length=15,null=True , blank=True)
-
-    locality = models.ForeignKey(Locality, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
-    city = models.ForeignKey(City, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
+    locality_city = models.ForeignKey(City, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     followup_meeting = models.DateTimeField(null=True, blank=True)
     status = models.ForeignKey(Call_Status, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
     description = models.CharField(max_length=500,null=True , blank=True)
