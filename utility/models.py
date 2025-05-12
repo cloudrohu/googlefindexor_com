@@ -77,6 +77,16 @@ class Locality(models.Model):
         return self.title + ' ' + self.city.title
 
 
+class Sub_Locality(models.Model):
+    locality = models.ForeignKey(Locality, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand
+    title = models.CharField(max_length=500,unique=True)    
+    create_at=models.DateTimeField(auto_now_add=True)
+    update_at=models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.title + ' ' + self.locality.title + ' ' + self.locality.city.title
+    
+
+
 class Meeting_Followup_Type(models.Model):
     title = models.CharField(max_length=100,unique=True)    
     create_at=models.DateTimeField(auto_now_add=True)

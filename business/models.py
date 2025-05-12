@@ -11,7 +11,7 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from django.utils.text import slugify
 
-from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status,City,Locality
+from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status,City,Locality,Sub_Locality
 
 
 class Category(MPTTModel):
@@ -71,6 +71,7 @@ class Company(models.Model):
     email = models.EmailField(null=True,blank=True)
     city = models.ForeignKey(City, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand     
     locality = models.ForeignKey(Locality, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand 
+    sub_locality = models.ForeignKey(Sub_Locality, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand 
     address = models.CharField(max_length=500,null=True , blank=True)
     keywords = models.CharField(max_length=255,null=True , blank=True)
     website = models.CharField(max_length=255,null=True , blank=True)
