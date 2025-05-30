@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'user.apps.UserConfig',
     'visit.apps.VisitConfig',
     'response.apps.ResponseConfig',
+    'useremail.apps.UseremailConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,8 +39,7 @@ INSTALLED_APPS = [
 
     'mptt',
     'ckeditor',
-    'ckeditor_uploader',
-    
+    'ckeditor_uploader',    
 ]
 
 MIDDLEWARE = [
