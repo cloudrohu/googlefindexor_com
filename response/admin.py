@@ -12,6 +12,7 @@ class Meeting_Follow_UpInline(admin.TabularInline):
 class ResponseAdmin(admin.ModelAdmin):
     list_display = ['id','call_status','contact_no','description', 'update_at','create_at','created_by','updated_by']    
     list_filter = ['call_status']
+    list_editable = ['call_status']
     search_fields = ['id','contact_no', 'description']
     list_per_page = 10
     inlines = [Meeting_Follow_UpInline]
@@ -34,7 +35,7 @@ class ResponseAdmin(admin.ModelAdmin):
 
 class Meeting_Follow_UpAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'type','Meeting_follow_up','contact_porsone','locality_city', 
+        'id', 'type','Meeting_follow_up','contact_persone','locality_city', 
         'business_name', 'business_category', 'response_status', 
         'city', 'email_id','create_at','update_at', 'created_by', 'updated_by'
     ]    
@@ -43,6 +44,9 @@ class Meeting_Follow_UpAdmin(admin.ModelAdmin):
         'business_category','response_status','city',
         'create_at','update_at'
     )
+    list_editable = ['type','Meeting_follow_up','contact_persone','locality_city', 
+        'business_name', 'business_category', 'response_status', 
+        'city', 'email_id',]
     list_per_page = 10
 
 

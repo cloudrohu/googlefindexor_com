@@ -58,7 +58,7 @@ class Meeting_Follow_Up(models.Model):
     type = models.CharField(max_length=25, choices=Type,null=True, blank=True)
 
     Meeting_follow_up = models.DateTimeField(blank=True, null=True,)
-    contact_porsone = models.CharField(max_length=500,blank=True, null=True,)
+    contact_persone = models.CharField(max_length=500,blank=True, null=True,)
     email_id = models.EmailField(max_length=255,null=True , blank=True)
 
     business_name = models.CharField(max_length=500,blank=True, null=True,)
