@@ -96,7 +96,7 @@ class Meeting_Followup_Type(models.Model):
         return self.title
     
 
-class Response_From(models.Model):
+class RequirementType(models.Model):
     name = models.CharField(max_length=100,unique=True)
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
@@ -105,7 +105,7 @@ class Response_From(models.Model):
         return self.name 
     
     class Meta:
-        verbose_name_plural='4. Response_From'
+        verbose_name_plural='4. Requirement_Type'
 
 
 

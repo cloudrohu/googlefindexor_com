@@ -11,7 +11,7 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from django.utils.text import slugify
 # Create your models here.
-from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status,City,Locality,Response_From,Response_Status
+from utility.models import  Call_Status,City,Locality,Response_Status,RequirementType
 from business.models import Category
 
 
@@ -65,6 +65,12 @@ class Meeting_Follow_Up(models.Model):
 
     business_category = models.ForeignKey(Category,blank=True, null=True , on_delete=models.CASCADE)
     response_status = models.ForeignKey(Response_Status,blank=True, null=True , on_delete=models.CASCADE)
+    requirement_type = models.ForeignKey(
+    'utility.RequirementType',
+    on_delete=models.SET_NULL,
+    null=True, blank=True
+)
+    
     city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
     locality_city= models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
     response = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)

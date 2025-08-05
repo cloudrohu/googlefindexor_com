@@ -59,3 +59,4 @@ class Meeting_Follow_UpAdmin(admin.ModelAdmin):
 
 admin.site.register(Meeting_Follow_Up, Meeting_Follow_UpAdmin)
 admin.site.register(Response, ResponseAdmin)
+
