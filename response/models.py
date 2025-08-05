@@ -40,7 +40,10 @@ class Response(models.Model):
         return super().save_model(request, obj, form, change)
 
     def __str__(self):
-        return self.contact_no + ' ' + self.description 
+        return f"{self.contact_no or ''} {self.description or ''}"
+
+    class Meta:
+        verbose_name_plural = '1. Response'
   
     class Meta:
         verbose_name_plural='1. Response'

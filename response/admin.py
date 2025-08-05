@@ -16,6 +16,12 @@ class ResponseAdmin(admin.ModelAdmin):
     list_per_page = 10
     inlines = [Meeting_Follow_UpInline]
 
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        super().save_model(request, obj, form, change)
+
 
     exclude = ['created_by', 'updated_by']
 
