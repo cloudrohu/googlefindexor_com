@@ -61,7 +61,7 @@ class Meeting_Follow_Up(models.Model):
     business_name = models.CharField(max_length=500,blank=True, null=True,)
 
     business_category = models.ForeignKey(Category,blank=True, null=True , on_delete=models.CASCADE)
-    response_status = models.ForeignKey(Response_Status,blank=True, null=True , on_delete=models.CASCADE)
+    response_status = models.ForeignKey(Call_Status,blank=True, null=True , on_delete=models.CASCADE)
     city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
     locality_city= models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
     response = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)
