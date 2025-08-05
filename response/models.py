@@ -11,43 +11,27 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from django.utils.text import slugify
 # Create your models here.
-from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status,City,Locality
+from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status,City,Locality,Response_From,Response_Status
+from business.models import Category
 
-class Response_From(models.Model):
-    name = models.CharField(max_length=100,unique=True)
-    create_at=models.DateTimeField(auto_now_add=True)
-    update_at=models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name 
-    
-    class Meta:
-        verbose_name_plural='4. Response_From'
-
-class Response_Status(models.Model):
-    name = models.CharField(max_length=100,unique=True)
-    create_at=models.DateTimeField(auto_now_add=True)
-    update_at=models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.name 
-    
-    class Meta:
-        verbose_name_plural='5. Response_Status'
 
 class Response(models.Model):
-    response_from = models.ForeignKey(Response_From,blank=True, null=True , on_delete=models.CASCADE)
-    locality_city = models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
-    name = models.CharField(max_length=50,unique=False)
+    call_status = models.ForeignKey(Response_Status,blank=True, null=True , on_delete=models.CASCADE)
     contact_no = models.CharField(max_length=255,null=True , blank=True)
-    email_id = models.EmailField(max_length=255,null=True , blank=True)
     description = models.CharField(max_length=500,null=True , blank=True)
-    response_status = models.ForeignKey(Response_Status,blank=True, null=True , on_delete=models.CASCADE)
-    meeting_follow_up = models.DateTimeField(blank=True, null=True,)
-    call_comment = models.CharField(max_length=500,null=True , blank=True)
 
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
+
+    created_by = models.ForeignKey(
+        User, related_name='responses_created',
+        on_delete=models.SET_NULL, null=True, blank=True
+    )
+    updated_by = models.ForeignKey(
+        User, related_name='responses_updated',
+        on_delete=models.SET_NULL, null=True, blank=True
+    )
+
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -56,38 +40,49 @@ class Response(models.Model):
         return super().save_model(request, obj, form, change)
 
     def __str__(self):
-        return self.name + ' ' + self.contact_no 
+        return self.contact_no + ' ' + self.description 
   
     class Meta:
         verbose_name_plural='1. Response'
 
 # -------------------------------------------------------------------------------------------------------------
-class Follow_Up(models.Model):
-    name = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)
-    follow_up = models.DateTimeField(blank=True, null=True,)
-    comment = models.CharField(max_length=500,blank=True, null=True,)
+class Meeting_Follow_Up(models.Model):
+    Type = (
+        ('Meeting', 'Meeting'),
+        ('Follow_Up', 'Follow_Up'),        
+    )
+
+    type = models.CharField(max_length=25, choices=Type,null=True, blank=True)
+
+    Meeting_follow_up = models.DateTimeField(blank=True, null=True,)
+    contact_porsone = models.CharField(max_length=500,blank=True, null=True,)
+    email_id = models.EmailField(max_length=255,null=True , blank=True)
+
+    business_name = models.CharField(max_length=500,blank=True, null=True,)
+
+    business_category = models.ForeignKey(Category,blank=True, null=True , on_delete=models.CASCADE)
+    response_status = models.ForeignKey(Response_Status,blank=True, null=True , on_delete=models.CASCADE)
+    city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
     locality_city= models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
+    response = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)
 
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
+
+    
+    created_by = models.ForeignKey(
+        User, related_name='meeting_followups_created',
+        on_delete=models.SET_NULL, null=True, blank=True
+    )
+    updated_by = models.ForeignKey(
+        User, related_name='meeting_followups_updated',
+        on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     def __str__(self):
         return self.comment 
     
     class Meta:
-        verbose_name_plural='2. Follow_Up'
- 
-class Meeting(models.Model):
-    name = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)
-    meeting = models.DateTimeField(null=True, blank=True)
-    comment = models.CharField(max_length=500,blank=True, null=True,)
-    locality_city= models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
-    create_at=models.DateTimeField(auto_now_add=True)
-    update_at=models.DateTimeField(auto_now=True)
+        verbose_name_plural='2. Meeting Follow_Up'
 
-    def __str__(self):
-        return self.comment 
-    
-    class Meta:
-        verbose_name_plural='3. Meeting'
  
