@@ -14,14 +14,13 @@ from django.utils.text import slugify
 from utility.models import  Call_Status,City,Locality,Response_Status,RequirementType
 from business.models import Category
 
-
 class Response(models.Model):
-    call_status = models.ForeignKey(Call_Status,blank=True, null=True , on_delete=models.CASCADE)
-    contact_no = models.CharField(max_length=15,null=True , blank=True,unique=True)
-    description = models.CharField(max_length=500,null=True , blank=True)
+    call_status = models.ForeignKey(Call_Status, blank=True, null=True, on_delete=models.CASCADE)
+    contact_no = models.CharField(max_length=15, null=True, blank=True, unique=True)
+    description = models.CharField(max_length=500, null=True, blank=True)
 
-    create_at=models.DateTimeField(auto_now_add=True)
-    update_at=models.DateTimeField(auto_now=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     created_by = models.ForeignKey(
         User, related_name='responses_created',
@@ -32,21 +31,19 @@ class Response(models.Model):
         on_delete=models.SET_NULL, null=True, blank=True
     )
 
+    def save(self, *args, **kwargs):
+        # Remove spaces from contact_no
+        if self.contact_no:
+            self.contact_no = self.contact_no.replace(" ", "")
 
-    def save_model(self, request, obj, form, change):
-        if not change:
-            obj.created_by = request.user
-        obj.updated_by = request.user
-        return super().save_model(request, obj, form, change)
+        # Set created_by / updated_by manually from view or admin signal
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.contact_no or ''} {self.description or ''}"
 
     class Meta:
         verbose_name_plural = '1. Response'
-  
-    class Meta:
-        verbose_name_plural='1. Response'
 
 # -------------------------------------------------------------------------------------------------------------
 class Meeting_Follow_Up(models.Model):
