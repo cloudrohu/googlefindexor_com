@@ -9,6 +9,21 @@ class Meeting_Follow_UpInline(admin.TabularInline):
     exclude = ['created_by', 'updated_by']
 
 
+from django import forms
+from .models import Response
+
+class ResponseAdminForm(forms.ModelForm):
+    class Meta:
+        model = Response
+        fields = '__all__'
+
+    def clean_contact_no(self):
+        contact_no = self.cleaned_data.get('contact_no')
+        if contact_no:
+            contact_no = contact_no.replace(" ", "")
+        return contact_no
+
+
 class ResponseAdmin(admin.ModelAdmin):
     list_display = ['id','call_status','contact_no','description', 'update_at','create_at','created_by','updated_by']    
     list_filter = ['call_status']
@@ -22,6 +37,8 @@ class ResponseAdmin(admin.ModelAdmin):
             obj.created_by = request.user
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
+
+    form = ResponseAdminForm
 
 
     exclude = ['created_by', 'updated_by']
