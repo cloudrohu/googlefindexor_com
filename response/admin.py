@@ -25,7 +25,7 @@ class ResponseAdminForm(forms.ModelForm):
 
 
 class ResponseAdmin(admin.ModelAdmin):
-    list_display = ['id','call_status','contact_no','comment', 'update_at','create_at','created_by','updated_by']    
+    list_display = ['id','call_status','contact_no','comment', 'contact_persone', 'business_name', 'business_category', 'response_status', 'update_at','create_at','created_by','updated_by']    
     list_filter = ['call_status']
     list_editable = ['call_status']
     search_fields = ['id','contact_no', 'comment']
@@ -52,18 +52,16 @@ class ResponseAdmin(admin.ModelAdmin):
 
 class Meeting_Follow_UpAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'type','response','Meeting_follow_up', 'description', 'contact_persone','locality_city', 
-        'business_name', 'business_category', 'response_status', 
-        'city', 'email_id','create_at','update_at', 'created_by', 'updated_by'
+        'id','response','Meeting_follow_up', 'description','locality_city', 
+        'city','create_at','update_at', 'created_by', 'updated_by'
     ]    
     list_filter = (
-        'type','Meeting_follow_up','locality_city',
-        'business_category','response_status','city',
+        'Meeting_follow_up','locality_city',
+        'city',
         'create_at','update_at'
     )
-    list_editable = ['type','Meeting_follow_up','contact_persone','locality_city', 
-        'business_name', 'business_category', 'response_status', 
-        'city', 'email_id',]
+    list_editable = ['Meeting_follow_up','locality_city', 
+        'city']
     list_per_page = 10
 
 

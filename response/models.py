@@ -18,7 +18,12 @@ class Response(models.Model):
     call_status = models.ForeignKey(Call_Status, blank=True, null=True, on_delete=models.CASCADE)
     contact_no = models.CharField(max_length=11, null=True, blank=True, unique=True)
     comment = models.CharField(max_length=500, null=True, blank=True)
-
+    Meeting_follow_up = models.DateTimeField(blank=True, null=True,)
+    contact_persone = models.CharField(max_length=500,blank=True, null=True,)
+    requirement_type = models.ForeignKey('utility.RequirementType',on_delete=models.SET_NULL,null=True, blank=True)
+    business_name = models.CharField(max_length=500,blank=True, null=True,)
+    business_category = models.ForeignKey(Category,blank=True, null=True , on_delete=models.CASCADE)
+    response_status = models.ForeignKey(Response_Status,blank=True, null=True , on_delete=models.CASCADE)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
@@ -40,35 +45,16 @@ class Response(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.contact_no or ''} {self.comment or ''}"
+        return f"{self.contact_no or ''} {self.comment or ''}  {self.Meeting_follow_up or ''} {self.business_name or ''} {self.business_category or ''}"
 
     class Meta:
         verbose_name_plural = '1. Response'
 
 # -------------------------------------------------------------------------------------------------------------
 class Meeting_Follow_Up(models.Model):
-    Type = (
-        ('Meeting', 'Meeting'),
-        ('Follow_Up', 'Follow_Up'),        
-    )
-
-    type = models.CharField(max_length=25, choices=Type,null=True, blank=True)
-
     Meeting_follow_up = models.DateTimeField(blank=True, null=True,)
     description = models.CharField(max_length=500, null=True, blank=True)
-
-    contact_persone = models.CharField(max_length=500,blank=True, null=True,)
-    email_id = models.EmailField(max_length=255,null=True , blank=True)
-
-    business_name = models.CharField(max_length=500,blank=True, null=True,)
-
-    business_category = models.ForeignKey(Category,blank=True, null=True , on_delete=models.CASCADE)
-    response_status = models.ForeignKey(Response_Status,blank=True, null=True , on_delete=models.CASCADE)
-    requirement_type = models.ForeignKey(
-    'utility.RequirementType',
-    on_delete=models.SET_NULL,
-    null=True, blank=True
-)
+    email_id = models.EmailField(max_length=255,null=True , blank=True)  
     
     city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
     locality_city= models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
