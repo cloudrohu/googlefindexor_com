@@ -84,7 +84,7 @@ class imagesAdmin(admin.ModelAdmin):
 
 class CategoryAdmin(DraggableMPTTAdmin):
     mptt_indent_field = "title"
-    list_display = ('id','tree_actions', 'indented_title','slug',
+    list_display = ('id','tree_actions', 'indented_title', 'slug',
                     )
     list_display_links = ('indented_title',)
     
