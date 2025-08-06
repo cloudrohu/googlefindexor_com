@@ -16,8 +16,8 @@ from business.models import Category
 
 class Response(models.Model):
     call_status = models.ForeignKey(Call_Status, blank=True, null=True, on_delete=models.CASCADE)
-    contact_no = models.CharField(max_length=15, null=True, blank=True, unique=True)
-    description = models.CharField(max_length=500, null=True, blank=True)
+    contact_no = models.CharField(max_length=11, null=True, blank=True, unique=True)
+    comment = models.CharField(max_length=500, null=True, blank=True)
 
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
@@ -40,7 +40,7 @@ class Response(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.contact_no or ''} {self.description or ''}"
+        return f"{self.contact_no or ''} {self.comment or ''}"
 
     class Meta:
         verbose_name_plural = '1. Response'
@@ -55,6 +55,8 @@ class Meeting_Follow_Up(models.Model):
     type = models.CharField(max_length=25, choices=Type,null=True, blank=True)
 
     Meeting_follow_up = models.DateTimeField(blank=True, null=True,)
+    description = models.CharField(max_length=500, null=True, blank=True)
+
     contact_persone = models.CharField(max_length=500,blank=True, null=True,)
     email_id = models.EmailField(max_length=255,null=True , blank=True)
 
@@ -86,7 +88,7 @@ class Meeting_Follow_Up(models.Model):
     )
 
     def __str__(self):
-        return self.response 
+        return self.description 
     
     class Meta:
         verbose_name_plural='2. Meeting Follow_Up'
