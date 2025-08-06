@@ -52,7 +52,7 @@ class ResponseAdmin(admin.ModelAdmin):
 
 class Meeting_Follow_UpAdmin(admin.ModelAdmin):
     list_display = [
-        'id', 'type','contact_no','Meeting_follow_up', 'description', 'contact_persone','locality_city', 
+        'id', 'type','response','Meeting_follow_up', 'description', 'contact_persone','locality_city', 
         'business_name', 'business_category', 'response_status', 
         'city', 'email_id','create_at','update_at', 'created_by', 'updated_by'
     ]    
