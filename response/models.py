@@ -89,7 +89,7 @@ class Meeting_Follow_Up(models.Model):
     )
 
     def __str__(self):
-        return self.comment 
+        return self.Meeting_follow_up 
     
     class Meta:
         verbose_name_plural='2. Meeting Follow_Up'
