@@ -15,11 +15,15 @@ from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status,Ci
 
 
 class Category(MPTTModel):
-    
+    STATUS = (
+        ('True', 'True'),
+        ('False', 'False'),
+    )
     parent = TreeForeignKey('self',blank=True, null=True ,related_name='children', on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     keywords = models.CharField(max_length=255)
     description = models.TextField(max_length=255)
+    status=models.CharField(max_length=10, choices=STATUS)
     slug = models.SlugField(unique=True , null=True , blank=True)
     create_at=models.DateTimeField(auto_now_add=True)
     update_at=models.DateTimeField(auto_now=True)
