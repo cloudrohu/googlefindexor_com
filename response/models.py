@@ -17,7 +17,7 @@ from business.models import Category
 
 class Response(models.Model):
     call_status = models.ForeignKey(Call_Status,blank=True, null=True , on_delete=models.CASCADE)
-    contact_no = models.CharField(max_length=11,null=True , blank=True,unique=True)
+    contact_no = models.CharField(max_length=15,null=True , blank=True,unique=True)
     description = models.CharField(max_length=500,null=True , blank=True)
 
     create_at=models.DateTimeField(auto_now_add=True)
