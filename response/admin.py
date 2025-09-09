@@ -1,8 +1,15 @@
 from django.contrib import admin
-from .models import Response, Meeting_Follow_Up
+from .models import Response, Meeting,Followup
 
-class Meeting_Follow_UpInline(admin.TabularInline):
-    model = Meeting_Follow_Up
+class MeetingInline(admin.TabularInline):
+    model = Meeting
+    extra = 1
+    show_change_link = True
+
+    exclude = ['created_by', 'updated_by']
+
+class FollowupInline(admin.TabularInline):
+    model = Meeting
     extra = 1
     show_change_link = True
 
@@ -25,12 +32,12 @@ class ResponseAdminForm(forms.ModelForm):
 
 
 class ResponseAdmin(admin.ModelAdmin):
-    list_display = ['id','call_status','contact_no','comment', 'contact_persone', 'business_name', 'business_category', 'response_status', 'update_at','create_at','created_by','updated_by']    
-    list_filter = ['call_status']
-    list_editable = ['call_status']
+    list_display = ['id','status','contact_no','comment', 'contact_persone', 'business_name','update_at','create_at','created_by','updated_by']    
+    list_filter = ['status']
+    list_editable = ['status']
     search_fields = ['id','contact_no', 'comment']
-    list_per_page = 10
-    inlines = [Meeting_Follow_UpInline]
+    list_per_page = 15
+    inlines = [MeetingInline,FollowupInline]
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -50,19 +57,19 @@ class ResponseAdmin(admin.ModelAdmin):
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
 
-class Meeting_Follow_UpAdmin(admin.ModelAdmin):
+class MeetingAdmin(admin.ModelAdmin):
     list_display = [
-        'id','response','Meeting_follow_up', 'description','locality_city', 
+        'id','response','meeting', 'description','locality_city', 
         'city','create_at','update_at', 'created_by', 'updated_by'
     ]    
     list_filter = (
-        'Meeting_follow_up','locality_city',
+        'meeting','locality_city',
         'city',
         'create_at','update_at'
     )
-    list_editable = ['Meeting_follow_up','locality_city', 
+    list_editable = ['meeting','locality_city', 
         'city']
-    list_per_page = 10
+    list_per_page = 15
 
 
     # Auto fill user
@@ -72,6 +79,35 @@ class Meeting_Follow_UpAdmin(admin.ModelAdmin):
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
 
-admin.site.register(Meeting_Follow_Up, Meeting_Follow_UpAdmin)
+
+
+class FollowupAdmin(admin.ModelAdmin):
+    list_display = [
+        'id','response','followup', 'description','locality_city', 
+        'city','create_at','update_at', 'created_by', 'updated_by'
+    ]    
+    list_filter = (
+        'followup','locality_city',
+        'city',
+        'create_at','update_at'
+    )
+    list_editable = ['followup','locality_city', 
+        'city']
+    list_per_page = 15
+
+
+    # Auto fill user
+    def save_model(self, request, obj, form, change):
+        if not obj.pk:  # New object
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        super().save_model(request, obj, form, change)
+
+admin.site.register(Followup, FollowupAdmin)
+admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(Response, ResponseAdmin)
+
+
+
+
 

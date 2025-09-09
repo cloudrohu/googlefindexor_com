@@ -15,15 +15,13 @@ from utility.models import  Call_Status,City,Locality,Response_Status,Requiremen
 from business.models import Category
 
 class Response(models.Model):
-    call_status = models.ForeignKey(Call_Status, blank=True, null=True, on_delete=models.CASCADE)
+    status = models.ForeignKey(Call_Status, blank=True, null=True, on_delete=models.CASCADE)
     contact_no = models.CharField(max_length=11, null=True, blank=True, unique=True)
     comment = models.CharField(max_length=500, null=True, blank=True)
-    Meeting_follow_up = models.DateTimeField(blank=True, null=True,)
     contact_persone = models.CharField(max_length=500,blank=True, null=True,)
-    requirement_type = models.ForeignKey('utility.RequirementType',on_delete=models.SET_NULL,null=True, blank=True)
     business_name = models.CharField(max_length=500,blank=True, null=True,)
-    business_category = models.ForeignKey(Category,blank=True, null=True , on_delete=models.CASCADE)
-    response_status = models.ForeignKey(Response_Status,blank=True, null=True , on_delete=models.CASCADE)
+
+
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
@@ -45,17 +43,17 @@ class Response(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.contact_no or ''} {self.comment or ''}  {self.Meeting_follow_up or ''} {self.business_name or ''} {self.business_category or ''}"
+        return f"{self.contact_no or ''} {self.comment or ''} {self.business_name or ''}"
 
     class Meta:
         verbose_name_plural = '1. Response'
 
 # -------------------------------------------------------------------------------------------------------------
-class Meeting_Follow_Up(models.Model):
-    Meeting_follow_up = models.DateTimeField(blank=True, null=True,)
+class Meeting(models.Model):
+    meeting= models.DateTimeField(blank=True, null=True,)
     description = models.CharField(max_length=500, null=True, blank=True)
-    email_id = models.EmailField(max_length=255,null=True , blank=True)  
-    
+    business_category = models.ForeignKey(Category,blank=True, null=True , on_delete=models.CASCADE)
+    requirement_types = models.ManyToManyField('utility.RequirementType',blank=True,related_name='meetings' )
     city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
     locality_city= models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
     response = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)
@@ -65,11 +63,11 @@ class Meeting_Follow_Up(models.Model):
 
     
     created_by = models.ForeignKey(
-        User, related_name='meeting_followups_created',
+        User, related_name='meeting_created',
         on_delete=models.SET_NULL, null=True, blank=True
     )
     updated_by = models.ForeignKey(
-        User, related_name='meeting_followups_updated',
+        User, related_name='meeting_updated',
         on_delete=models.SET_NULL, null=True, blank=True
     )
 
@@ -77,6 +75,41 @@ class Meeting_Follow_Up(models.Model):
         return self.description 
     
     class Meta:
-        verbose_name_plural='2. Meeting Follow_Up'
+        verbose_name_plural='2. Meeting'
+
+
+
+# -------------------------------------------------------------------------------------------------------------
+class Followup(models.Model):
+    followup= models.DateTimeField(blank=True, null=True,)
+    description = models.CharField(max_length=500, null=True, blank=True)
+    business_category = models.ForeignKey(Category,blank=True, null=True , on_delete=models.CASCADE)
+    requirement_types = models.ManyToManyField('utility.RequirementType',blank=True,related_name='followups' )
+    city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
+    locality_city= models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
+    response = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)
+
+    create_at=models.DateTimeField(auto_now_add=True)
+    update_at=models.DateTimeField(auto_now=True)
+
+    
+    created_by = models.ForeignKey(
+        User, related_name='followup_created',
+        on_delete=models.SET_NULL, null=True, blank=True
+    )
+    updated_by = models.ForeignKey(
+        User, related_name='followup_updated',
+        on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    def __str__(self):
+        return self.description 
+    
+    class Meta:
+        verbose_name_plural='3.Follow_Up'
+
+
+
+
 
  
