@@ -55,27 +55,29 @@ class Response(models.Model):
 
 # -------------------------------------------------------------------------------------------------------------
 class Meeting(models.Model):
+    meeting_date = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time")
+
     MEETING_STATUS_CHOICES = [
         ("not_fixed", "Not Fixed"),
         ("fixed", "Fixed"),
+        ("done", "Done"),
         ("cancelled", "Cancelled"),
     ]
-
-    meeting = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time")
     status = models.CharField(
         max_length=20,
         choices=MEETING_STATUS_CHOICES,
         default="not_fixed",
         verbose_name="Meeting Status"
     )
-    response = models.ForeignKey(Response, blank=True, null=True, on_delete=models.CASCADE)
+    response = models.ForeignKey("Response", blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        date_str = self.meeting.strftime("%d-%m-%Y %H:%M") if self.meeting else "No Date"
+        date_str = self.meeting_date.strftime("%d-%m-%Y %H:%M") if self.meeting_date else "No Date"
         return f"Meeting {self.id} - {self.get_status_display()} ({date_str})"
 
     class Meta:
         verbose_name_plural = "2. Meeting"
+
 # -------------------------------------------------------------------------------------------------------------
 class Followup(models.Model):
     followup= models.DateTimeField(blank=True, null=True,)

@@ -63,25 +63,25 @@ class ResponseAdmin(admin.ModelAdmin):
     get_mr_id.short_description = "ID"
 
 class MeetingAdmin(admin.ModelAdmin):
-
     list_display = (
-        "id", 
-        "response", 
-        "get_response_contact_no", 
-        "meeting", 
+        "id",
+        "response",
+        "get_response_contact_no",
+        "meeting_date",   # <-- pehle 'meeting' tha, ab 'meeting_date'
+        "status",         # <-- naya status field
         "get_response_comment",
         "get_response_business_name",
         "get_response_business_category",
         "get_response_locality",
         "get_response_city",
         "get_response_create_at",
-        "get_response_update_at", 
-        "get_response_created_by", 
-        "get_response_updated_by"
+        "get_response_update_at",
+        "get_response_created_by",
+        "get_response_updated_by",
     )
-    list_filter = ("meeting","response__city", "response__locality_city","response__business_category",)
+    list_filter = ("status", "response__city", "response__locality_city", "response__business_category")
     search_fields = ("response__id", "response__business_name", "response__contact_no")
-    list_editable = ["meeting"]
+    list_editable = ["meeting_date", "status"]   # <-- yahan bhi 'meeting' hatao
     list_per_page = 15
 
     def get_response_comment(self, obj):
