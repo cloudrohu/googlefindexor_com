@@ -28,10 +28,11 @@ class ResponseAdminForm(forms.ModelForm):
             contact_no = contact_no.replace(" ", "")
         return contact_no
 
-
 class ResponseAdmin(admin.ModelAdmin):
+    exclude = ['created_by', 'updated_by']   # <-- Form me dropdown nahi dikhenga
+
     list_display = [
-        'get_mr_id',   # <-- yahan custom MR id show karenge
+        'get_mr_id',
         'status',
         'contact_no',
         'comment',
@@ -45,16 +46,21 @@ class ResponseAdmin(admin.ModelAdmin):
         'created_by',
         'updated_by'
     ]    
-    list_filter = ['status','locality_city','city','business_category',]
-    list_editable = ['status','locality_city','city','business_category',]
-    search_fields = ['id','contact_no', 'comment']
+    list_filter = ['status', 'locality_city', 'city', 'business_category']
+    list_editable = ['status', 'locality_city', 'city', 'business_category']
+    search_fields = ['id', 'contact_no', 'comment']
     list_per_page = 15
     inlines = [MeetingInline, FollowupInline]
 
-    # Custom MR id
+    def save_model(self, request, obj, form, change):
+        if not obj.pk:   # New object hai
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        super().save_model(request, obj, form, change)
+
     def get_mr_id(self, obj):
         return f"MR{obj.id}"
-    get_mr_id.short_description = "ID"   # column heading
+    get_mr_id.short_description = "ID"
 
 class MeetingAdmin(admin.ModelAdmin):
 
