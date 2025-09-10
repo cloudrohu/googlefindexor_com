@@ -58,7 +58,7 @@ class Meeting(models.Model):
     meeting_date = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time")
 
     MEETING_STATUS_CHOICES = [
-        ("not_fixed", "Not Fixed"),
+        ("New Meeting", "New Meeting"),
         ("fixed", "Fixed"),
         ("done", "Done"),
         ("cancelled", "Cancelled"),
