@@ -9,7 +9,7 @@ class MeetingInline(admin.TabularInline):
     exclude = ['created_by', 'updated_by']
 
 class FollowupInline(admin.TabularInline):
-    model = Meeting
+    model = Followup
     extra = 1
     show_change_link = True
 
