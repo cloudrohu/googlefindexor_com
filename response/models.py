@@ -16,7 +16,7 @@ from business.models import Category
 
 class Response(models.Model):
     status = models.ForeignKey(Call_Status, blank=True, null=True, on_delete=models.CASCADE)
-    contact_no = models.CharField(max_length=11, null=True, blank=True, unique=True)
+    contact_no = models.CharField(max_length=16, null=True, blank=True, unique=True)
     comment = models.CharField(max_length=500, null=True, blank=True)
     contact_persone = models.CharField(max_length=500,blank=True, null=True,)
     business_name = models.CharField(max_length=500,blank=True, null=True,)
@@ -58,7 +58,7 @@ class Meeting(models.Model):
     meeting_date = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time")
 
     MEETING_STATUS_CHOICES = [
-        ("not_fixed", "Not Fixed"),
+        ("New Meeting", "New Meeting"),
         ("fixed", "Fixed"),
         ("done", "Done"),
         ("cancelled", "Cancelled"),
