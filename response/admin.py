@@ -46,6 +46,14 @@ class ResponseAdmin(admin.ModelAdmin):
         'created_by',
         'updated_by'
     ]    
+
+    class Media:
+        css = {
+            'all': ('response/css/admin_cards.css',)
+        }
+        js = ('response/js/admin_cards.js',)
+
+        
     list_filter = ['status', 'locality_city', 'city', 'business_category']
     list_editable = ['status', 'locality_city', 'city', 'business_category']
     search_fields = ['id', 'contact_no', 'comment']
