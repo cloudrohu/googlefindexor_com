@@ -13,7 +13,6 @@ class FollowupInline(admin.TabularInline):
     show_change_link = True
     exclude = ['created_by', 'updated_by']
 
-
 from django import forms
 from .models import Response
 
@@ -34,10 +33,10 @@ class ResponseAdmin(admin.ModelAdmin):
     list_display = [
         'get_mr_id',
         'status',
-        'meeting_follow',
+        'contact_persone',
         'contact_no',
         'comment',
-        'contact_persone',
+        'meeting_follow',
         'business_name',
         'business_category',
         'locality_city',
@@ -55,11 +54,11 @@ class ResponseAdmin(admin.ModelAdmin):
         js = ('response/js/admin_cards.js',)
 
 
-    list_filter = ['status', 'locality_city', 'city', 'business_category']
+    list_filter = ['status', 'meeting_follow','locality_city', 'city', 'business_category']
     list_editable = ['status', 'locality_city', 'city', 'business_category']
     search_fields = ['id', 'contact_no', 'comment']
     list_per_page = 15
-    inlines = [MeetingInline, FollowupInline]
+    inlines = [MeetingInline,FollowupInline]
 
     def get_search_results(self, request, queryset, search_term):
         # Default Django search
@@ -87,6 +86,16 @@ class ResponseAdmin(admin.ModelAdmin):
         return f"MR{obj.id}"
     get_mr_id.short_description = "ID"
 
+def save_model(self, request, obj, form, change):
+    if not obj.pk:   # New object hai
+        obj.created_by = request.user
+    obj.updated_by = request.user
+    super().save_model(request, obj, form, change)
+
+
+
+
+
 class MeetingAdminForm(forms.ModelForm):
     meeting_follow = forms.DateTimeField(
         required=False,
@@ -108,19 +117,14 @@ class MeetingAdminForm(forms.ModelForm):
 
 
 class MeetingAdmin(admin.ModelAdmin):
-    form = MeetingAdminForm
-    list_display = ("id", "status", "get_response_meeting_follow", "get_response_comment")
-    list_editable = ["status"]
-
-
-class MeetingAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "get_response_id",
-        "get_response_contact_no",
         "status",
-        "get_response_meeting_follow",   # ✅ ab method banayenge
+        "get_response_id",
+        "get_response_contact_persone",   # ✅ custom method
+        "get_response_contact_no",
         "get_response_comment",
+        "get_response_meeting_follow",
         "get_response_business_name",
         "get_response_business_category",
         "get_response_locality",
@@ -130,6 +134,13 @@ class MeetingAdmin(admin.ModelAdmin):
         "get_response_created_by",
         "get_response_updated_by",
     )
+
+    class Media:
+        css = {
+            'all': ('response/css/meeting_cards.css',)
+        }
+        js = ('response/js/meeting_cards.js',)
+
     list_filter = ("status", "response__city", "response__locality_city", "response__business_category")
     search_fields = ("response__id", "response__business_name", "response__contact_no")
     list_editable = ["status",]   # ✅ sirf model ka apna field
@@ -182,15 +193,20 @@ class MeetingAdmin(admin.ModelAdmin):
     def get_response_updated_by(self, obj):
         return obj.response.updated_by.username if obj.response and obj.response.updated_by else "-"
     get_response_updated_by.short_description = "Updated By"
+
+    def get_response_contact_persone(self, obj):
+        return obj.response.contact_persone if obj.response and obj.response.contact_persone else "-"
+    get_response_contact_persone.short_description = "Contact Person"
 
 class FollowupAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
-        "get_response_id",
-        "get_response_contact_no",
+       "id",
         "status",
-        "get_response_meeting_follow",   # ✅ ab method banayenge
+        "get_response_id",
+        "get_response_contact_persone",   # ✅ custom method
+        "get_response_contact_no",
         "get_response_comment",
+        "get_response_meeting_follow",
         "get_response_business_name",
         "get_response_business_category",
         "get_response_locality",
@@ -200,6 +216,13 @@ class FollowupAdmin(admin.ModelAdmin):
         "get_response_created_by",
         "get_response_updated_by",
     )
+
+    class Media:
+        css = {
+            'all': ('response/css/meeting_cards.css',)
+        }
+        js = ('response/js/meeting_cards.js',)
+
     list_filter = ("status", "response__city", "response__locality_city", "response__business_category")
     search_fields = ("response__id", "response__business_name", "response__contact_no")
     list_editable = ["status",]   # ✅ sirf model ka apna field
@@ -252,6 +275,12 @@ class FollowupAdmin(admin.ModelAdmin):
     def get_response_updated_by(self, obj):
         return obj.response.updated_by.username if obj.response and obj.response.updated_by else "-"
     get_response_updated_by.short_description = "Updated By"
+
+    def get_response_contact_persone(self, obj):
+        return obj.response.contact_persone if obj.response and obj.response.contact_persone else "-"
+    get_response_contact_persone.short_description = "Contact Person"
+
+
 
 admin.site.register(Followup, FollowupAdmin)
 admin.site.register(Meeting, MeetingAdmin)

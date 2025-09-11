@@ -15,18 +15,33 @@ from utility.models import  Call_Status,City,Locality,Response_Status,Requiremen
 from business.models import Category
 
 class Response(models.Model):
-    status = models.ForeignKey(Call_Status, blank=True, null=True, on_delete=models.CASCADE)
-    meeting_follow = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time")
-    
+
+    STATUS_CHOICES = [
+        ("New", "New"),
+        ("Meeting", "Meeting"),
+        ("Follow_Up", "Follow_Up"),
+        ("Not_received", "Not Received"),
+        ("Software_company", "Software Company"),
+        ("For_job", "For Job"),
+        ("Training", "Training"),
+        ("Fake_lead", "face Lead"),
+        ("Deal_close", "Deal Close"),
+    ]
+    status = models.CharField(
+        max_length=25,
+        choices=STATUS_CHOICES,
+        default="New",
+        verbose_name="Response Status"
+    )
+    contact_persone = models.CharField(max_length=500,blank=True, null=True,)
     contact_no = models.CharField(max_length=16, null=True, blank=True, unique=True)
     comment = models.CharField(max_length=500, null=True, blank=True)
-    contact_persone = models.CharField(max_length=500,blank=True, null=True,)
+    meeting_follow = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time") 
     business_name = models.CharField(max_length=500,blank=True, null=True,)
     business_category = models.ForeignKey(Category,blank=True, null=True , on_delete=models.CASCADE)
     requirement_types = models.ManyToManyField('utility.RequirementType',blank=True,related_name='meetings' )  
     city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
     locality_city= models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
-
 
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
@@ -57,17 +72,18 @@ class Response(models.Model):
 
 # -------------------------------------------------------------------------------------------------------------
 class Meeting(models.Model):
+    featured_property = models.BooleanField() 
+
     MEETING_STATUS_CHOICES = [
-        ("None", "None"),
         ("New Meeting", "New Meeting"),
-        ("Deal Done", "Deal Done"),
         ("Re Meeting", "Re Meeting"),
         ("cancelled", "Cancelled"),
+        ("Deal Done", "Deal Done"),
+
     ]
     status = models.CharField(
         max_length=25,
         choices=MEETING_STATUS_CHOICES,
-        default="None",
         verbose_name="Meeting Status"
     )
     response = models.ForeignKey("Response", blank=True, null=True, on_delete=models.CASCADE)
@@ -79,29 +95,29 @@ class Meeting(models.Model):
         verbose_name_plural = "2. Meeting"
 
 
+
 # -------------------------------------------------------------------------------------------------------------
 class Followup(models.Model):
-    Followup_STATUS_CHOICES = [
-        ("None ", "None "),
-        ("New ", "New "),
-        ("2ND TIME", "2ND TIME"),
-        ("HOT", "HOT"),
-        ("COOL", "COOL"),
+    featured_property = models.BooleanField() 
+
+    STATUS_CHOICES = [
+        ("New Meeting", "New Meeting"),
+        ("Re Meeting", "Re Meeting"),
+        ("cancelled", "Cancelled"),
+        ("Deal Done", "Deal Done"),
+
     ]
     status = models.CharField(
         max_length=25,
-        choices=Followup_STATUS_CHOICES,
-        default="None",
-        verbose_name="Followup Status"
+        choices=STATUS_CHOICES,
+        verbose_name="Meeting Status"
     )
-    response = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)   
+    response = models.ForeignKey("Response", blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"Followup {self.id} - {self.status}"
-   
-    
-    class Meta:
-        verbose_name_plural='3.Follow_Up'
+        return f"Meeting {self.id} - {self.status}"
 
+    class Meta:
+        verbose_name_plural = "3. Follow Up"
 
  
