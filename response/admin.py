@@ -34,6 +34,7 @@ class ResponseAdmin(admin.ModelAdmin):
     list_display = [
         'get_mr_id',
         'status',
+        'meeting_follow',
         'contact_no',
         'comment',
         'contact_persone',
@@ -53,7 +54,7 @@ class ResponseAdmin(admin.ModelAdmin):
         }
         js = ('response/js/admin_cards.js',)
 
-        
+
     list_filter = ['status', 'locality_city', 'city', 'business_category']
     list_editable = ['status', 'locality_city', 'city', 'business_category']
     search_fields = ['id', 'contact_no', 'comment']
@@ -86,13 +87,39 @@ class ResponseAdmin(admin.ModelAdmin):
         return f"MR{obj.id}"
     get_mr_id.short_description = "ID"
 
+class MeetingAdminForm(forms.ModelForm):
+    meeting_follow = forms.DateTimeField(
+        required=False,
+        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'})
+    )
+
+    class Meta:
+        model = Meeting
+        fields = "__all__"
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if instance.response:
+            instance.response.meeting_follow = self.cleaned_data['meeting_follow']
+            instance.response.save()
+        if commit:
+            instance.save()
+        return instance
+
+
+class MeetingAdmin(admin.ModelAdmin):
+    form = MeetingAdminForm
+    list_display = ("id", "status", "get_response_meeting_follow", "get_response_comment")
+    list_editable = ["status"]
+
+
 class MeetingAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "response",
+        "get_response_id",
         "get_response_contact_no",
-        "meeting_date",   # <-- pehle 'meeting' tha, ab 'meeting_date'
-        "status",         # <-- naya status field
+        "status",
+        "get_response_meeting_follow",   # ✅ ab method banayenge
         "get_response_comment",
         "get_response_business_name",
         "get_response_business_category",
@@ -105,16 +132,24 @@ class MeetingAdmin(admin.ModelAdmin):
     )
     list_filter = ("status", "response__city", "response__locality_city", "response__business_category")
     search_fields = ("response__id", "response__business_name", "response__contact_no")
-    list_editable = ["meeting_date", "status"]   # <-- yahan bhi 'meeting' hatao
+    list_editable = ["status",]   # ✅ sirf model ka apna field
     list_per_page = 15
 
-    def get_response_comment(self, obj):
-        return obj.response.comment if obj.response else "-"
-    get_response_comment.short_description = "Response Comment"
+    def get_response_id(self, obj):
+        return f"MR{obj.response.id}" if obj.response else "-"
+    get_response_id.short_description = "Response ID"
 
     def get_response_contact_no(self, obj):
         return obj.response.contact_no if obj.response else "-"
     get_response_contact_no.short_description = "Response Contact No"
+
+    def get_response_meeting_follow(self, obj):
+        return obj.response.meeting_follow.strftime("%d-%m-%Y %H:%M") if obj.response and obj.response.meeting_follow else "-"
+    get_response_meeting_follow.short_description = "Meeting Follow"
+
+    def get_response_comment(self, obj):
+        return obj.response.comment if obj.response else "-"
+    get_response_comment.short_description = "Response Comment"
 
     def get_response_city(self, obj):
         return obj.response.city if obj.response and obj.response.city else "-"
@@ -148,46 +183,43 @@ class MeetingAdmin(admin.ModelAdmin):
         return obj.response.updated_by.username if obj.response and obj.response.updated_by else "-"
     get_response_updated_by.short_description = "Updated By"
 
-    # Auto fill user (agar future me Meeting me bhi created_by chahiye ho)
-    def save_model(self, request, obj, form, change):
-        if not obj.pk and hasattr(obj, 'created_by'):
-            obj.created_by = request.user
-        if hasattr(obj, 'updated_by'):
-            obj.updated_by = request.user
-        super().save_model(request, obj, form, change)
-
-
-        
-
 class FollowupAdmin(admin.ModelAdmin):
-       
     list_display = (
-        "id", 
-        "response", 
-        "get_response_contact_no", 
-        "followup", 
+        "id",
+        "get_response_id",
+        "get_response_contact_no",
+        "status",
+        "get_response_meeting_follow",   # ✅ ab method banayenge
         "get_response_comment",
         "get_response_business_name",
         "get_response_business_category",
         "get_response_locality",
         "get_response_city",
         "get_response_create_at",
-        "get_response_update_at", 
-        "get_response_created_by", 
-        "get_response_updated_by"
+        "get_response_update_at",
+        "get_response_created_by",
+        "get_response_updated_by",
     )
-    list_filter = ("followup","response__city", "response__locality_city","response__business_category",)
+    list_filter = ("status", "response__city", "response__locality_city", "response__business_category")
     search_fields = ("response__id", "response__business_name", "response__contact_no")
-    list_editable = ["followup"]
+    list_editable = ["status",]   # ✅ sirf model ka apna field
     list_per_page = 15
 
-    def get_response_comment(self, obj):
-        return obj.response.comment if obj.response else "-"
-    get_response_comment.short_description = "Response Comment"
+    def get_response_id(self, obj):
+        return f"MR{obj.response.id}" if obj.response else "-"
+    get_response_id.short_description = "Response ID"
 
     def get_response_contact_no(self, obj):
         return obj.response.contact_no if obj.response else "-"
     get_response_contact_no.short_description = "Response Contact No"
+
+    def get_response_meeting_follow(self, obj):
+        return obj.response.meeting_follow.strftime("%d-%m-%Y %H:%M") if obj.response and obj.response.meeting_follow else "-"
+    get_response_meeting_follow.short_description = "Meeting Follow"
+
+    def get_response_comment(self, obj):
+        return obj.response.comment if obj.response else "-"
+    get_response_comment.short_description = "Response Comment"
 
     def get_response_city(self, obj):
         return obj.response.city if obj.response and obj.response.city else "-"
@@ -220,15 +252,6 @@ class FollowupAdmin(admin.ModelAdmin):
     def get_response_updated_by(self, obj):
         return obj.response.updated_by.username if obj.response and obj.response.updated_by else "-"
     get_response_updated_by.short_description = "Updated By"
-
-    # Auto fill user (agar future me Meeting me bhi created_by chahiye ho)
-    def save_model(self, request, obj, form, change):
-        if not obj.pk and hasattr(obj, 'created_by'):
-            obj.created_by = request.user
-        if hasattr(obj, 'updated_by'):
-            obj.updated_by = request.user
-        super().save_model(request, obj, form, change)
-
 
 admin.site.register(Followup, FollowupAdmin)
 admin.site.register(Meeting, MeetingAdmin)

@@ -15,7 +15,7 @@
 .change-list .results table tbody tr {
     background: #fff;
     border-radius: 14px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 15px rgba(208, 9, 9, 0.08);
     border: 1px solid #e5e7eb;
     margin-bottom: 16px;
     transition: all 0.25s ease-in-out;

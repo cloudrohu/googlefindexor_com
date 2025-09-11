@@ -16,6 +16,8 @@ from business.models import Category
 
 class Response(models.Model):
     status = models.ForeignKey(Call_Status, blank=True, null=True, on_delete=models.CASCADE)
+    meeting_follow = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time")
+    
     contact_no = models.CharField(max_length=16, null=True, blank=True, unique=True)
     comment = models.CharField(max_length=500, null=True, blank=True)
     contact_persone = models.CharField(max_length=500,blank=True, null=True,)
@@ -55,36 +57,47 @@ class Response(models.Model):
 
 # -------------------------------------------------------------------------------------------------------------
 class Meeting(models.Model):
-    meeting_date = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time")
-
     MEETING_STATUS_CHOICES = [
+        ("None", "None"),
         ("New Meeting", "New Meeting"),
-        ("fixed", "Fixed"),
-        ("done", "Done"),
+        ("Deal Done", "Deal Done"),
+        ("Re Meeting", "Re Meeting"),
         ("cancelled", "Cancelled"),
     ]
     status = models.CharField(
-        max_length=20,
+        max_length=25,
         choices=MEETING_STATUS_CHOICES,
-        default="not_fixed",
+        default="None",
         verbose_name="Meeting Status"
     )
     response = models.ForeignKey("Response", blank=True, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
-        date_str = self.meeting_date.strftime("%d-%m-%Y %H:%M") if self.meeting_date else "No Date"
-        return f"Meeting {self.id} - {self.get_status_display()} ({date_str})"
+        return f"Meeting {self.id} - {self.status}"
 
     class Meta:
         verbose_name_plural = "2. Meeting"
 
+
 # -------------------------------------------------------------------------------------------------------------
 class Followup(models.Model):
-    followup= models.DateTimeField(blank=True, null=True,)
+    Followup_STATUS_CHOICES = [
+        ("None ", "None "),
+        ("New ", "New "),
+        ("2ND TIME", "2ND TIME"),
+        ("HOT", "HOT"),
+        ("COOL", "COOL"),
+    ]
+    status = models.CharField(
+        max_length=25,
+        choices=Followup_STATUS_CHOICES,
+        default="None",
+        verbose_name="Followup Status"
+    )
     response = models.ForeignKey(Response,blank=True, null=True , on_delete=models.CASCADE)   
 
     def __str__(self):
-        return self.followup.strftime("%d-%m-%Y %H:%M") if self.followup else f"followup {self.id}" 
+        return f"Followup {self.id} - {self.status}"
    
     
     class Meta:
