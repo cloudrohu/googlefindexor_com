@@ -53,14 +53,15 @@ class ResponseAdmin(admin.ModelAdmin):
     inlines = [MeetingInline, FollowupInline]
 
     def get_search_results(self, request, queryset, search_term):
-        # normal search
+        # Default Django search
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 
-        # agar MR ke sath id search ho rahi hai
-        if search_term.startswith("MR"):
+        # Agar search "MR" se start ho raha hai
+        if search_term.upper().startswith("MR"):
+            raw_id = search_term[2:]  # "MR" ke baad ka part nikal lo
             try:
-                # MR part remove karke number nikalo
-                num = int(search_term.replace("MR", ""))
+                # Leading zeros hatao, number me convert karo
+                num = int(raw_id.lstrip("0"))
                 queryset |= self.model.objects.filter(id=num)
             except ValueError:
                 pass
