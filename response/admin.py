@@ -52,6 +52,21 @@ class ResponseAdmin(admin.ModelAdmin):
     list_per_page = 15
     inlines = [MeetingInline, FollowupInline]
 
+    def get_search_results(self, request, queryset, search_term):
+        # normal search
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+
+        # agar MR ke sath id search ho rahi hai
+        if search_term.startswith("MR"):
+            try:
+                # MR part remove karke number nikalo
+                num = int(search_term.replace("MR", ""))
+                queryset |= self.model.objects.filter(id=num)
+            except ValueError:
+                pass
+
+        return queryset, use_distinct
+
     def save_model(self, request, obj, form, change):
         if not obj.pk:   # New object hai
             obj.created_by = request.user
