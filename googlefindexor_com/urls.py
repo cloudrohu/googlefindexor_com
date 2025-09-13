@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 urlpatterns = [
     path('home/', include('home.urls')),
     path('', include('home.urls')),
-
+    
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('admin/', admin.site.urls),
     path('jet/', include('jet.urls')),
@@ -20,5 +20,7 @@ urlpatterns = [
 
     path('<slug:slug>', views.company_details, name='company_details'),
 
+
+    path("metarepoting/", views.metarepoting, name="metarepoting"),
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

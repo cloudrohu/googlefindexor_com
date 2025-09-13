@@ -22,7 +22,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [    
     'jet.dashboard',
     'jet',
-    
+    'adsrepoting.apps.AdsrepotingConfig',
     'home.apps.HomeConfig',
     'business.apps.BusinessConfig',
     'utility.apps.UtilityConfig',
