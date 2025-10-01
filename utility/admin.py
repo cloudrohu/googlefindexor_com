@@ -14,11 +14,24 @@ from .models import (
 # Resources for Import/Export
 # ------------------------------
 
+
+# Resource for import-export
 class LocalityResource(resources.ModelResource):
     class Meta:
         model = Locality
-        fields = ("id", "title", "parent", "slug")  # sirf actual fields
-        import_id_fields = ("id",)  # id ke basis par update bhi ho sakta hai
+        fields = ("id", "title", "parent", "slug")   # sirf relevant fields
+        import_id_fields = ("id",)                  # id ke base par update bhi hoga
+
+
+# Admin
+@admin.register(Locality)
+class LocalityAdmin(ImportExportModelAdmin, DraggableMPTTAdmin):
+    resource_class = LocalityResource
+    mptt_indent_field = "title"
+    list_display = ("id", "tree_actions", "indented_title", "slug")
+    list_display_links = ("indented_title",)
+    list_per_page = 30
+    prepopulated_fields = {"slug": ("title",)}
 
 class SubLocalityResource(resources.ModelResource):
     class Meta:
@@ -74,14 +87,7 @@ class CityAdmin(ImportExportModelAdmin):
     list_display = ("id", "title")
     search_fields = ("title",)
 
-@admin.register(Locality)
-class LocalityAdmin(ImportExportModelAdmin, DraggableMPTTAdmin):
-    resource_class = LocalityResource
-    mptt_indent_field = "title"
-    list_display = ("id", "tree_actions", "indented_title", "slug")
-    list_display_links = ("indented_title",)
-    list_per_page = 30
-    prepopulated_fields = {"slug": ("title",)}
+
 
 @admin.register(Sub_Locality)
 class SubLocalityAdmin(ImportExportModelAdmin):
