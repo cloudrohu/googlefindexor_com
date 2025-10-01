@@ -58,17 +58,20 @@ class RequirementTypeResource(resources.ModelResource):
 # ------------------------------
 # Admin Classes
 # ------------------------------
+# Resource
 class CityResource(resources.ModelResource):
     class Meta:
         model = City
-        fields = ("id", "title",)  # slug optional hai agar hai to
+        fields = ("id", "title")   # sirf id aur title
+        import_id_fields = ("id",) # id optional hai import ke time
 
 
+# Admin
 @admin.register(City)
 class CityAdmin(ImportExportModelAdmin):
     resource_class = CityResource
-    list_display = ("id", "title")   # <-- "__str__" hata ke "title" use karo
-    search_fields = ("title",)       # <-- title searchable banado
+    list_display = ("id", "title")
+    search_fields = ("title",)
 
 @admin.register(Locality)
 class LocalityAdmin(ImportExportModelAdmin, DraggableMPTTAdmin):
