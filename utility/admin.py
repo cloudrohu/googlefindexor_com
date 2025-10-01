@@ -62,15 +62,17 @@ class RequirementTypeResource(resources.ModelResource):
 # ------------------------------
 # Admin Classes
 # ------------------------------
+class CityResource(resources.ModelResource):
+    class Meta:
+        model = City
+        fields = ("id", "title", "slug")  # slug optional hai agar hai to
+
+
 @admin.register(City)
 class CityAdmin(ImportExportModelAdmin):
     resource_class = CityResource
-    list_display = ("id", "city_name")
-    search_fields = ("title",)
-
-    def city_name(self, obj):
-        return str(obj)   # ye __str__ ko call karega
-    city_name.short_description = "City"
+    list_display = ("id", "title")   # <-- "__str__" hata ke "title" use karo
+    search_fields = ("title",)       # <-- title searchable banado
 
 @admin.register(Locality)
 class LocalityAdmin(ImportExportModelAdmin, DraggableMPTTAdmin):
