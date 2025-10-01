@@ -17,10 +17,16 @@ from .models import (
 
 # Resource for import-export
 class LocalityResource(resources.ModelResource):
+    parent = fields.Field(
+        column_name="parent",
+        attribute="parent",
+        widget=ForeignKeyWidget(Locality, "title")  # parent ko title ke base par match karega
+    )
+
     class Meta:
         model = Locality
-        fields = ("id", "title", "parent", "slug")   # sirf relevant fields
-        import_id_fields = ("id",)                  # id ke base par update bhi hoga
+        fields = ("id", "title", "parent", "slug")
+        import_id_fields = ("id",)
 
 
 # Admin
