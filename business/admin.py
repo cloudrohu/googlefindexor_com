@@ -1,137 +1,204 @@
 import admin_thumbnails
 from django.contrib import admin
-
-# Register your models here.
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 from mptt.admin import DraggableMPTTAdmin
 
-from .models import *
-
-  
-class CategoryApproxInline(admin.TabularInline):
-    model = Approx
-    extra = 1
-    show_change_link = True
-
-class CompanySocialInline(admin.TabularInline):
-    model = SocialLink
-    extra = 1
-    show_change_link = True
-
-class CompanyErrorInline(admin.TabularInline):
-    model = Error
-    extra = 1
-    show_change_link = True
-
-class Follow_UpInline(admin.TabularInline):
-    model = Follow_Up
-    extra = 1
-    show_change_link = True
-
-class MeetingInline(admin.TabularInline):
-    model = Meeting
-    extra = 1
-    show_change_link = True
-
-class VisitInline(admin.TabularInline):
-    model = Visit
-    extra = 1
-    show_change_link = True
+from .models import Category, Company, Approx, SocialLink, Error, Follow_Up, Images, Faq, Meeting, Visit
 
 
-class ImagesInline(admin.TabularInline):
-    model = Images
-    extra = 1
-    show_change_link = True
+# ===================== Resources =====================
+class CategoryResource(resources.ModelResource):
+    class Meta:
+        model = Category
+        fields = ("id", "title", "keywords", "description", "status", "slug", "parent")
 
 
-class FaqInline(admin.TabularInline):
-    model = Faq
-    extra = 1
-    show_change_link = True
+class CompanyResource(resources.ModelResource):
+    class Meta:
+        model = Company
+        fields = (
+            "id",
+            "company_name",
+            "category",
+            "contact_person",
+            "contact_no",
+            "email",
+            "city",
+            "locality",
+            "sub_locality",
+            "address",
+            "keywords",
+            "website",
+            "google_map",
+            "description",
+            "about",
+            "call_status",
+            "call_comment",
+            "followup_meeting",
+            "find_form",
+            "googlemap_status",
+            "slug",
+            "created_by",
+            "updated_by",
+        )
 
 
-class ApproxAdmin(admin.ModelAdmin):
-    list_display = ['id', 'category', 'locality','city', 'title', ]
-    list_filter = [ 'category', 'locality','city', ]
-
-    search_fields = ['title']
-    list_per_page = 30 
-
-class SocialSiteAdmin(admin.ModelAdmin):
-    list_display = ['id','title','code']
-    search_fields = ['title']
-    list_per_page = 30 
-
-class SocialLinkAdmin(admin.ModelAdmin):
-    list_display = ['id','company','link']
-    search_fields = ['title']
-    list_per_page = 30 
-
-class ErrorAdmin(admin.ModelAdmin):
-    list_display = ['id','title','error']
-    search_fields = ['title']
-    list_per_page = 30 
+class ApproxResource(resources.ModelResource):
+    class Meta:
+        model = Approx
+        fields = ("id", "title", "category", "city", "locality")
 
 
-class FaqAdmin(admin.ModelAdmin):
-    list_display = ['id','company','questions','answers']
-    list_per_page = 30 
+class SocialLinkResource(resources.ModelResource):
+    class Meta:
+        model = SocialLink
+        fields = ("id", "company", "socia_site", "link")
 
-class imagesAdmin(admin.ModelAdmin):
-    list_display = ['id']
 
-    list_per_page = 30 
+class ErrorResource(resources.ModelResource):
+    class Meta:
+        model = Error
+        fields = ("id", "company", "title", "error")
 
-class CategoryAdmin(DraggableMPTTAdmin):
+
+class FollowUpResource(resources.ModelResource):
+    class Meta:
+        model = Follow_Up
+        fields = ("id", "company", "follow_up", "comment")
+
+
+class ImagesResource(resources.ModelResource):
+    class Meta:
+        model = Images
+        fields = ("id", "product", "title", "image")
+
+
+class FaqResource(resources.ModelResource):
+    class Meta:
+        model = Faq
+        fields = ("id", "company", "questions", "answers")
+
+
+class MeetingResource(resources.ModelResource):
+    class Meta:
+        model = Meeting
+        fields = ("id", "company", "meeting", "comment")
+
+
+class VisitResource(resources.ModelResource):
+    class Meta:
+        model = Visit
+        fields = ("id", "company", "comment", "visit_date")
+
+
+# ===================== Admins =====================
+
+class CategoryAdmin(ImportExportModelAdmin, DraggableMPTTAdmin):
+    resource_class = CategoryResource
     mptt_indent_field = "title"
-    list_display = ('id','tree_actions', 'indented_title', 'slug',
-                    )
-    list_display_links = ('indented_title',)
-    
-    list_per_page = 30 
-    prepopulated_fields = {'slug': ('title',)}    
-    inlines = [CategoryApproxInline,]
+    list_display = ("id", "tree_actions", "indented_title", "slug", "status")
+    list_display_links = ("indented_title",)
+    search_fields = ("title", "keywords")
+    list_per_page = 30
+    prepopulated_fields = {"slug": ("title",)}
 
 
-@admin_thumbnails.thumbnail('image')
-class CompanyAdmin(admin.ModelAdmin):
-    list_display = ['id', 'image_thumbnail', 'find_form', 'call_status','call_comment', 'followup_meeting','company_name','category', 'contact_person','contact_no', 'description','email','website','address','sub_locality', 'locality','city','googlemap_status',]    
-    
-    list_filter = ('sub_locality','locality','city','category','followup_meeting','googlemap_status','call_status', 'find_form',) 
-    search_fields = ['id','company_name','contact_person','contact_no', 'description','email','website',]
-    list_per_page = 10 
-    inlines = [CompanySocialInline,CompanyErrorInline,Follow_UpInline,MeetingInline,VisitInline,ImagesInline,FaqInline]
-
-@admin_thumbnails.thumbnail('image')
-class MeetingAdmin(admin.ModelAdmin):
-    list_display = ['id', 'meeting','comment', 'company','create_at','update_at']    
-    
-    list_filter = ('meeting','create_at','update_at',) 
-    list_per_page = 30 
-
-
-@admin_thumbnails.thumbnail('image')
-class Follow_UpAdmin(admin.ModelAdmin):
-    list_display = ['id',  'follow_up','comment','company', 'create_at','update_at']    
-    
-    list_filter = ('follow_up','create_at','update_at',) 
-    list_per_page = 30 
-
-
-admin.site.register(SocialLink,SocialLinkAdmin)
-admin.site.register(Approx,ApproxAdmin)
-admin.site.register(Category,CategoryAdmin)
-admin.site.register(Company,CompanyAdmin)
-
-admin.site.register(Follow_Up,Follow_UpAdmin)
-admin.site.register(Meeting,MeetingAdmin)
-admin.site.register(Visit)
-admin.site.register(Faq,FaqAdmin)
-admin.site.register(Images,imagesAdmin)
+@admin_thumbnails.thumbnail("image")
+class CompanyAdmin(ImportExportModelAdmin):
+    resource_class = CompanyResource
+    list_display = (
+        "id",
+        "image_thumbnail",
+        "company_name",
+        "category",
+        "contact_person",
+        "contact_no",
+        "email",
+        "city",
+        "locality",
+        "sub_locality",
+        "address",
+        "website",
+        "googlemap_status",
+        "call_status",
+        "followup_meeting",
+    )
+    list_filter = ("city", "locality", "sub_locality", "category", "call_status", "googlemap_status")
+    search_fields = ("company_name", "contact_person", "contact_no", "email", "website")
+    list_per_page = 20
 
 
+class ApproxAdmin(ImportExportModelAdmin):
+    resource_class = ApproxResource
+    list_display = ("id", "title", "category", "city", "locality")
+    list_filter = ("category", "city", "locality")
+    search_fields = ("title",)
+    list_per_page = 30
 
 
+class SocialLinkAdmin(ImportExportModelAdmin):
+    resource_class = SocialLinkResource
+    list_display = ("id", "company", "socia_site", "link")
+    list_filter = ("socia_site",)
+    search_fields = ("link",)
+    list_per_page = 30
 
 
+class ErrorAdmin(ImportExportModelAdmin):
+    resource_class = ErrorResource
+    list_display = ("id", "company", "title", "error")
+    search_fields = ("title", "error")
+    list_per_page = 30
 
+
+class FollowUpAdmin(ImportExportModelAdmin):
+    resource_class = FollowUpResource
+    list_display = ("id", "company", "follow_up", "comment")
+    list_filter = ("follow_up",)
+    search_fields = ("comment", "company__company_name")
+    list_per_page = 30
+
+
+class ImagesAdmin(ImportExportModelAdmin):
+    resource_class = ImagesResource
+    list_display = ("id", "product", "title", "image")
+    search_fields = ("title",)
+    list_per_page = 30
+
+
+class FaqAdmin(ImportExportModelAdmin):
+    resource_class = FaqResource
+    list_display = ("id", "company", "questions", "answers")
+    search_fields = ("questions",)
+    list_per_page = 30
+
+
+class MeetingAdmin(ImportExportModelAdmin):
+    resource_class = MeetingResource
+    list_display = ("id", "company", "meeting", "comment")
+    list_filter = ("meeting",)
+    search_fields = ("comment",)
+    list_per_page = 30
+
+
+class VisitAdmin(ImportExportModelAdmin):
+    resource_class = VisitResource
+    list_display = ("id", "company", "comment", "visit_date")
+    list_filter = ("visit_date",)
+    search_fields = ("comment", "company__company_name")
+    list_per_page = 30
+
+
+# ===================== Register =====================
+
+admin.site.register(Category, CategoryAdmin)
+admin.site.register(Company, CompanyAdmin)
+admin.site.register(Approx, ApproxAdmin)
+admin.site.register(SocialLink, SocialLinkAdmin)
+admin.site.register(Error, ErrorAdmin)
+admin.site.register(Follow_Up, FollowUpAdmin)
+admin.site.register(Images, ImagesAdmin)
+admin.site.register(Faq, FaqAdmin)
+admin.site.register(Meeting, MeetingAdmin)
+admin.site.register(Visit, VisitAdmin)
