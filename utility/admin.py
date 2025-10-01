@@ -13,10 +13,6 @@ from .models import (
 # ------------------------------
 # Resources for Import/Export
 # ------------------------------
-class CityResource(resources.ModelResource):
-    class Meta:
-        model = City
-        fields = "__all__"
 
 class LocalityResource(resources.ModelResource):
     class Meta:
