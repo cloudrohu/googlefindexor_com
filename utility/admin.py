@@ -4,6 +4,10 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from mptt.admin import DraggableMPTTAdmin
 
+from import_export import resources, fields
+from import_export.widgets import ForeignKeyWidget
+
+
 from .models import (
     City, Locality, Sub_Locality,
     Find_Form, Call_Status, SocialSite,
