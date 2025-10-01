@@ -65,8 +65,12 @@ class RequirementTypeResource(resources.ModelResource):
 @admin.register(City)
 class CityAdmin(ImportExportModelAdmin):
     resource_class = CityResource
-    list_display = ("id", "__str__")
-    search_fields = ("id",)
+    list_display = ("id", "city_name")
+    search_fields = ("title",)
+
+    def city_name(self, obj):
+        return str(obj)   # ye __str__ ko call karega
+    city_name.short_description = "City"
 
 @admin.register(Locality)
 class LocalityAdmin(ImportExportModelAdmin, DraggableMPTTAdmin):
