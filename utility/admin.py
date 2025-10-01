@@ -61,7 +61,7 @@ class RequirementTypeResource(resources.ModelResource):
 class CityResource(resources.ModelResource):
     class Meta:
         model = City
-        fields = ("id", "title", "slug")  # slug optional hai agar hai to
+        fields = ("id", "title",)  # slug optional hai agar hai to
 
 
 @admin.register(City)
