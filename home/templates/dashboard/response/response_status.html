@@ -1,0 +1,50 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Responses - {{ status_name }}{% endblock %}
+
+{% block content %}
+<div class="content-header">
+  <div class="container-fluid">
+    <h4 class="mb-4">Responses — <strong>{{ status_name }}</strong></h4>
+  </div>
+</div>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-body table-responsive p-0">
+        <table class="table table-bordered table-hover text-nowrap">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Business Name</th>
+              <th>Contact Person</th>
+              <th>Contact No</th>
+              <th>Status</th>
+              <th>City</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in responses %}
+            <tr>
+              <td>{{ r.id }}</td>
+              <td>{{ r.business_name }}</td>
+              <td>{{ r.contact_persone }}</td>
+              <td>{{ r.contact_no }}</td>
+              <td>{{ r.get_status_display }}</td>
+              <td>{{ r.city }}</td>
+              <td>{{ r.create_at|date:"d M Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center text-muted">No responses found for this status.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

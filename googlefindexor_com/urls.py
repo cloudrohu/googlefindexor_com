@@ -1,26 +1,29 @@
-
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-import home
-from home import views 
-from django.utils.translation import gettext_lazy as _
-
+from home import views as IndexView # केवल home के views को यहाँ इम्पोर्ट करें
 
 urlpatterns = [
-    path('home/', include('home.urls')),
-    path('', include('home.urls')),
-    
-    path('ckeditor/', include('ckeditor_uploader.urls')),
+    # ------------------------------------
+    # 1. DJANGO ADMIN / AUTH URLs
+    # ------------------------------------
+    path('accounts/', include('django.contrib.auth.urls')), 
     path('admin/', admin.site.urls),
     path('jet/', include('jet.urls')),
     path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
-    path('company', views.company, name='company'),
-
-    path('<slug:slug>', views.company_details, name='company_details'),
-
-
-    path("metarepoting/", views.metarepoting, name="metarepoting"),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    # ------------------------------------
+    # 2. HOME App URLs (Main/Root Pages)
+    # ------------------------------------
+    path('', include('home.urls')), # Home app manages the root path ('/')
+
+    
+   
+    # ------------------------------------
+    # 4. RESPONSE App URLs (All paths start with 'response/')
+    # ------------------------------------
+    path('response/', include('response.urls')), # Dashboard, Response CRUD
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

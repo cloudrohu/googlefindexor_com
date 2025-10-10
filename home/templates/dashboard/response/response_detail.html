@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}रिस्पॉन्स विवरण: {{ response.business_name }}{% endblock %}
+
+{% block content %}
+    <a href="{% url 'response_dashboard_all' %}" class="btn btn-sm btn-outline-secondary mb-3">
+        ← डैशबोर्ड पर वापस जाएं
+    </a>
+    <h1 class="mb-4">{{ response.business_name }}</h1>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">रिस्पॉन्स जानकारी</div>
+                <div class="card-body">
+                    <p><strong>कॉन्टेक्ट पर्सन:</strong> {{ response.contact_persone|default:"N/A" }}</p>
+                    <p><strong>फ़ोन:</strong> {{ response.contact_no|default:"N/A" }}</p>
+                    <p><strong>स्टेटस:</strong> <span class="badge bg-info">{{ response.status.name }}</span></p>
+                    <p><strong>मीटिंग/फॉलो डेट:</strong> {{ response.meeting_follow|default:"N/A" }}</p>
+                    <p><strong>कैटेगरी:</strong> {{ response.business_category|default:"N/A" }}</p>
+                    <p><strong>स्थान:</strong> {{ response.locality_city|default:"N/A" }}, {{ response.city|default:"N/A" }}</p>
+                    <p><strong>ज़रूरत:</strong> 
+                        {% for req in response.requirement_types.all %}
+                            <span class="badge bg-secondary">{{ req.name }}</span>
+                        {% endfor %}
+                    </p>
+                    <hr>
+                    <p class="small text-muted">टिप्पणी: {{ response.comment|default:"कोई टिप्पणी नहीं" }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'response_update' response.pk %}" class="btn btn-sm btn-warning">एडिट करें</a>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">+ नया मीटिंग लॉग</div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ meeting_form.as_p }}
+                        <button type="submit" name="submit_meeting" class="btn btn-success">मीटिंग रिकॉर्ड करें</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">+ नया फॉलो-अप लॉग</div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ followup_form.as_p }}
+                        <button type="submit" name="submit_followup" class="btn btn-danger">फॉलो-अप रिकॉर्ड करें</button>
+                    </form>
+                </div>
+            </div>
+
+        </div> <div class="col-md-7">
+            <h4 class="mb-3">पिछला लॉग इतिहास</h4>
+            
+            <div class="mb-4">
+                <h5>मीटिंग लॉग्स</h5>
+                {% for log in meetings %}
+                <div class="card mb-2 border-success">
+                    <div class="card-body p-3">
+                        <p class="mb-1">
+                            <strong>{{ log.get_status_display }}</strong> 
+                            {% if log.featured_property %}
+                                <span class="badge bg-warning ms-2">Featured</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% empty %}
+                    <p class="text-muted">कोई मीटिंग दर्ज नहीं है।</p>
+                {% endfor %}
+            </div>
+
+            <div>
+                <h5>फॉलो-अप लॉग्स</h5>
+                {% for log in followups %}
+                <div class="card mb-2 border-danger">
+                    <div class="card-body p-3">
+                         <p class="mb-1">
+                            <strong>{{ log.get_status_display }}</strong> 
+                            {% if log.featured_property %}
+                                <span class="badge bg-warning ms-2">Featured</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                {% empty %}
+                    <p class="text-muted">कोई फॉलो-अप दर्ज नहीं है।</p>
+                {% endfor %}
+            </div>
+
+        </div> </div>
+{% endblock %}

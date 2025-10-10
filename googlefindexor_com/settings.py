@@ -22,6 +22,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [    
     'jet.dashboard',
     'jet',
+
     'adsrepoting.apps.AdsrepotingConfig',
     'home.apps.HomeConfig',
     'business.apps.BusinessConfig',
@@ -30,6 +31,7 @@ INSTALLED_APPS = [
     'visit.apps.VisitConfig',
     'response.apps.ResponseConfig',
     'useremail.apps.UseremailConfig',
+    'crm.apps.CrmConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -163,3 +165,16 @@ CKEDITOR_CONFIGS = {
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# mycrmproject/settings.py (फ़ाइल के अंत में जोड़ें)
+
+# 👈 लॉगिन के बाद कहाँ रीडायरेक्ट करना है (उदाहरण: लीड लिस्ट पेज)
+LOGIN_REDIRECT_URL = '/leads/' 
+
+# 👈 अगर कोई बिना लॉगिन किए किसी पेज को एक्सेस करने की कोशिश करता है, 
+#    तो उसे किस URL पर भेजना है
+LOGIN_URL = '/accounts/login/'
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'

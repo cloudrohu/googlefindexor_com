@@ -14,6 +14,14 @@ from django.utils.text import slugify
 from utility.models import  Call_Status,City,Locality,Response_Status,RequirementType
 from business.models import Category
 
+
+class Staff(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.user.get_full_name() or self.user.username
+
+
 class Response(models.Model):
 
     STATUS_CHOICES = [
@@ -33,15 +41,18 @@ class Response(models.Model):
         default="New",
         verbose_name="Response Status"
     )
-    contact_persone = models.CharField(max_length=500,blank=True, null=True,)
     contact_no = models.CharField(max_length=16, null=True, blank=True, unique=True)
+    assigned_to = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True)
+    contact_persone = models.CharField(max_length=500,blank=True, null=True,)
+
     comment = models.CharField(max_length=500, null=True, blank=True)
-    meeting_follow = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time") 
     business_name = models.CharField(max_length=500,blank=True, null=True,)
     business_category = models.ForeignKey(Category,blank=True, null=True , on_delete=models.CASCADE)
     requirement_types = models.ManyToManyField('utility.RequirementType',blank=True,related_name='meetings' )  
     city = models.ForeignKey(City,blank=True, null=True , on_delete=models.CASCADE)
     locality_city= models.ForeignKey(Locality,blank=True, null=True , on_delete=models.CASCADE)
+    voice_recording = models.FileField(upload_to='call_recordings/', blank=True, null=True)
+    
 
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
@@ -72,7 +83,8 @@ class Response(models.Model):
 
 # -------------------------------------------------------------------------------------------------------------
 class Meeting(models.Model):
-    featured_property = models.BooleanField() 
+    meeting_date = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time") 
+    
 
     MEETING_STATUS_CHOICES = [
         ("New Meeting", "New Meeting"),
@@ -86,7 +98,11 @@ class Meeting(models.Model):
         choices=MEETING_STATUS_CHOICES,
         verbose_name="Meeting Status"
     )
+    meeting_date = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time") 
+
     response = models.ForeignKey("Response", blank=True, null=True, on_delete=models.CASCADE)
+    assigned_to = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True)
+
 
     def __str__(self):
         return f"Meeting {self.id} - {self.status}"
@@ -98,11 +114,12 @@ class Meeting(models.Model):
 
 # -------------------------------------------------------------------------------------------------------------
 class Followup(models.Model):
-    featured_property = models.BooleanField() 
+    follow = models.DateTimeField(blank=True, null=True, verbose_name="Followup Date & Time") 
+
 
     STATUS_CHOICES = [
-        ("New Meeting", "New Meeting"),
-        ("Re Meeting", "Re Meeting"),
+        ("New followup", "New followup"),
+        ("Re followup", "Re followup"),
         ("cancelled", "Cancelled"),
         ("Deal Done", "Deal Done"),
 

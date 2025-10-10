@@ -1,0 +1,69 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}All Responses{% endblock %}
+
+{% block content %}
+<h4 class="mb-3">All Responses</h4>
+
+<div class="table-responsive">
+<table class="table table-bordered table-striped table-sm">
+  <thead class="thead-dark">
+    <tr>
+      <th>ID</th>
+      <th>Business Name</th>
+      <th>Contact Person</th>
+      <th>Contact No</th>
+      <th>Status</th>
+      <th>Business Category</th>
+      <th>Requirement Types</th>
+      <th>City</th>
+      <th>Locality</th>
+      <th>Assigned To</th>
+      <th>Comment</th>
+      <th>Voice Recording</th>
+      <th>Created By</th>
+      <th>Updated By</th>
+      <th>Created At</th>
+      <th>Updated At</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in responses %}
+    <tr>
+      <td>{{ r.id }}</td>
+      <td>{{ r.business_name }}</td>
+      <td>{{ r.contact_persone }}</td>
+      <td>{{ r.contact_no }}</td>
+      <td>{{ r.status }}</td>
+      <td>{{ r.business_category }}</td>
+      <td>
+        {% for req in r.requirement_types.all %}
+          <span class="badge badge-info">{{ req }}</span>
+        {% empty %}
+          -
+        {% endfor %}
+      </td>
+      <td>{{ r.city }}</td>
+      <td>{{ r.locality_city }}</td>
+      <td>{{ r.assigned_to }}</td>
+      <td>{{ r.comment }}</td>
+      <td>
+        {% if r.voice_recording %}
+          <audio controls style="width:150px;">
+            <source src="{{ r.voice_recording.url }}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        {% else %}
+          -
+        {% endif %}
+      </td>
+      <td>{{ r.created_by }}</td>
+      <td>{{ r.updated_by }}</td>
+      <td>{{ r.create_at|date:"d M Y H:i" }}</td>
+      <td>{{ r.update_at|date:"d M Y H:i" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

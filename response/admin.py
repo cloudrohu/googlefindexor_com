@@ -2,7 +2,7 @@ from django.contrib import admin
 from django import forms
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
-from .models import Response, Meeting, Followup
+from .models import Response, Meeting, Followup,Staff
 
 
 # ------------------------------
@@ -12,7 +12,7 @@ class ResponseResource(resources.ModelResource):
     class Meta:
         model = Response
         fields = (
-            "id", "status", "contact_persone", "contact_no",
+            "id", "status", 'assigned_to',"contact_persone", "contact_no",
             "comment", "meeting_follow", "business_name",
             "business_category", "locality_city", "city",
             "created_by", "updated_by", "create_at", "update_at"
@@ -81,7 +81,6 @@ class ResponseAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         'contact_persone',
         'contact_no',
         'comment',
-        'meeting_follow',
         'business_name',
         'business_category',
         'locality_city',
@@ -98,7 +97,7 @@ class ResponseAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         }
         js = ('response/js/admin_cards.js',)
 
-    list_filter = ['status', 'meeting_follow', 'locality_city', 'city', 'business_category']
+    list_filter = ['status', 'locality_city', 'city', 'business_category']
     list_editable = ['status', 'locality_city', 'city', 'business_category']
     search_fields = ['id', 'contact_no', 'comment']
     list_per_page = 15
@@ -160,7 +159,6 @@ class MeetingAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         "get_response_contact_persone",
         "get_response_contact_no",
         "get_response_comment",
-        "get_response_meeting_follow",
         "get_response_business_name",
         "get_response_business_category",
         "get_response_locality",
@@ -225,7 +223,6 @@ class FollowupAdmin(ImportExportModelAdmin, admin.ModelAdmin):
         "get_response_contact_persone",
         "get_response_contact_no",
         "get_response_comment",
-        "get_response_meeting_follow",
         "get_response_business_name",
         "get_response_business_category",
         "get_response_locality",
@@ -281,3 +278,7 @@ class FollowupAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 admin.site.register(Response, ResponseAdmin)
 admin.site.register(Meeting, MeetingAdmin)
 admin.site.register(Followup, FollowupAdmin)
+@admin.register(Staff)
+class StaffAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user']  # 👈 columns jo admin list me dikhenge
+    search_fields = ['user__username', 'user__first_name', 'user__last_name']

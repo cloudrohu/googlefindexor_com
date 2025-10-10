@@ -1,65 +1,67 @@
 from django.shortcuts import render
-from django.shortcuts import render,redirect
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+# Note: Leads, Responses, and Staff models are assumed to be imported from 'crm.models' or other relevant apps.
+# For now, we will use dummy data until models are fully set up.
 
-from adsrepoting.models import Campaign
-from django.shortcuts import render, get_object_or_404
+class IndexView(LoginRequiredMixin, TemplateView):
+    """
+    Main dashboard view for the application.
+    Displays key performance indicators (KPIs) and a project overview.
+    """
+    template_name = 'index.html'
 
-
-# Create your views here.
-
-from business.models import City, Category,Company
-
-def index(request):
-    #category = categoryTree(0,'',currentlang)
-    city = City.objects.all()
-    category = Category.objects.all()
-
-
-    context={
-        'category':category,
-        'city':city,
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         
-    }
-    return render(request, 'index.html',context)
+        # 💡 Dummy Data for Dashboard KPIs (Replace with actual queries later)
+        # जब आपके Models तैयार हो जाएंगे, तो आप यहाँ असली डेटा Query करेंगे।
+        
+        context['total_leads'] = 5240
+        context['completed_responses'] = 1280
+        context['pending_followups'] = 48
+        context['total_revenue'] = "5.6M"  # Using string for rupee formatting in template
+        
+        # Example: Fetching actual data when models are ready
+        # try:
+        #     from crm.models import Lead, Response
+        #     context['total_leads'] = Lead.objects.count()
+        #     context['completed_responses'] = Response.objects.filter(status='completed').count()
+        # except Exception:
+        #     pass # Keep dummy data if models not ready
+
+        return context
+
+# Note: Add other views here as needed, like Contact, About, etc.
 
 
-def company(request):
+class DashboardView(LoginRequiredMixin, TemplateView):
+    """
+    Main dashboard view for the application.
+    Displays key performance indicators (KPIs) and a project overview.
+    """
+    template_name = 'dashboard/dashboard.html'
 
-    city = City.objects.all()
-    category = Category.objects.all()
-    company = Company.objects.all()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # 💡 Dummy Data for Dashboard KPIs (Replace with actual queries later)
+        # जब आपके Models तैयार हो जाएंगे, तो आप यहाँ असली डेटा Query करेंगे।
+        
+        context['total_leads'] = 5240
+        context['completed_responses'] = 1280
+        context['pending_followups'] = 48
+        context['total_revenue'] = "5.6M"  # Using string for rupee formatting in template
+        
+        # Example: Fetching actual data when models are ready
+        # try:
+        #     from crm.models import Lead, Response
+        #     context['total_leads'] = Lead.objects.count()
+        #     context['completed_responses'] = Response.objects.filter(status='completed').count()
+        # except Exception:
+        #     pass # Keep dummy data if models not ready
 
-    context={
-        'category':category,
-        'city':city,        
-        'company':company,        
-    }        
-    return render(request, 'company.html', context)
+        return context
 
+# Note: Add other views here as needed, like Contact, About, etc.
 
-
-def company_details(request,slug):
-    
-    company = Company.objects.filter(slug = slug)
-
-    if company.exists():
-        company = Company.objects.get(slug = slug)
-    else:
-        return redirect('404')    
-    
-    context = {
-        'company': company,
-    }   
-
-    return render(request, 'company_details.html',context )
-
-
-
-
-def metarepoting(request):
-
-    campaigns = Campaign.objects.all()
-    context={
-        'campaigns':campaigns,             
-    }        
-    return render(request, 'adsrepoting/meta.html', context)
