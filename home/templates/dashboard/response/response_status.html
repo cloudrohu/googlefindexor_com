@@ -146,36 +146,34 @@
         </div>
       </form>
 
-      
-    <!-- 🎤 Voice Recordings (Only Latest One) -->
-    <div id="voiceList{{ r.id }}" class="mt-1">
-      {% with latest_voice=r.voice_recordings.last %}
-        {% if latest_voice %}
-          <div class="mb-1" id="latest-voice-{{ r.id }}">
-            <audio controls preload="none" class="w-100">
-              <source src="{{ latest_voice.file.url }}" type="audio/mpeg">
-            </audio>
-            <div class="text-muted small">
-              {{ latest_voice.uploaded_at|date:"d M Y H:i" }} — {{ latest_voice.uploaded_by|default:"User" }}
+        <!-- 🎤 Voice Recordings (Only Latest One) -->
+      <div id="voiceList{{ r.id }}" class="mt-1">
+        {% with latest_voice=r.voice_recordings.last %}
+          {% if latest_voice %}
+            <div class="mb-1" id="latest-voice-{{ r.id }}">
+              <audio controls preload="none" class="w-100">
+                <source src="{{ latest_voice.file.url }}" type="audio/mpeg">
+              </audio>
+              <div class="text-muted small">
+                {{ latest_voice.uploaded_at|date:"d M Y H:i" }} — {{ latest_voice.uploaded_by|default:"User" }}
+              </div>
             </div>
-          </div>
-        {% else %}
-          <div class="text-muted small">No voice yet.</div>
-        {% endif %}
-      {% endwith %}
-    </div>
-
-    <!-- 📤 Upload Voice -->
-    <form class="voiceForm mt-1" data-id="{{ r.id }}" enctype="multipart/form-data">
-      {% csrf_token %}
-      <div class="input-group input-group-sm">
-        <input type="file" name="file" accept="audio/*" class="form-control p-1">
-        <div class="input-group-append">
-          <button class="btn btn-success btn-sm" type="submit">🎤</button>
-        </div>
+          {% else %}
+            <div class="text-muted small">No voice yet.</div>
+          {% endif %}
+        {% endwith %}
       </div>
-    </form>
 
+      <!-- 📤 Upload Voice -->
+      <form class="voiceForm mt-1" data-id="{{ r.id }}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="input-group input-group-sm">
+          <input type="file" name="file" accept="audio/*" class="form-control p-1">
+          <div class="input-group-append">
+            <button class="btn btn-success btn-sm" type="submit">🎤</button>
+          </div>
+        </div>
+      </form>
 
 
 
@@ -188,6 +186,46 @@
   </div>
   {% endfor %}
 </div>
+
+<!-- 📄 PAGINATION -->
+{% if is_paginated %}
+<nav aria-label="Page navigation" class="mt-3">
+  <ul class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-hidden="true">&laquo;</span>
+      </li>
+    {% endif %}
+
+    {% for i in paginator.page_range %}
+      {% if page_obj.number == i %}
+        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+      {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-hidden="true">&raquo;</span>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+
 {% endblock %}
 
 {% block extra_js %}
@@ -229,22 +267,15 @@ document.querySelectorAll('.commentForm').forEach(form => {
   });
 });
 
-
-// 🎤 Voice Upload (No Autoplay + Last Update)
 document.querySelectorAll('.voiceForm').forEach(form => {
-  form.addEventListener('submit', async function(e) {
+  form.addEventListener('submit', function(e) {
     e.preventDefault();
     const id = this.dataset.id;
     const fileInput = this.querySelector('input[type="file"]');
     if (!fileInput.files.length) return;
 
-    const originalFile = fileInput.files[0];
-
-    // ✅ Optional compression (low bitrate MP3 / webm)
-    const compressedFile = await simpleCompressAudio(originalFile);
-
     const formData = new FormData();
-    formData.append('file', compressedFile, compressedFile.name);
+    formData.append('file', fileInput.files[0]);
 
     fetch(`/response/${id}/ajax/add-voice/`, {
       method: 'POST',
@@ -273,87 +304,10 @@ document.querySelectorAll('.voiceForm').forEach(form => {
     })
     .catch(err => {
       console.error(err);
-      alert('Upload failed. Check console.');
+      alert('Upload failed');
     });
   });
 });
-
-
-/**
- * 🧠 Simple compression by converting to mono + lower sample rate
- * Works in modern browsers without ffmpeg
- */
-async function simpleCompressAudio(file) {
-  const arrayBuffer = await file.arrayBuffer();
-  const audioCtx = new AudioContext();
-  const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-
-  // Convert to mono
-  const offlineCtx = new OfflineAudioContext(1, audioBuffer.length, 22050); // 22kHz mono
-  const source = offlineCtx.createBufferSource();
-  source.buffer = audioBuffer;
-  source.connect(offlineCtx.destination);
-  source.start(0);
-  const renderedBuffer = await offlineCtx.startRendering();
-
-  // Convert buffer back to Blob (WAV format)
-  const wavBlob = audioBufferToWavBlob(renderedBuffer);
-  const compressedFile = new File([wavBlob], file.name.replace(/\.[^/.]+$/, "") + "_compressed.wav", {
-    type: 'audio/wav'
-  });
-  return compressedFile;
-}
-
-// Helper: convert audio buffer to WAV Blob
-function audioBufferToWavBlob(buffer) {
-  const numOfChan = buffer.numberOfChannels,
-        length = buffer.length * numOfChan * 2 + 44,
-        bufferArray = new ArrayBuffer(length),
-        view = new DataView(bufferArray),
-        channels = [],
-        sampleRate = buffer.sampleRate;
-  let offset = 0;
-
-  function writeString(view, offset, string) {
-    for (let i = 0; i < string.length; i++) {
-      view.setUint8(offset + i, string.charCodeAt(i));
-    }
-  }
-
-  writeString(view, 0, 'RIFF');
-  view.setUint32(4, 36 + buffer.length * numOfChan * 2, true);
-  writeString(view, 8, 'WAVE');
-  writeString(view, 12, 'fmt ');
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
-  view.setUint16(22, numOfChan, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, sampleRate * 2 * numOfChan, true);
-  view.setUint16(32, numOfChan * 2, true);
-  view.setUint16(34, 16, true);
-  writeString(view, 36, 'data');
-  view.setUint32(40, buffer.length * numOfChan * 2, true);
-
-  offset = 44;
-  for (let i = 0; i < buffer.numberOfChannels; i++) {
-    channels.push(buffer.getChannelData(i));
-  }
-
-  const interleaved = new Float32Array(buffer.length * numOfChan);
-  for (let i = 0; i < buffer.length; i++) {
-    for (let ch = 0; ch < numOfChan; ch++) {
-      interleaved[i * numOfChan + ch] = channels[ch][i];
-    }
-  }
-
-  let index = 44;
-  for (let i = 0; i < interleaved.length; i++, index += 2) {
-    let sample = Math.max(-1, Math.min(1, interleaved[i]));
-    view.setInt16(index, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
-  }
-
-  return new Blob([view], { type: 'audio/wav' });
-}
 
 
 
@@ -402,3 +356,17 @@ document.querySelectorAll('.status-select').forEach(select => {
 
 </script>
 {% endblock %}
+
+
+<style>
+
+    .page-link {
+  padding: 4px 10px;
+  font-size: 14px;
+}
+.pagination .active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+</style>

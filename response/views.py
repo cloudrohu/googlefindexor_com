@@ -192,15 +192,3 @@ def ajax_update_status(request, pk):
         return JsonResponse({'success': False, 'error': 'Response not found'})
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)})
-<style>
-
-    .page-link {
-  padding: 4px 10px;
-  font-size: 14px;
-}
-.pagination .active .page-link {
-  background-color: #007bff;
-  border-color: #007bff;
-}
-
-</style>
