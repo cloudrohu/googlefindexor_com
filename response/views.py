@@ -12,7 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
 # 🎧 Voice Compression
-from pydub import AudioSegment
 import os
 from django.core.files import File
 
