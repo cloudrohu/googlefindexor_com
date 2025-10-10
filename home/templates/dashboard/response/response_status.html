@@ -1,50 +1,404 @@
 {% extends 'dashboard/base.html' %}
-
-{% block title %}Responses - {{ status_name }}{% endblock %}
+{% block title %}All Responses{% endblock %}
 
 {% block content %}
-<div class="content-header">
-  <div class="container-fluid">
-    <h4 class="mb-4">Responses — <strong>{{ status_name }}</strong></h4>
-  </div>
-</div>
+<h4 class="mb-3">All Responses</h4>
 
-<section class="content">
-  <div class="container-fluid">
-    <div class="card">
-      <div class="card-body table-responsive p-0">
-        <table class="table table-bordered table-hover text-nowrap">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Business Name</th>
-              <th>Contact Person</th>
-              <th>Contact No</th>
-              <th>Status</th>
-              <th>City</th>
-              <th>Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for r in responses %}
-            <tr>
-              <td>{{ r.id }}</td>
-              <td>{{ r.business_name }}</td>
-              <td>{{ r.contact_persone }}</td>
-              <td>{{ r.contact_no }}</td>
-              <td>{{ r.get_status_display }}</td>
-              <td>{{ r.city }}</td>
-              <td>{{ r.create_at|date:"d M Y H:i" }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="7" class="text-center text-muted">No responses found for this status.</td>
-            </tr>
+<!-- 🖥 DESKTOP TABLE -->
+<div class="table-responsive d-none d-md-block">
+  <table class="table table-bordered table-hover table-sm align-middle">
+    <thead class="thead-dark">
+      <tr>
+        <th>ID</th>
+        <th>Business</th>
+        <th>Person</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>City</th>
+        <th style="min-width:300px;">Comments / Voice</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in responses %}
+      <tr>
+        <td>MR{{ r.id|stringformat:"03d" }}</td>
+        <td>{{ r.business_name|default:"-" }}</td>
+        <td>{{ r.contact_persone|default:"-" }}</td>
+        <td>{{ r.contact_no|default:"-" }}</td>
+
+        <!-- ⚡ STATUS DROPDOWN -->
+        <td>
+          <select class="form-control form-control-sm status-select" data-id="{{ r.id }}">
+            {% for key, label in r.STATUS_CHOICES %}
+              <option value="{{ key }}" {% if r.status == key %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
-          </tbody>
-        </table>
+          </select>
+        </td>
+
+        <td>{{ r.city|default:"-" }}</td>
+
+        <td>
+          <!-- 💬 Show only latest comment -->
+            {% with latest_comment=r.comments.last %}
+            {% if latest_comment %}
+                <div class="small text-muted border-bottom py-1">
+                <strong>{{ latest_comment.created_by }}</strong>
+                <span class="text-secondary ml-1" style="font-size:11px;">
+                    {{ latest_comment.create_at|date:"d M Y H:i" }}
+                </span>: {{ latest_comment.comment }}
+                </div>
+            {% else %}
+                <div class="text-muted small">No comments yet.</div>
+            {% endif %}
+            {% endwith %}
+
+          <!-- ➕ Add Comment -->
+          <form class="commentForm mt-1" data-id="{{ r.id }}">
+            {% csrf_token %}
+            <div class="input-group input-group-sm">
+              <input type="text" name="comment" class="form-control" placeholder="Add comment...">
+              <div class="input-group-append">
+                <button class="btn btn-primary btn-sm" type="submit">➕</button>
+              </div>
+            </div>
+          </form>
+
+          <!-- 🎤 Voice Recordings (Only Latest One) -->
+            <div id="voiceList{{ r.id }}" class="mt-1">
+            {% with latest_voice=r.voice_recordings.last %}
+                {% if latest_voice %}
+                <div class="mb-1" id="latest-voice-{{ r.id }}">
+                    <audio controls preload="none" class="w-100">
+                    <source src="{{ latest_voice.file.url }}" type="audio/mpeg">
+                    </audio>
+                    <div class="text-muted small">
+                    {{ latest_voice.uploaded_at|date:"d M Y H:i" }} — {{ latest_voice.uploaded_by|default:"User" }}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-muted small">No voice yet.</div>
+                {% endif %}
+            {% endwith %}
+            </div>
+
+            <!-- 📤 Upload Voice -->
+            <form class="voiceForm mt-1" data-id="{{ r.id }}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="input-group input-group-sm">
+                <input type="file" name="file" accept="audio/*" class="form-control p-1">
+                <div class="input-group-append">
+                <button class="btn btn-success btn-sm" type="submit">🎤</button>
+                </div>
+            </div>
+            </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
+
+<!-- 📱 MOBILE CARD VIEW -->
+<div class="d-md-none">
+  {% for r in responses %}
+  <div class="card mb-3 shadow-sm">
+    <div class="card-body p-2">
+      <div class="d-flex justify-content-between mb-1">
+        <strong>MR{{ r.id|stringformat:"03d" }}</strong>
+
+        <!-- ⚡ STATUS DROPDOWN (MOBILE) -->
+        <select class="form-control form-control-sm status-select" data-id="{{ r.id }}">
+          {% for key, label in r.STATUS_CHOICES %}
+            <option value="{{ key }}" {% if r.status == key %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
       </div>
+
+      <div class="small text-muted">
+        <div><strong>Business:</strong> {{ r.business_name|default:"-" }}</div>
+        <div><strong>Person:</strong> {{ r.contact_persone|default:"-" }}</div>
+        <div><strong>Phone:</strong> {{ r.contact_no|default:"-" }}</div>
+        <div><strong>City:</strong> {{ r.city|default:"-" }}</div>
+      </div>
+
+      <!-- 💬 Comments -->
+      <div id="commentList{{ r.id }}_mobile" class="mt-2">
+        {% for c in r.comments.all %}
+        <div class="small text-muted border-bottom py-1">
+          <strong>{{ c.created_by }}</strong>
+          <span class="text-secondary ml-1" style="font-size:11px;">
+            {{ c.create_at|date:"d M Y H:i" }}
+          </span>: {{ c.comment }}
+        </div>
+        {% empty %}
+        <div class="text-muted small">No comments yet.</div>
+        {% endfor %}
+      </div>
+
+      <!-- ➕ Add Comment -->
+      <form class="commentForm mt-1" data-id="{{ r.id }}">
+        {% csrf_token %}
+        <div class="input-group input-group-sm">
+          <input type="text" name="comment" class="form-control" placeholder="Add comment...">
+          <div class="input-group-append">
+            <button class="btn btn-primary btn-sm" type="submit">➕</button>
+          </div>
+        </div>
+      </form>
+
+      
+    <!-- 🎤 Voice Recordings (Only Latest One) -->
+    <div id="voiceList{{ r.id }}" class="mt-1">
+      {% with latest_voice=r.voice_recordings.last %}
+        {% if latest_voice %}
+          <div class="mb-1" id="latest-voice-{{ r.id }}">
+            <audio controls preload="none" class="w-100">
+              <source src="{{ latest_voice.file.url }}" type="audio/mpeg">
+            </audio>
+            <div class="text-muted small">
+              {{ latest_voice.uploaded_at|date:"d M Y H:i" }} — {{ latest_voice.uploaded_by|default:"User" }}
+            </div>
+          </div>
+        {% else %}
+          <div class="text-muted small">No voice yet.</div>
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <!-- 📤 Upload Voice -->
+    <form class="voiceForm mt-1" data-id="{{ r.id }}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="input-group input-group-sm">
+        <input type="file" name="file" accept="audio/*" class="form-control p-1">
+        <div class="input-group-append">
+          <button class="btn btn-success btn-sm" type="submit">🎤</button>
+        </div>
+      </div>
+    </form>
+
+
+
+
+
+
+
+
+
     </div>
   </div>
-</section>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+// 💬 Comment AJAX
+document.querySelectorAll('.commentForm').forEach(form => {
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const id = this.dataset.id;
+    const input = this.querySelector('input[name="comment"]');
+    const text = input.value.trim();
+    if (!text) return;
+    fetch(`/response/${id}/ajax/add-comment/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': csrftoken, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ comment: text })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) location.reload();
+      else alert(data.error);
+    });
+  });
+});
+
+
+// 🎤 Voice Upload (No Autoplay + Last Update)
+document.querySelectorAll('.voiceForm').forEach(form => {
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const id = this.dataset.id;
+    const fileInput = this.querySelector('input[type="file"]');
+    if (!fileInput.files.length) return;
+
+    const originalFile = fileInput.files[0];
+
+    // ✅ Optional compression (low bitrate MP3 / webm)
+    const compressedFile = await simpleCompressAudio(originalFile);
+
+    const formData = new FormData();
+    formData.append('file', compressedFile, compressedFile.name);
+
+    fetch(`/response/${id}/ajax/add-voice/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': csrftoken },
+      body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const voiceContainer = document.getElementById(`voiceList${id}`);
+        const newHtml = `
+          <div class="mb-1" id="latest-voice-${id}">
+            <audio controls preload="none" class="w-100">
+              <source src="${data.file_url}" type="audio/mpeg">
+            </audio>
+            <div class="text-muted small">
+              ${data.uploaded_at} — ${data.uploaded_by}
+            </div>
+          </div>
+        `;
+        voiceContainer.innerHTML = newHtml;
+        fileInput.value = '';
+      } else {
+        alert(data.error);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Upload failed. Check console.');
+    });
+  });
+});
+
+
+/**
+ * 🧠 Simple compression by converting to mono + lower sample rate
+ * Works in modern browsers without ffmpeg
+ */
+async function simpleCompressAudio(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const audioCtx = new AudioContext();
+  const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+  // Convert to mono
+  const offlineCtx = new OfflineAudioContext(1, audioBuffer.length, 22050); // 22kHz mono
+  const source = offlineCtx.createBufferSource();
+  source.buffer = audioBuffer;
+  source.connect(offlineCtx.destination);
+  source.start(0);
+  const renderedBuffer = await offlineCtx.startRendering();
+
+  // Convert buffer back to Blob (WAV format)
+  const wavBlob = audioBufferToWavBlob(renderedBuffer);
+  const compressedFile = new File([wavBlob], file.name.replace(/\.[^/.]+$/, "") + "_compressed.wav", {
+    type: 'audio/wav'
+  });
+  return compressedFile;
+}
+
+// Helper: convert audio buffer to WAV Blob
+function audioBufferToWavBlob(buffer) {
+  const numOfChan = buffer.numberOfChannels,
+        length = buffer.length * numOfChan * 2 + 44,
+        bufferArray = new ArrayBuffer(length),
+        view = new DataView(bufferArray),
+        channels = [],
+        sampleRate = buffer.sampleRate;
+  let offset = 0;
+
+  function writeString(view, offset, string) {
+    for (let i = 0; i < string.length; i++) {
+      view.setUint8(offset + i, string.charCodeAt(i));
+    }
+  }
+
+  writeString(view, 0, 'RIFF');
+  view.setUint32(4, 36 + buffer.length * numOfChan * 2, true);
+  writeString(view, 8, 'WAVE');
+  writeString(view, 12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, numOfChan, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2 * numOfChan, true);
+  view.setUint16(32, numOfChan * 2, true);
+  view.setUint16(34, 16, true);
+  writeString(view, 36, 'data');
+  view.setUint32(40, buffer.length * numOfChan * 2, true);
+
+  offset = 44;
+  for (let i = 0; i < buffer.numberOfChannels; i++) {
+    channels.push(buffer.getChannelData(i));
+  }
+
+  const interleaved = new Float32Array(buffer.length * numOfChan);
+  for (let i = 0; i < buffer.length; i++) {
+    for (let ch = 0; ch < numOfChan; ch++) {
+      interleaved[i * numOfChan + ch] = channels[ch][i];
+    }
+  }
+
+  let index = 44;
+  for (let i = 0; i < interleaved.length; i++, index += 2) {
+    let sample = Math.max(-1, Math.min(1, interleaved[i]));
+    view.setInt16(index, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+  }
+
+  return new Blob([view], { type: 'audio/wav' });
+}
+
+
+
+
+
+
+// ⚡ Quick Status Change AJAX + Page Filter Logic
+document.querySelectorAll('.status-select').forEach(select => {
+  select.addEventListener('change', function () {
+    const id = this.dataset.id;
+    const newStatus = this.value;
+
+    fetch(`/response/${id}/ajax/update-status/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrftoken,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({ status: newStatus })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        // ✅ Green border flash
+        this.classList.add('border', 'border-success');
+        setTimeout(() => this.classList.remove('border', 'border-success'), 1000);
+
+        // ✅ Check if current page is a status filtered page
+        const currentUrl = window.location.pathname;
+        const statusPagePattern = /\/response\/status\/([^\/]+)\/?/;
+        const match = currentUrl.match(statusPagePattern);
+
+        if (match) {
+          const currentStatus = match[1];
+          // ✅ If new status doesn't match the current filter, reload to refresh list
+          if (newStatus !== currentStatus) {
+            location.reload();
+          }
+        }
+      } else {
+        alert(data.error);
+      }
+    });
+  });
+});
+
+</script>
 {% endblock %}

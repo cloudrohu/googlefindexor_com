@@ -1,21 +1,22 @@
 # response/urls.py
-
 from django.urls import path
 from . import views
 
 urlpatterns = [
-    # Dashboard Views
-    path('dashboard/', views.ResponseDashboardView.as_view(), {'status_slug': 'all'}, name='response_dashboard_all'), # /response/dashboard/
-    path('dashboard/status/<slug:status_slug>/', views.ResponseDashboardView.as_view(), name='response_dashboard_status'),
-    
-    # CRUD Views
-    path('add/', views.ResponseCreateView.as_view(), name='response_create'), # /response/add/
+    # 📄 CRUD VIEWS
+    path('', views.ResponseListView.as_view(), name='response_list'),
     path('<int:pk>/', views.ResponseDetailView.as_view(), name='response_detail'),
-    path('<int:pk>/edit/', views.ResponseUpdateView.as_view(), name='response_update'),
+    path('<int:pk>/update/', views.ResponseUpdateView.as_view(), name='response_update'),
     path('<int:pk>/delete/', views.ResponseDeleteView.as_view(), name='response_delete'),
 
-    path('list/', views.ResponseListView.as_view(), name='response_list'),
+    # 📊 FILTERED STATUS VIEW
     path('status/<str:status>/', views.ResponseStatusView.as_view(), name='response_status'),
+
+    # 📅 MEETINGS
     path('meetings/', views.ResponseMeetingsView.as_view(), name='response_meetings'),
-    path('followups/', views.ResponseFollowupsView.as_view(), name='response_followups'),
+
+    # ⚡ AJAX ENDPOINTS
+    path('<int:pk>/ajax/update-status/', views.ajax_update_status, name='ajax_update_status'),
+    path('<int:pk>/ajax/add-comment/', views.ajax_add_comment, name='ajax_add_comment'),
+    path('<int:pk>/ajax/add-voice/', views.ajax_add_voice, name='ajax_add_voice'),
 ]
