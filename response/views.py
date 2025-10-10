@@ -78,7 +78,7 @@ class ResponseListView(LoginRequiredMixin, ListView):
     model = Response
     template_name = 'dashboard/response/response_list.html'
     context_object_name = 'responses'
-    paginate_by = 10
+    paginate_by = 1
 
     def render_to_response(self, context, **response_kwargs):
         response = super().render_to_response(context, **response_kwargs)
@@ -90,7 +90,7 @@ class ResponseStatusView(LoginRequiredMixin, ListView):
     model = Response
     template_name = 'dashboard/response/response_status.html'
     context_object_name = 'responses'
-    paginate_by = 10
+    paginate_by = 1
 
     def get_queryset(self):
         status = self.kwargs.get('status')
