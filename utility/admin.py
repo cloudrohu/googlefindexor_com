@@ -9,7 +9,7 @@ from import_export.widgets import ForeignKeyWidget
 
 
 from .models import (
-    City, Locality, Sub_Locality,
+    City, Locality,
     Find_Form, Call_Status, SocialSite,
     Googlemap_Status, Response_Status, RequirementType
 )
@@ -43,10 +43,6 @@ class LocalityAdmin(ImportExportModelAdmin, DraggableMPTTAdmin):
     list_per_page = 30
     prepopulated_fields = {"slug": ("title",)}
 
-class SubLocalityResource(resources.ModelResource):
-    class Meta:
-        model = Sub_Locality
-        fields = "__all__"
 
 class FindFormResource(resources.ModelResource):
     class Meta:
@@ -98,12 +94,6 @@ class CityAdmin(ImportExportModelAdmin):
     search_fields = ("title",)
 
 
-
-@admin.register(Sub_Locality)
-class SubLocalityAdmin(ImportExportModelAdmin):
-    resource_class = SubLocalityResource
-    list_display = ("id", "__str__")
-    search_fields = ("id",)
 
 @admin.register(Find_Form)
 class FindFormAdmin(ImportExportModelAdmin):

@@ -11,7 +11,7 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from django.utils.text import slugify
 
-from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status,City,Locality,Sub_Locality
+from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status,City,Locality
 
 
 class Category(MPTTModel):
@@ -70,7 +70,6 @@ class Company(models.Model):
     email = models.EmailField(null=True,blank=True)
     city = models.ForeignKey(City, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand     
     locality = models.ForeignKey(Locality, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand 
-    sub_locality = models.ForeignKey(Sub_Locality, on_delete=models.CASCADE,null=True,blank=True) #many to one relation with Brand 
     address = models.CharField(max_length=500,null=True , blank=True)
     keywords = models.CharField(max_length=255,null=True , blank=True)
     website = models.CharField(max_length=255,null=True , blank=True)
@@ -80,8 +79,8 @@ class Company(models.Model):
 
     image=models.ImageField(upload_to='images/')
     slug = models.SlugField(max_length=500,null=True,blank=True)
-    create_at=models.DateTimeField(auto_now_add=True)
-    update_at=models.DateTimeField(auto_now=True)
+    create_at=models.DateTimeField(auto_now_add=True,null=True,blank=True)
+    update_at=models.DateTimeField(auto_now=True,null=True,blank=True)
     updated_by=models.ForeignKey(User, related_name='updated_by_user',on_delete=models.CASCADE,null=True,blank=True,)
     created_by=models.ForeignKey(User, related_name='created_by_user',on_delete=models.CASCADE,null=True,blank=True,)
 

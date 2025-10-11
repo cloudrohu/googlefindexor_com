@@ -117,14 +117,13 @@ class CompanyAdmin(ImportExportModelAdmin):
         "email",
         "city",
         "locality",
-        "sub_locality",
         "address",
         "website",
         "googlemap_status",
         "call_status",
         "followup_meeting",
     )
-    list_filter = ("city", "locality", "sub_locality", "category", "call_status", "googlemap_status")
+    list_filter = ("city", "locality","category", "call_status", "googlemap_status")
     search_fields = ("company_name", "contact_person", "contact_no", "email", "website")
     list_per_page = 20
 

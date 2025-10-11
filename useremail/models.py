@@ -11,7 +11,7 @@ from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from django.utils.text import slugify
 
-from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status,City,Locality,Sub_Locality
+from utility.models import Find_Form, Call_Status,SocialSite,Googlemap_Status,City,Locality
 
 # Create your models here.
 
