@@ -74,17 +74,20 @@ class ResponseAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     exclude = ['created_by', 'updated_by']
 
     list_display = [
-        'get_mr_id',
+        'get_mr_id',        
         'status',
+        'contact_no',
+
         'business_name',
         'contact_persone',
-        'contact_no',
         'meeting_follow',
         'city',
+        'locality_city',
         'update_at',
+        'updated_by',
         'create_at'
     ]
-    list_filter = ['status', 'city', 'business_category']
+    list_filter = ['status', 'city', 'locality_city', 'business_category']
     search_fields = ['id', 'contact_no', 'business_name', 'contact_persone']
     list_per_page = 20
 

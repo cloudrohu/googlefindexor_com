@@ -71,7 +71,7 @@ class Response(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"MR{str(self.id).zfill(3)}"
+        return f"MR{str(self.id).zfill(3)}"+ '--' + self.contact_no
 
     class Meta:
         verbose_name_plural = '1. Responses'
