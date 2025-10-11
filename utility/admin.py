@@ -82,7 +82,7 @@ class RequirementTypeResource(resources.ModelResource):
 class CityResource(resources.ModelResource):
     class Meta:
         model = City
-        fields = ("id", "title")   # sirf id aur title
+        fields = ("id", 'city' "title")   # sirf id aur title
         import_id_fields = ("id",) # id optional hai import ke time
 
 
