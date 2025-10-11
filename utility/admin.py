@@ -11,7 +11,7 @@ from import_export.widgets import ForeignKeyWidget
 from .models import (
     City, Locality,
     Find_Form, Call_Status, SocialSite,
-    Googlemap_Status, Response_Status, RequirementType
+    Googlemap_Status, Response_Status, RequirementType,Category
 )
 
 # ------------------------------
@@ -124,3 +124,18 @@ class ResponseStatusAdmin(ImportExportModelAdmin):
 class RequirementTypeAdmin(ImportExportModelAdmin):
     resource_class = RequirementTypeResource
     list_display = ("id", "__str__")
+
+# ======================================================
+# CATEGORY ADMIN
+# ======================================================
+class CategoryAdmin(DraggableMPTTAdmin):
+    mptt_indent_field = "title"
+    list_display = ("tree_actions", "indented_title", "slug", "create_at")
+    list_display_links = ("indented_title",)
+    search_fields = ("title", "keywords")
+    prepopulated_fields = {"slug": ("title",)}
+    list_per_page = 30
+
+
+
+admin.site.register(Category, CategoryAdmin)

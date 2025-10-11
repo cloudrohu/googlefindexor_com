@@ -69,6 +69,8 @@ class Locality(MPTTModel):
         ('False', 'False'),
     )
     parent = TreeForeignKey('self',blank=True, null=True ,related_name='children', on_delete=models.CASCADE)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
+
     title = models.CharField(max_length=50, blank=True)
     description = models.TextField(default="", blank=True)
     keywords = models.CharField(max_length=255, default="", blank=True)
@@ -132,3 +134,48 @@ class Response_Status(models.Model):
     
     class Meta:
         verbose_name_plural='5. Response_Status'
+
+
+# ============================================================
+# CATEGORY MODEL
+# ============================================================
+class Category(MPTTModel):
+    STATUS = (
+        ('True', 'True'),
+        ('False', 'False'),
+    )
+
+    parent = TreeForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.CASCADE)
+    title = models.CharField(max_length=50)
+    slug = models.SlugField(unique=True, null=True, blank=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    class MPTTMeta:
+        order_insertion_by = ['title']
+
+    class Meta:
+        verbose_name_plural = "Categories"
+
+    def __str__(self):
+        full_path = [self.title]
+        k = self.parent
+        while k is not None:
+            full_path.append(k.title)
+            k = k.parent
+        return ' / '.join(full_path[::-1])
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(Category, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('category_detail', kwargs={'slug': self.slug})
+
+    def image_tag(self):
+        if self.image:
+            return mark_safe(f'<img src="{self.image.url}" height="50"/>')
+        return ""
+    image_tag.short_description = 'Image'
+

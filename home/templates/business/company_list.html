@@ -1,0 +1,26 @@
+{% extends 'dashboard/base.html' %}
+{% block content %}
+<div class="container py-4">
+  <h2>Company List</h2>
+  <a href="{% url 'company_add' %}" class="btn btn-primary mb-3">+ Add Company</a>
+  <table class="table table-bordered">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>City</th>
+      <th>Actions</th>
+    </tr>
+    {% for c in companies %}
+    <tr>
+      <td>{{ c.id }}</td>
+      <td><a href="{{ c.get_absolute_url }}">{{ c.company_name }}</a></td>
+      <td>{{ c.city }}</td>
+      <td>
+        <a href="{% url 'company_edit' c.pk %}" class="btn btn-sm btn-warning">Edit</a>
+        <a href="{% url 'company_delete' c.pk %}" class="btn btn-sm btn-danger">Delete</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

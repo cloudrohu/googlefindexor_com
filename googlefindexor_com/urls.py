@@ -25,5 +25,6 @@ urlpatterns = [
     # 4. RESPONSE App URLs (All paths start with 'response/')
     # ------------------------------------
     path('response/', include('response.urls')), # Dashboard, Response CRUD
+    path('business/', include('business.urls')), # Dashboard, Response CRUD
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

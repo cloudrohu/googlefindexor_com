@@ -1,198 +1,171 @@
-import admin_thumbnails
 from django.contrib import admin
-from import_export import resources
-from import_export.admin import ImportExportModelAdmin
 from mptt.admin import DraggableMPTTAdmin
+import admin_thumbnails
 
-from .models import Category, Company, Approx, SocialLink, Error, Follow_Up, Images, Faq, Meeting, Visit
-
-
-# ===================== Resources =====================
-class CategoryResource(resources.ModelResource):
-    class Meta:
-        model = Category
-        fields = ("id", "title", "keywords", "description", "status", "slug", "parent")
+from .models import (
+    Company, Comment, VoiceRecording, Approx,
+    SocialLink, Error, Follow_Up, Images, Faq,
+    Meeting, Visit
+)
 
 
-class CompanyResource(resources.ModelResource):
-    class Meta:
-        model = Company
-        fields = (
-            "id",
-            "company_name",
-            "category",
-            "contact_person",
-            "contact_no",
-            "email",
-            "city",
-            "locality",
-            "sub_locality",
-            "address",
-            "keywords",
-            "website",
-            "google_map",
-            "description",
-            "about",
-            "call_status",
-            "call_comment",
-            "followup_meeting",
-            "find_form",
-            "googlemap_status",
-            "slug",
-            "created_by",
-            "updated_by",
-        )
-
-
-class ApproxResource(resources.ModelResource):
-    class Meta:
-        model = Approx
-        fields = ("id", "title", "category", "city", "locality")
-
-
-class SocialLinkResource(resources.ModelResource):
-    class Meta:
-        model = SocialLink
-        fields = ("id", "company", "socia_site", "link")
-
-
-class ErrorResource(resources.ModelResource):
-    class Meta:
-        model = Error
-        fields = ("id", "company", "title", "error")
-
-
-class FollowUpResource(resources.ModelResource):
-    class Meta:
-        model = Follow_Up
-        fields = ("id", "company", "follow_up", "comment")
-
-
-class ImagesResource(resources.ModelResource):
-    class Meta:
-        model = Images
-        fields = ("id", "product", "title", "image")
-
-
-class FaqResource(resources.ModelResource):
-    class Meta:
-        model = Faq
-        fields = ("id", "company", "questions", "answers")
-
-
-class MeetingResource(resources.ModelResource):
-    class Meta:
-        model = Meeting
-        fields = ("id", "company", "meeting", "comment")
-
-
-class VisitResource(resources.ModelResource):
-    class Meta:
-        model = Visit
-        fields = ("id", "company", "comment", "visit_date")
-
-
-# ===================== Admins =====================
-
-class CategoryAdmin(ImportExportModelAdmin, DraggableMPTTAdmin):
-    resource_class = CategoryResource
-    mptt_indent_field = "title"
-    list_display = ("id", "tree_actions", "indented_title", "slug", "status")
-    list_display_links = ("indented_title",)
-    search_fields = ("title", "keywords")
-    list_per_page = 30
-    prepopulated_fields = {"slug": ("title",)}
-
-
+# ======================================================
+# COMPANY ADMIN
+# ======================================================
 @admin_thumbnails.thumbnail("image")
-class CompanyAdmin(ImportExportModelAdmin):
-    resource_class = CompanyResource
+class CompanyAdmin(admin.ModelAdmin):
     list_display = (
-        "id",
-        "image_thumbnail",
-        "company_name",
-        "category",
-        "contact_person",
-        "contact_no",
-        "email",
-        "city",
-        "locality",
-        "address",
-        "website",
-        "googlemap_status",
-        "call_status",
-        "followup_meeting",
+        "id", "image_thumbnail", "company_name",
+        "category", "city", "locality",
+        "call_status", "googlemap_status",
+        "assigned_to", "create_at"
     )
-    list_filter = ("city", "locality","category", "call_status", "googlemap_status")
-    search_fields = ("company_name", "contact_person", "contact_no", "email", "website")
-    list_per_page = 20
+    list_filter = (
+        "category", "city", "locality",
+        "call_status", "googlemap_status", "assigned_to"
+    )
+    search_fields = (
+        "company_name", "contact_person",
+        "contact_no", "website", "address"
+    )
+    list_per_page = 25
+    readonly_fields = ("slug", "image_tag")
+    fieldsets = (
+        ("Company Information", {
+            "fields": (
+                "category", "company_name", "contact_person", "contact_no",
+                "city", "locality", "address", "website", "google_map",
+                "description", "image", "image_tag"
+            )
+        }),
+        ("Status & Assignment", {
+            "fields": ("call_status", "call_comment", "googlemap_status", "find_form", "assigned_to")
+        }),
+        ("System Fields", {
+            "fields": ("slug",)
+        }),
+    )
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        super().save_model(request, obj, form, change)
 
 
-class ApproxAdmin(ImportExportModelAdmin):
-    resource_class = ApproxResource
-    list_display = ("id", "title", "category", "city", "locality")
-    list_filter = ("category", "city", "locality")
+# ======================================================
+# COMMENT ADMIN
+# ======================================================
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ("id", "company", "comment", "created_by", "create_at")
+    search_fields = ("comment", "company__company_name")
+    list_filter = ("create_at", "created_by")
+    autocomplete_fields = ("company",)
+    list_per_page = 30
+
+
+# ======================================================
+# VOICE RECORDING ADMIN
+# ======================================================
+class VoiceRecordingAdmin(admin.ModelAdmin):
+    list_display = ("id", "company", "file", "uploaded_by", "uploaded_at")
+    search_fields = ("company__company_name", "note")
+    list_filter = ("uploaded_at", "uploaded_by")
+    autocomplete_fields = ("company",)
+    list_per_page = 30
+
+
+# ======================================================
+# APPROX ADMIN
+# ======================================================
+class ApproxAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "category", "city", "locality", "create_at")
     search_fields = ("title",)
+    list_filter = ("category", "city", "locality")
     list_per_page = 30
 
 
-class SocialLinkAdmin(ImportExportModelAdmin):
-    resource_class = SocialLinkResource
+# ======================================================
+# SOCIAL LINK ADMIN
+# ======================================================
+class SocialLinkAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "socia_site", "link")
+    search_fields = ("link", "company__company_name")
     list_filter = ("socia_site",)
-    search_fields = ("link",)
     list_per_page = 30
+    autocomplete_fields = ("company",)
 
 
-class ErrorAdmin(ImportExportModelAdmin):
-    resource_class = ErrorResource
+# ======================================================
+# ERROR ADMIN
+# ======================================================
+class ErrorAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "title", "error")
-    search_fields = ("title", "error")
+    search_fields = ("title", "error", "company__company_name")
     list_per_page = 30
+    autocomplete_fields = ("company",)
 
 
-class FollowUpAdmin(ImportExportModelAdmin):
-    resource_class = FollowUpResource
+# ======================================================
+# FOLLOW UP ADMIN
+# ======================================================
+class FollowUpAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "follow_up", "comment")
     list_filter = ("follow_up",)
     search_fields = ("comment", "company__company_name")
+    autocomplete_fields = ("company",)
     list_per_page = 30
 
 
-class ImagesAdmin(ImportExportModelAdmin):
-    resource_class = ImagesResource
-    list_display = ("id", "product", "title", "image")
-    search_fields = ("title",)
+# ======================================================
+# IMAGES ADMIN
+# ======================================================
+@admin_thumbnails.thumbnail("image")
+class ImagesAdmin(admin.ModelAdmin):
+    list_display = ("id", "product", "title", "image_thumbnail")
+    search_fields = ("title", "product__company_name")
     list_per_page = 30
+    autocomplete_fields = ("product",)
 
 
-class FaqAdmin(ImportExportModelAdmin):
-    resource_class = FaqResource
-    list_display = ("id", "company", "questions", "answers")
-    search_fields = ("questions",)
+# ======================================================
+# FAQ ADMIN
+# ======================================================
+class FaqAdmin(admin.ModelAdmin):
+    list_display = ("id", "company", "questions")
+    search_fields = ("questions", "company__company_name")
     list_per_page = 30
+    autocomplete_fields = ("company",)
 
 
-class MeetingAdmin(ImportExportModelAdmin):
-    resource_class = MeetingResource
+# ======================================================
+# MEETING ADMIN
+# ======================================================
+class MeetingAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "meeting", "comment")
     list_filter = ("meeting",)
-    search_fields = ("comment",)
+    search_fields = ("comment", "company__company_name")
+    autocomplete_fields = ("company",)
     list_per_page = 30
 
 
-class VisitAdmin(ImportExportModelAdmin):
-    resource_class = VisitResource
+# ======================================================
+# VISIT ADMIN
+# ======================================================
+class VisitAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "comment", "visit_date")
     list_filter = ("visit_date",)
     search_fields = ("comment", "company__company_name")
+    autocomplete_fields = ("company",)
     list_per_page = 30
 
 
-# ===================== Register =====================
-
-admin.site.register(Category, CategoryAdmin)
+# ======================================================
+# REGISTER ALL MODELS
+# ======================================================
 admin.site.register(Company, CompanyAdmin)
+admin.site.register(Comment, CommentAdmin)
+admin.site.register(VoiceRecording, VoiceRecordingAdmin)
 admin.site.register(Approx, ApproxAdmin)
 admin.site.register(SocialLink, SocialLinkAdmin)
 admin.site.register(Error, ErrorAdmin)

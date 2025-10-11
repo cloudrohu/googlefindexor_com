@@ -2,8 +2,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
-from utility.models import Call_Status, City, Locality, Response_Status, RequirementType
-from business.models import Category
+from utility.models import Category, City, Locality, RequirementType
 
 
 # =======================

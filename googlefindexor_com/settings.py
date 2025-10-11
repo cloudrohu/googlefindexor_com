@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',   
     'import_export', 
+
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 MIDDLEWARE = [
@@ -178,3 +181,7 @@ LOGIN_URL = '/accounts/login/'
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
+
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
