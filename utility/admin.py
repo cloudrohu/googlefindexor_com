@@ -38,7 +38,7 @@ class LocalityResource(resources.ModelResource):
 class LocalityAdmin(ImportExportModelAdmin, DraggableMPTTAdmin):
     resource_class = LocalityResource
     mptt_indent_field = "title"
-    list_display = ("id",'city' "tree_actions", "indented_title", "slug")
+    list_display = ("id",'city', "tree_actions", "indented_title", "slug")
     list_display_links = ("indented_title",)
     list_per_page = 30
     prepopulated_fields = {"slug": ("title",)}
