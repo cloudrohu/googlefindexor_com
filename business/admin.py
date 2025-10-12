@@ -53,8 +53,6 @@ class CompanyAdmin(admin.ModelAdmin):
     list_filter = ("category", "city", "locality", "create_at", "assigned_to")
     search_fields = ("company_name", "contact_person", "contact_no", "city__name", "locality__name")
     readonly_fields = ("slug", "create_at", "update_at", "image_tag")
-    # ❌ remove this line:
-    # prepopulated_fields = {"slug": ("company_name",)}
     inlines = [CommentInline, VoiceRecordingInline, VisitInline]
     ordering = ["-create_at"]
 
@@ -67,7 +65,7 @@ class CompanyAdmin(admin.ModelAdmin):
         }),
         ("Follow Up & Status", {
             "fields": (
-                "call_status", "call_comment", "followup_meeting",
+                "status", "followup_meeting",   # ✅ yahan call_status/call_comment hata diya
                 "find_form", "googlemap_status", "assigned_to"
             )
         }),
