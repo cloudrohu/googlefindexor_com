@@ -1,154 +1,132 @@
 from django import forms
+from django.forms import ModelForm
 from .models import (
-    Company, Comment, VoiceRecording,
-    Follow_Up, Faq, Meeting, Visit,
-    Approx, SocialLink, Error, Images
+    Company, Comment, VoiceRecording, Visit,
+    Approx, SocialLink, Error, Follow_Up, Images,
+    Faq, Meeting
 )
 
-
-# ======================================================
-# COMPANY FORM
-# ======================================================
-class CompanyForm(forms.ModelForm):
+# ============================================================
+# COMPANY FORM ✅ (Fixed)
+# ============================================================
+class CompanyForm(ModelForm):
     class Meta:
         model = Company
         fields = [
-            "category", "company_name", "contact_person", "contact_no",
-            "city", "locality", "address", "website", "google_map",
-            "description", "image", "call_status", "call_comment",
-            "googlemap_status", "find_form", "assigned_to"
+            'category', 'status', 'followup_meeting',
+            'find_form', 'googlemap_status', 'company_name', 'contact_person',
+            'contact_no', 'city', 'locality', 'address', 'website',
+            'google_map', 'description', 'image', 'assigned_to',
+            'created_by', 'updated_by'
         ]
         widgets = {
-            "company_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Company Name"}),
-            "contact_person": forms.TextInput(attrs={"class": "form-control", "placeholder": "Contact Person"}),
-            "contact_no": forms.TextInput(attrs={"class": "form-control", "placeholder": "Contact Number"}),
-            "address": forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Address"}),
-            "website": forms.TextInput(attrs={"class": "form-control", "placeholder": "Website URL"}),
-            "google_map": forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Google Map URL"}),
-            "description": forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Short Description"}),
-            "call_comment": forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Call Remarks"}),
+            'company_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Name'}),
+            'contact_person': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contact Person'}),
+            'contact_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contact Number'}),
+            'address': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'website': forms.URLInput(attrs={'class': 'form-control'}),
+            'google_map': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'followup_meeting': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
         }
 
-
-# ======================================================
+# ============================================================
 # COMMENT FORM
-# ======================================================
-class CommentForm(forms.ModelForm):
+# ============================================================
+class CommentForm(ModelForm):
     class Meta:
         model = Comment
-        fields = ["comment"]
+        fields = ['company', 'comment', 'created_by', 'updated_by']
         widgets = {
-            "comment": forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Write a comment..."}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Write a comment...'}),
         }
 
-
-# ======================================================
+# ============================================================
 # VOICE RECORDING FORM
-# ======================================================
-class VoiceRecordingForm(forms.ModelForm):
+# ============================================================
+class VoiceRecordingForm(ModelForm):
     class Meta:
         model = VoiceRecording
-        fields = ["file", "note"]
+        fields = ['company', 'file', 'note', 'uploaded_by']
         widgets = {
-            "note": forms.TextInput(attrs={"class": "form-control", "placeholder": "Optional note"}),
+            'note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Add a note'}),
         }
 
-
-# ======================================================
-# FOLLOW UP FORM
-# ======================================================
-class FollowUpForm(forms.ModelForm):
-    class Meta:
-        model = Follow_Up
-        fields = ["follow_up", "comment"]
-        widgets = {
-            "follow_up": forms.DateTimeInput(attrs={"type": "datetime-local", "class": "form-control"}),
-            "comment": forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Follow-up remarks"}),
-        }
-
-
-# ======================================================
-# FAQ FORM
-# ======================================================
-class FaqForm(forms.ModelForm):
-    class Meta:
-        model = Faq
-        fields = ["questions", "answers"]
-        widgets = {
-            "questions": forms.TextInput(attrs={"class": "form-control", "placeholder": "Question"}),
-            "answers": forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Answer"}),
-        }
-
-
-# ======================================================
-# MEETING FORM
-# ======================================================
-class MeetingForm(forms.ModelForm):
-    class Meta:
-        model = Meeting
-        fields = ["meeting", "comment"]
-        widgets = {
-            "meeting": forms.DateTimeInput(attrs={"type": "datetime-local", "class": "form-control"}),
-            "comment": forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Meeting comments"}),
-        }
-
-
-# ======================================================
+# ============================================================
 # VISIT FORM
-# ======================================================
-class VisitForm(forms.ModelForm):
+# ============================================================
+class VisitForm(ModelForm):
     class Meta:
         model = Visit
-        fields = ["comment"]
+        fields = ['company', 'visit_for', 'visit_type', 'visit_status', 'comment', 'uploaded_by']
         widgets = {
-            "comment": forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Visit remarks"}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }
 
-
-# ======================================================
+# ============================================================
 # APPROX FORM
-# ======================================================
-class ApproxForm(forms.ModelForm):
+# ============================================================
+class ApproxForm(ModelForm):
     class Meta:
         model = Approx
-        fields = ["category", "city", "locality", "title"]
-        widgets = {
-            "title": forms.TextInput(attrs={"class": "form-control", "placeholder": "Approx Title"}),
-        }
+        fields = ['category', 'city', 'locality', 'title']
 
-
-# ======================================================
+# ============================================================
 # SOCIAL LINK FORM
-# ======================================================
-class SocialLinkForm(forms.ModelForm):
+# ============================================================
+class SocialLinkForm(ModelForm):
     class Meta:
         model = SocialLink
-        fields = ["company", "socia_site", "link"]
-        widgets = {
-            "link": forms.TextInput(attrs={"class": "form-control", "placeholder": "Social link URL"}),
-        }
+        fields = ['company', 'socia_site', 'link']
 
-
-# ======================================================
+# ============================================================
 # ERROR FORM
-# ======================================================
-class ErrorForm(forms.ModelForm):
+# ============================================================
+class ErrorForm(ModelForm):
     class Meta:
         model = Error
-        fields = ["title", "error"]
+        fields = ['company', 'title', 'error']
+
+# ============================================================
+# FOLLOW UP FORM
+# ============================================================
+class FollowUpForm(ModelForm):
+    class Meta:
+        model = Follow_Up
+        fields = ['company', 'follow_up', 'comment']
         widgets = {
-            "title": forms.TextInput(attrs={"class": "form-control", "placeholder": "Error Title"}),
-            "error": forms.Textarea(attrs={"class": "form-control", "rows": 3, "placeholder": "Error Details"}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'follow_up': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
         }
 
-
-# ======================================================
+# ============================================================
 # IMAGES FORM
-# ======================================================
-class ImagesForm(forms.ModelForm):
+# ============================================================
+class ImagesForm(ModelForm):
     class Meta:
         model = Images
-        fields = ["title", "image"]
+        fields = ['product', 'title', 'image']
+
+# ============================================================
+# FAQ FORM
+# ============================================================
+class FaqForm(ModelForm):
+    class Meta:
+        model = Faq
+        fields = ['company', 'questions', 'answers']
         widgets = {
-            "title": forms.TextInput(attrs={"class": "form-control", "placeholder": "Image Title"}),
+            'questions': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Question'}),
+            'answers': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+# ============================================================
+# MEETING FORM
+# ============================================================
+class MeetingForm(ModelForm):
+    class Meta:
+        model = Meeting
+        fields = ['company', 'meeting', 'comment']
+        widgets = {
+            'meeting': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
         }

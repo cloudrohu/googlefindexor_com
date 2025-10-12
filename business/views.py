@@ -8,30 +8,49 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-from .models import Company, Comment, VoiceRecording
-from .forms import CompanyForm, CommentForm, VoiceRecordingForm
+from .models import Company, Comment, VoiceRecording, Visit
+from .forms import CompanyForm, CommentForm, VoiceRecordingForm, VisitForm
 
-# 🎧 Audio compression
+# Optional audio compression
 import os
 from django.core.files import File
 
 
-# ===============================
-# COMPANY LIST
-# ===============================
+# =====================================================
+# 📄 COMPANY LIST VIEW  (Business List)
+# =====================================================
 class CompanyListView(LoginRequiredMixin, ListView):
     model = Company
     template_name = 'business/company_list.html'
     context_object_name = 'companies'
-    paginate_by = 20
+    paginate_by = 5
 
     def get_queryset(self):
         return Company.objects.select_related('city', 'locality', 'category').order_by('-create_at')
 
 
-# ===============================
-# COMPANY DETAIL
-# ===============================
+# =====================================================
+# 📄 COMPANY STATUS FILTER VIEW (optional like response/status/<status>/)
+# =====================================================
+class CompanyStatusListView(LoginRequiredMixin, ListView):
+    model = Company
+    template_name = 'business/company_list.html'
+    context_object_name = 'companies'
+    paginate_by = 5
+
+    def get_queryset(self):
+        status = self.kwargs.get('status')
+        return Company.objects.filter(status=status).select_related('city', 'locality', 'category').order_by('-create_at')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['status_filter'] = self.kwargs.get('status')
+        return context
+
+
+# =====================================================
+# 📝 COMPANY DETAIL VIEW
+# =====================================================
 class CompanyDetailView(LoginRequiredMixin, DetailView):
     model = Company
     template_name = 'business/company_detail.html'
@@ -42,14 +61,16 @@ class CompanyDetailView(LoginRequiredMixin, DetailView):
         company = self.get_object()
         context['comments'] = Comment.objects.filter(company=company).order_by('-create_at')
         context['voice_recordings'] = VoiceRecording.objects.filter(company=company).order_by('-uploaded_at')
+        context['visits'] = Visit.objects.filter(company=company).order_by('-uploaded_at')
         context['comment_form'] = CommentForm()
         context['voice_form'] = VoiceRecordingForm()
+        context['visit_form'] = VisitForm()
         return context
 
 
-# ===============================
-# COMPANY CREATE
-# ===============================
+# =====================================================
+# ➕ COMPANY CREATE VIEW
+# =====================================================
 class CompanyCreateView(LoginRequiredMixin, CreateView):
     model = Company
     form_class = CompanyForm
@@ -62,30 +83,34 @@ class CompanyCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-# ===============================
-# COMPANY UPDATE
-# ===============================
+# =====================================================
+# ✏️ COMPANY UPDATE VIEW
+# =====================================================
 class CompanyUpdateView(LoginRequiredMixin, UpdateView):
     model = Company
     form_class = CompanyForm
     template_name = 'business/company_form.html'
 
+    def form_valid(self, form):
+        form.instance.updated_by = self.request.user
+        return super().form_valid(form)
+
     def get_success_url(self):
         return reverse_lazy('company_detail', kwargs={'pk': self.object.pk, 'slug': self.object.slug})
 
 
-# ===============================
-# COMPANY DELETE
-# ===============================
+# =====================================================
+# 🗑 COMPANY DELETE VIEW
+# =====================================================
 class CompanyDeleteView(LoginRequiredMixin, DeleteView):
     model = Company
     template_name = 'business/company_confirm_delete.html'
     success_url = reverse_lazy('company_list')
 
 
-# ===============================
-# AJAX COMMENT ADD
-# ===============================
+# =====================================================
+# 💬 AJAX: Add Comment
+# =====================================================
 @csrf_exempt
 @require_POST
 @login_required
@@ -107,9 +132,9 @@ def ajax_add_comment(request, pk):
     return JsonResponse({'success': False, 'error': 'Comment cannot be empty'})
 
 
-# ===============================
-# AJAX VOICE UPLOAD
-# ===============================
+# =====================================================
+# 🎤 AJAX: Add Voice
+# =====================================================
 @csrf_exempt
 @require_POST
 @login_required
@@ -154,3 +179,44 @@ def ajax_add_voice(request, pk):
             'uploaded_at': voice_obj.uploaded_at.strftime('%d %b %Y %H:%M'),
             'warning': 'Compression failed, original file used'
         })
+
+
+# =====================================================
+# ⚡ AJAX: Update Status
+# =====================================================
+@csrf_exempt
+@require_POST
+@login_required
+def ajax_update_status(request, pk):
+    company = get_object_or_404(Company, pk=pk)
+    new_status = request.POST.get('status')
+    if new_status:
+        company.status = new_status
+        company.save(update_fields=['status'])
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False, 'error': 'Invalid status'})
+
+
+# =====================================================
+# 📝 AJAX: Add Visit
+# =====================================================
+@csrf_exempt
+@require_POST
+@login_required
+def ajax_add_visit(request, pk):
+    company = get_object_or_404(Company, pk=pk)
+    form = VisitForm(request.POST)
+    if form.is_valid():
+        visit = form.save(commit=False)
+        visit.company = company
+        visit.uploaded_by = request.user
+        visit.save()
+        return JsonResponse({
+            'success': True,
+            'visit_for': visit.visit_for,
+            'visit_type': visit.visit_type,
+            'visit_status': visit.visit_status,
+            'comment': visit.comment or '',
+            'uploaded_at': visit.uploaded_at.strftime('%d %b %Y %H:%M')
+        })
+    return JsonResponse({'success': False, 'errors': form.errors})
