@@ -41,9 +41,6 @@ class VisitInline(admin.TabularInline):
     show_change_link = True
 
 
-# ==========================
-# COMPANY ADMIN
-# ==========================
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     list_display = (
@@ -52,7 +49,10 @@ class CompanyAdmin(admin.ModelAdmin):
     )
     list_filter = ("category", "city", "locality", "create_at", "assigned_to")
     search_fields = ("company_name", "contact_person", "contact_no", "city__name", "locality__name")
-    readonly_fields = ("slug", "create_at", "update_at", "image_tag", "created_by", "updated_by")  # ✅ added here
+    readonly_fields = (
+        "slug", "create_at", "update_at", "image_tag",
+        "created_by_display", "updated_by_display"   # ✅ custom display fields
+    )
     inlines = [CommentInline, VoiceRecordingInline, VisitInline]
     ordering = ["-create_at"]
 
@@ -70,7 +70,10 @@ class CompanyAdmin(admin.ModelAdmin):
             )
         }),
         ("Meta Info", {
-            "fields": ("slug", "create_at", "update_at", "created_by", "updated_by")
+            "fields": (
+                "slug", "create_at", "update_at",
+                "created_by_display", "updated_by_display"  # ✅ new fields here
+            )
         }),
     )
 
@@ -81,26 +84,31 @@ class CompanyAdmin(admin.ModelAdmin):
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
 
-    # ✅ Auto-fill for inlines (comments, voice recordings, visits)
+    # ✅ Auto-fill for inlines
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for obj in instances:
-            # Comment inline
             if hasattr(obj, 'created_by') and not obj.created_by:
                 obj.created_by = request.user
             if hasattr(obj, 'updated_by'):
                 obj.updated_by = request.user
-
-            # VoiceRecording inline
             if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
                 obj.uploaded_by = request.user
-
-            # Visit inline
-            if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
-                obj.uploaded_by = request.user
-
             obj.save()
         formset.save_m2m()
+
+    # 👇 Custom readonly display methods
+    def created_by_display(self, obj):
+        if obj.created_by:
+            return obj.created_by.get_full_name() or obj.created_by.username
+        return "-"
+    created_by_display.short_description = "Created by"
+
+    def updated_by_display(self, obj):
+        if obj.updated_by:
+            return obj.updated_by.get_full_name() or obj.updated_by.username
+        return "-"
+    updated_by_display.short_description = "Updated by"
 
 # ==========================
 # COMMENT ADMIN

@@ -1,41 +1,6 @@
 from django.contrib import admin
-from django import forms
-from import_export import resources
-from import_export.admin import ImportExportModelAdmin
+from django.utils.html import format_html
 from .models import Response, Meeting, Comment, VoiceRecording
-
-
-# ------------------------------
-#  Import Export Resources
-# ------------------------------
-class ResponseResource(resources.ModelResource):
-    class Meta:
-        model = Response
-        fields = (
-            "id", "status", "contact_persone", "contact_no",
-            "meeting_follow", "business_name", "business_category",
-            "locality_city", "city", "created_by", "updated_by",
-            "create_at", "update_at"
-        )
-
-
-class MeetingResource(resources.ModelResource):
-    class Meta:
-        model = Meeting
-        fields = ("id", "response", "status", "meeting_date", "assigned_to", "comment")
-
-
-class CommentResource(resources.ModelResource):
-    class Meta:
-        model = Comment
-        fields = ("id", "response", "comment", "created_by", "updated_by", "create_at", "update_at")
-
-
-class VoiceRecordingResource(resources.ModelResource):
-    class Meta:
-        model = VoiceRecording
-        fields = ("id", "response", "file", "uploaded_by", "uploaded_at", "note")
-
 
 # ------------------------------
 #  Inlines
@@ -44,6 +9,7 @@ class MeetingInline(admin.TabularInline):
     model = Meeting
     extra = 1
     show_change_link = True
+    fields = ('status', 'meeting_date', 'assigned_to', 'comment')
 
 
 class CommentInline(admin.TabularInline):
@@ -56,92 +22,66 @@ class CommentInline(admin.TabularInline):
 class VoiceRecordingInline(admin.TabularInline):
     model = VoiceRecording
     extra = 1
-    fields = ('file', 'note', 'uploaded_at')
-    readonly_fields = ('uploaded_at',)
+    fields = ('file', 'note', 'uploaded_at', 'uploaded_by')
+    readonly_fields = ('uploaded_at', 'uploaded_by')
 
 
 # ------------------------------
 #  Response Admin
 # ------------------------------
-class ResponseAdminForm(forms.ModelForm):
-    class Meta:
-        model = Response
-        fields = '__all__'
-
-
 @admin.register(Response)
 class ResponseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'contact_no', 'status', 'assigned_to', 'create_at', 'update_at')
-    list_filter = ('status', 'create_at', 'update_at')
-    search_fields = ('contact_no', 'business_name')
-    inlines = [MeetingInline, CommentInline, VoiceRecordingInline]
-    readonly_fields = ('create_at', 'update_at', 'created_by', 'updated_by')
-    ordering = ['-create_at']
-
-    fieldsets = (
-        ("Response Info", {
-            "fields": (
-                "status", "contact_no", "contact_persone", "meeting_follow",
-                "business_name", "business_category", "requirement_types", "city", "locality_city", "assigned_to"
-            )
-        }),
-        ("Meta Info", {
-            "fields": ("create_at", "update_at", "created_by", "updated_by")
-        }),
+    list_display = (
+        'id',
+        'contact_no',
+        'status',
+        'meeting_follow',
+        'assigned_to',
+        'business_name',
+        'city',
+        'locality_city',
+        'comments_preview',
+        'voice_preview',
     )
+    list_filter = ('status',
+                   'business_name',
+                    'city',
+                    'locality_city',)
+    search_fields = ('contact_no', 'business_name')
+    list_editable = (
+        'status',
+        'meeting_follow',
+        'assigned_to',
+        'business_name',
+        'city',
+        'locality_city',
+    )
+    ordering = ['-create_at']
+    inlines = [MeetingInline, CommentInline, VoiceRecordingInline]
+    readonly_fields = ('create_at', 'update_at',  )
+    list_per_page = 10
 
-    # 👇 Auto-fill created_by & updated_by
-    def save_model(self, request, obj, form, change):
-        if not obj.created_by:
-            obj.created_by = request.user
-        obj.updated_by = request.user
-        super().save_model(request, obj, form, change)
+    # 📝 Meeting Date preview
+    def meeting_date_preview(self, obj):
+        # Latest meeting for that response
+        meeting = obj.meeting_set.order_by('-meeting_date').first()
+        if meeting and meeting.meeting_date:
+            return meeting.meeting_date.strftime('%b %d, %Y, %I:%M %p')
+        return "-"
+    meeting_date_preview.short_description = "Meeting Date & Time"
 
-    # 👇 Auto-fill created_by / updated_by / uploaded_by for inlines
-    def save_formset(self, request, form, formset, change):
-        instances = formset.save(commit=False)
-        for obj in instances:
-            # Comment inline
-            if hasattr(obj, 'created_by') and not obj.created_by:
-                obj.created_by = request.user
-            if hasattr(obj, 'updated_by'):
-                obj.updated_by = request.user
+    # 📝 Comment preview (last comment)
+    def comments_preview(self, obj):
+        last_comment = obj.comments.order_by('-create_at').first()
+        if last_comment:
+            return (last_comment.comment[:40] + "…") if len(last_comment.comment) > 40 else last_comment.comment
+        return "-"
+    comments_preview.short_description = "Latest Comment"
 
-            # VoiceRecording inline
-            if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
-                obj.uploaded_by = request.user
-
-            obj.save()
-        formset.save_m2m()
-
-    def get_mr_id(self, obj):
-        return f"MR{obj.id}"
-    get_mr_id.short_description = "ID"
-
-
-# ------------------------------
-#  Other Admins
-# ------------------------------
-@admin.register(Meeting)
-class MeetingAdmin(ImportExportModelAdmin):
-    resource_class = MeetingResource
-    list_display = ('id', 'response', 'status', 'meeting_date', 'assigned_to')
-    list_filter = ('status',)
-    search_fields = ('response__business_name', 'response__contact_no')
-
-
-@admin.register(Comment)
-class CommentAdmin(ImportExportModelAdmin):
-    resource_class = CommentResource
-    list_display = ('id', 'response', 'comment', 'created_by', 'create_at')
-    search_fields = ('response__id', 'comment')
-
-
-@admin.register(VoiceRecording)
-class VoiceRecordingAdmin(ImportExportModelAdmin):
-    resource_class = VoiceRecordingResource
-    list_display = ('id', 'response', 'file', 'uploaded_by', 'uploaded_at', 'note')
-    search_fields = ('response__id', 'note')
-
-
-# Register Response last to ensure inlines work
+    # 📝 Voice Recording preview (count or file icon)
+    def voice_preview(self, obj):
+        count = obj.recordings.count()
+        if count > 0:
+            return format_html('<span style="color:#007bff;">🎤 {} file(s)</span>', count)
+        return "-"
+    voice_preview.short_description = "Voice Notes"

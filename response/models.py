@@ -106,7 +106,6 @@ class Meeting(models.Model):
 class Comment(models.Model):
     response = models.ForeignKey(Response, blank=True, null=True, on_delete=models.CASCADE, related_name='comments')
     comment = models.CharField(max_length=500, null=True, blank=True)
-
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(
@@ -130,15 +129,18 @@ class Comment(models.Model):
 # =======================
 #  Voice Recording
 # =======================
+# models.py
 class VoiceRecording(models.Model):
-    response = models.ForeignKey(Response, on_delete=models.CASCADE, related_name='voice_recordings')
-    file = models.FileField(upload_to='call_recordings/')
+    response = models.ForeignKey(
+        Response,
+        on_delete=models.CASCADE,
+        related_name='recordings'   # 👉 Yeh line add karo
+    )
+    file = models.FileField(upload_to='voice_recordings/')
+    note = models.CharField(max_length=255, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    uploaded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    note = models.CharField(max_length=255, blank=True, null=True)
+    uploaded_by = models.ForeignKey('auth.User', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return f"Voice Recording for {self.response} ({self.uploaded_at.strftime('%d-%m-%Y %H:%M')})"
+        return f"Recording {self.id} - {self.file.name}"
 
-    class Meta:
-        verbose_name_plural = "4. Voice Recordings"
