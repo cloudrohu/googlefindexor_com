@@ -52,7 +52,7 @@ class CompanyAdmin(admin.ModelAdmin):
     )
     list_filter = ("category", "city", "locality", "create_at", "assigned_to")
     search_fields = ("company_name", "contact_person", "contact_no", "city__name", "locality__name")
-    readonly_fields = ("slug", "create_at", "update_at", "image_tag")
+    readonly_fields = ("slug", "create_at", "update_at", "image_tag", "created_by", "updated_by")  # ✅ added here
     inlines = [CommentInline, VoiceRecordingInline, VisitInline]
     ordering = ["-create_at"]
 
@@ -74,11 +74,33 @@ class CompanyAdmin(admin.ModelAdmin):
         }),
     )
 
+    # ✅ Auto-fill created_by & updated_by
     def save_model(self, request, obj, form, change):
         if not obj.created_by:
             obj.created_by = request.user
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
+
+    # ✅ Auto-fill for inlines (comments, voice recordings, visits)
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for obj in instances:
+            # Comment inline
+            if hasattr(obj, 'created_by') and not obj.created_by:
+                obj.created_by = request.user
+            if hasattr(obj, 'updated_by'):
+                obj.updated_by = request.user
+
+            # VoiceRecording inline
+            if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
+                obj.uploaded_by = request.user
+
+            # Visit inline
+            if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
+                obj.uploaded_by = request.user
+
+            obj.save()
+        formset.save_m2m()
 
 # ==========================
 # COMMENT ADMIN
