@@ -122,6 +122,27 @@ class Comment(models.Model):
         verbose_name_plural = "3. Comments"
         ordering = ['-create_at']
 
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for obj in instances:
+            # Comment inline ke liye
+            if hasattr(obj, 'created_by') and not obj.created_by:
+                obj.created_by = request.user
+            if hasattr(obj, 'updated_by'):
+                obj.updated_by = request.user
+
+            # VoiceRecording inline ke liye
+            if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
+                obj.uploaded_by = request.user
+
+            # Visit inline ke liye
+            if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
+                obj.uploaded_by = request.user
+
+            obj.save()
+        formset.save_m2m()
+
+
     def __str__(self):
         return f"Comment {self.id} - {self.comment[:25] if self.comment else ''}"
 
@@ -140,11 +161,32 @@ class VoiceRecording(models.Model):
         null=True,
         blank=True
     )
-    note = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "4. Voice Recordings"
         ordering = ['-uploaded_at']
+
+
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for obj in instances:
+            # Comment inline ke liye
+            if hasattr(obj, 'created_by') and not obj.created_by:
+                obj.created_by = request.user
+            if hasattr(obj, 'updated_by'):
+                obj.updated_by = request.user
+
+            # VoiceRecording inline ke liye
+            if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
+                obj.uploaded_by = request.user
+
+            # Visit inline ke liye
+            if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
+                obj.uploaded_by = request.user
+
+            obj.save()
+        formset.save_m2m()
+
 
     def __str__(self):
         return f"Voice Recording for {self.company} ({self.uploaded_at.strftime('%d-%m-%Y %H:%M')})"
@@ -201,6 +243,28 @@ class Visit(models.Model):
     class Meta:
         verbose_name_plural = "5. Visits"
         ordering = ['-uploaded_at']
+
+
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for obj in instances:
+            # Comment inline ke liye
+            if hasattr(obj, 'created_by') and not obj.created_by:
+                obj.created_by = request.user
+            if hasattr(obj, 'updated_by'):
+                obj.updated_by = request.user
+
+            # VoiceRecording inline ke liye
+            if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
+                obj.uploaded_by = request.user
+
+            # Visit inline ke liye
+            if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
+                obj.uploaded_by = request.user
+
+            obj.save()
+        formset.save_m2m()
+
 
     def __str__(self):
         return f"{self.company.company_name} - {self.visit_type} ({self.visit_status})"

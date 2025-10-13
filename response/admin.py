@@ -49,13 +49,14 @@ class MeetingInline(admin.TabularInline):
 class CommentInline(admin.TabularInline):
     model = Comment
     extra = 1
-    show_change_link = True
+    fields = ('comment', 'create_at', 'update_at')
+    readonly_fields = ('create_at', 'update_at')
 
 
 class VoiceRecordingInline(admin.TabularInline):
     model = VoiceRecording
     extra = 1
-    show_change_link = True
+    fields = ('file', 'note', 'uploaded_at')
     readonly_fields = ('uploaded_at',)
 
 
@@ -68,30 +69,50 @@ class ResponseAdminForm(forms.ModelForm):
         fields = '__all__'
 
 
-class ResponseAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    resource_class = ResponseResource
-    form = ResponseAdminForm
-    exclude = ['created_by', 'updated_by']
-
-    list_display = [
-        'get_mr_id',        
-        'status',
-        'contact_no',
-
-        'business_name',
-        'contact_persone',
-        'meeting_follow',
-        'city',
-        'locality_city',
-        'update_at',
-        'updated_by',
-        'create_at'
-    ]
-    list_filter = ['status', 'city', 'locality_city', 'business_category']
-    search_fields = ['id', 'contact_no', 'business_name', 'contact_persone']
-    list_per_page = 20
-
+@admin.register(Response)
+class ResponseAdmin(admin.ModelAdmin):
+    list_display = ('id', 'contact_no', 'status', 'assigned_to', 'create_at', 'update_at')
+    list_filter = ('status', 'create_at', 'update_at')
+    search_fields = ('contact_no', 'business_name')
     inlines = [MeetingInline, CommentInline, VoiceRecordingInline]
+    readonly_fields = ('create_at', 'update_at', 'created_by', 'updated_by')
+    ordering = ['-create_at']
+
+    fieldsets = (
+        ("Response Info", {
+            "fields": (
+                "status", "contact_no", "contact_persone", "meeting_follow",
+                "business_name", "business_category", "requirement_types", "city", "locality_city", "assigned_to"
+            )
+        }),
+        ("Meta Info", {
+            "fields": ("create_at", "update_at", "created_by", "updated_by")
+        }),
+    )
+
+    # 👇 Auto-fill created_by & updated_by
+    def save_model(self, request, obj, form, change):
+        if not obj.created_by:
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        super().save_model(request, obj, form, change)
+
+    # 👇 Auto-fill created_by / updated_by / uploaded_by for inlines
+    def save_formset(self, request, form, formset, change):
+        instances = formset.save(commit=False)
+        for obj in instances:
+            # Comment inline
+            if hasattr(obj, 'created_by') and not obj.created_by:
+                obj.created_by = request.user
+            if hasattr(obj, 'updated_by'):
+                obj.updated_by = request.user
+
+            # VoiceRecording inline
+            if hasattr(obj, 'uploaded_by') and not obj.uploaded_by:
+                obj.uploaded_by = request.user
+
+            obj.save()
+        formset.save_m2m()
 
     def get_mr_id(self, obj):
         return f"MR{obj.id}"
@@ -124,4 +145,3 @@ class VoiceRecordingAdmin(ImportExportModelAdmin):
 
 
 # Register Response last to ensure inlines work
-admin.site.register(Response, ResponseAdmin)

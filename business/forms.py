@@ -47,11 +47,19 @@ class CommentForm(ModelForm):
 class VoiceRecordingForm(ModelForm):
     class Meta:
         model = VoiceRecording
-        fields = ['company', 'file', 'note', 'uploaded_by']
+        fields = ['company', 'file', 'uploaded_by']
         widgets = {
-            'note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Add a note'}),
+            'company': forms.Select(attrs={
+                'class': 'form-control',
+                'placeholder': 'Select Company'
+            }),
+            'file': forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+            }),
+            'uploaded_by': forms.Select(attrs={
+                'class': 'form-control',
+            }),
         }
-
 # ============================================================
 # VISIT FORM
 # ============================================================

@@ -120,6 +120,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment {self.id} - {self.comment[:25] if self.comment else ''}"
+    
+
 
     class Meta:
         verbose_name_plural = "3. Comments"

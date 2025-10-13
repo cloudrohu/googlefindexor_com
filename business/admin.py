@@ -14,7 +14,7 @@ from .models import (
 class CommentInline(admin.TabularInline):
     model = Comment
     extra = 1
-    fields = ('comment', 'created_by', 'updated_by', 'create_at', 'update_at')
+    fields = ('comment', 'create_at', 'update_at')  # 👈 created_by / updated_by hata diya
     readonly_fields = ('create_at', 'update_at')
     show_change_link = True
 
@@ -25,7 +25,7 @@ class CommentInline(admin.TabularInline):
 class VoiceRecordingInline(admin.TabularInline):
     model = VoiceRecording
     extra = 1
-    fields = ('file', 'note', 'uploaded_by', 'uploaded_at')
+    fields = ('file', 'uploaded_at')   # 👈 uploaded_by hata diya
     readonly_fields = ('uploaded_at',)
     show_change_link = True
 
@@ -65,7 +65,7 @@ class CompanyAdmin(admin.ModelAdmin):
         }),
         ("Follow Up & Status", {
             "fields": (
-                "status", "followup_meeting",   # ✅ yahan call_status/call_comment hata diya
+                "status", "followup_meeting",
                 "find_form", "googlemap_status", "assigned_to"
             )
         }),
@@ -73,6 +73,12 @@ class CompanyAdmin(admin.ModelAdmin):
             "fields": ("slug", "create_at", "update_at", "created_by", "updated_by")
         }),
     )
+
+    def save_model(self, request, obj, form, change):
+        if not obj.created_by:
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        super().save_model(request, obj, form, change)
 
 # ==========================
 # COMMENT ADMIN
@@ -94,9 +100,9 @@ class CommentAdmin(admin.ModelAdmin):
 # ==========================
 @admin.register(VoiceRecording)
 class VoiceRecordingAdmin(admin.ModelAdmin):
-    list_display = ("id", "company", "file", "note", "uploaded_by", "uploaded_at")
+    list_display = ("id", "company", "file",  "uploaded_by", "uploaded_at")
     list_filter = ("uploaded_at",)
-    search_fields = ("company__company_name", "note")
+    search_fields = ("company__company_name",)
     ordering = ["-uploaded_at"]
 
 
