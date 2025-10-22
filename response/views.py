@@ -1,19 +1,26 @@
+# ===========================================================
+# response/views.py (Final Polished – Added Followups Support)
+# ===========================================================
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect
-
-from .models import Response, Meeting, Comment, VoiceRecording
-from .forms import ResponseCreateForm, MeetingForm, CommentForm, VoiceRecordingForm
-
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-
-# 🎧 Voice Compression
-import os
 from django.core.files import File
+
+import os
+
+from .models import Response, Meeting, Followup, Comment, VoiceRecording
+from .forms import (
+    ResponseForm,        # ✅ CORRECT
+    MeetingForm,
+    FollowupForm,
+    CommentForm,
+    VoiceRecordingForm,
+)
 
 # =================================================================
 #                       AJAX VOICE UPLOAD
@@ -22,14 +29,12 @@ from django.core.files import File
 @csrf_exempt
 @require_POST
 def ajax_add_voice(request, pk):
-    """Upload & compress voice note using ffmpeg (pydub)."""
+    """Upload & compress voice note using ffmpeg (via pydub)."""
     response = get_object_or_404(Response, pk=pk)
     if 'file' not in request.FILES:
         return JsonResponse({'success': False, 'error': 'No file uploaded'})
 
     file = request.FILES['file']
-
-    # Save original file first
     voice_obj = VoiceRecording.objects.create(
         response=response,
         file=file,
@@ -40,17 +45,15 @@ def ajax_add_voice(request, pk):
     compressed_path = original_path.rsplit('.', 1)[0] + "_compressed.mp3"
 
     try:
-        audio = AudioSegment.from_file(original_path)
-        audio = audio.set_frame_rate(22050).set_channels(1)  # mono + 22kHz
-        audio.export(compressed_path, format="mp3", bitrate="64k")
+        if not original_path.lower().endswith(".mp3"):
+            audio = AudioSegment.from_file(original_path)
+            audio = audio.set_frame_rate(22050).set_channels(1)
+            audio.export(compressed_path, format="mp3", bitrate="64k")
 
-        with open(compressed_path, 'rb') as f:
-            voice_obj.file.save(os.path.basename(compressed_path), File(f), save=True)
+            with open(compressed_path, 'rb') as f:
+                voice_obj.file.save(os.path.basename(compressed_path), File(f), save=True)
 
-        # clean temp
-        if os.path.exists(original_path):
             os.remove(original_path)
-        if os.path.exists(compressed_path):
             os.remove(compressed_path)
 
         return JsonResponse({
@@ -104,30 +107,35 @@ class ResponseStatusView(LoginRequiredMixin, ListView):
 
 class ResponseCreateView(LoginRequiredMixin, CreateView):
     model = Response
-    form_class = ResponseCreateForm
-    template_name = 'response/response_create.html'
+    form_class = ResponseForm
+    template_name = 'dashboard/response/response_create.html'
     success_url = reverse_lazy('response_list')
 
 
 class ResponseDetailView(LoginRequiredMixin, DetailView):
     model = Response
-    template_name = 'response/response_detail.html'
+    template_name = 'dashboard/response/response_detail.html'
     context_object_name = 'response'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         response = self.get_object()
         context['meetings'] = Meeting.objects.filter(response=response)
+        context['followups'] = Followup.objects.filter(response=response)
         context['comments'] = Comment.objects.filter(response=response).order_by('-create_at')
         context['voice_recordings'] = VoiceRecording.objects.filter(response=response).order_by('-uploaded_at')
+
+        # Inline forms
         context['comment_form'] = CommentForm()
+        context['meeting_form'] = MeetingForm()
+        context['followup_form'] = FollowupForm()
         context['voice_form'] = VoiceRecordingForm()
         return context
 
 
 class ResponseUpdateView(LoginRequiredMixin, UpdateView):
     model = Response
-    form_class = ResponseCreateForm
+    form_class = ResponseForm
     template_name = 'dashboard/response/response_update.html'
 
     def get_success_url(self):
@@ -136,14 +144,56 @@ class ResponseUpdateView(LoginRequiredMixin, UpdateView):
 
 class ResponseDeleteView(LoginRequiredMixin, DeleteView):
     model = Response
-    template_name = 'response/response_confirm_delete.html'
+    template_name = 'dashboard/response/response_confirm_delete.html'
     success_url = reverse_lazy('response_list')
 
 
-class ResponseMeetingsView(LoginRequiredMixin, ListView):
+# =================================================================
+#                       MEETING VIEWS
+# =================================================================
+
+class MeetingListView(LoginRequiredMixin, ListView):
     model = Meeting
-    template_name = 'response/response_meetings.html'
+    template_name = 'dashboard/meeting/meeting_list.html'
     context_object_name = 'meetings'
+    paginate_by = 20
+
+
+class MeetingCreateView(LoginRequiredMixin, CreateView):
+    model = Meeting
+    form_class = MeetingForm
+    template_name = 'dashboard/meeting/meeting_form.html'
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('response_detail', kwargs={'pk': self.object.response.pk})
+
+
+# =================================================================
+#                       FOLLOWUP VIEWS
+# =================================================================
+
+class FollowupListView(LoginRequiredMixin, ListView):
+    model = Followup
+    template_name = 'dashboard/followup/followup_list.html'
+    context_object_name = 'followups'
+    paginate_by = 20
+
+
+class FollowupCreateView(LoginRequiredMixin, CreateView):
+    model = Followup
+    form_class = FollowupForm
+    template_name = 'dashboard/followup/followup_form.html'
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('response_detail', kwargs={'pk': self.object.response.pk})
 
 
 # =================================================================
@@ -153,6 +203,7 @@ class ResponseMeetingsView(LoginRequiredMixin, ListView):
 @csrf_exempt
 @require_POST
 def ajax_add_comment(request, pk):
+    """Adds a new comment via AJAX."""
     response = get_object_or_404(Response, pk=pk)
     comment_text = request.POST.get('comment')
     if comment_text and comment_text.strip():
@@ -173,6 +224,7 @@ def ajax_add_comment(request, pk):
 @csrf_exempt
 @require_POST
 def ajax_update_status(request, pk):
+    """Updates Response status via AJAX."""
     try:
         response = Response.objects.get(pk=pk)
         new_status = request.POST.get('status')

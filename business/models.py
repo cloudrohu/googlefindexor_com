@@ -313,23 +313,6 @@ class Error(models.Model):
         return self.title
 
 
-# ============================================================
-# FOLLOW UP MODEL
-# ============================================================
-class Follow_Up(models.Model):
-    company = models.ForeignKey(Company, blank=True, null=True, on_delete=models.CASCADE)
-    follow_up = models.DateTimeField(blank=True, null=True)
-    comment = models.CharField(max_length=500, blank=True, null=True)
-    create_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name_plural = '2. Follow_Up'
-        ordering = ['-follow_up']
-
-    def __str__(self):
-        return self.comment or f"{self.company}"
-
 
 # ============================================================
 # IMAGES MODEL
@@ -356,22 +339,102 @@ class Faq(models.Model):
     def __str__(self):
         return self.questions
 
+class Followup(models.Model):
+    FOLLOWUP_STATUS_CHOICES = [
+        ("New Followup", "New Followup"),
+        ("Re Followup", "Re Followup"),
+        ("Cancelled", "Cancelled"),
+        ("Deal Done", "Deal Done"),
+    ]
 
-# ============================================================
-# MEETING MODEL
-# ============================================================
-class Meeting(models.Model):
-    company = models.ForeignKey(Company, blank=True, null=True, on_delete=models.CASCADE)
-    meeting = models.DateTimeField(null=True, blank=True)
-    comment = models.CharField(max_length=500, blank=True, null=True)
+    company = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        related_name='followups'
+    )
+    status = models.CharField(max_length=25, choices=FOLLOWUP_STATUS_CHOICES, verbose_name="Followup Status")
+    followup_date = models.DateTimeField(blank=True, null=True, verbose_name="Followup Date & Time")
+
+    # 👇 FIXED: give a unique related_name
+    assigned_to = models.ForeignKey(
+        Staff,
+        related_name='business_followup_assigned',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    comment = models.CharField(max_length=500, null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
-    class Meta:
-        verbose_name_plural = '3. Meeting'
-        ordering = ['-meeting']
+    created_by = models.ForeignKey(
+        User,
+        related_name='business_followup_created',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    updated_by = models.ForeignKey(
+        User,
+        related_name='business_followup_updated',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
 
     def __str__(self):
-        return self.comment or f"{self.company}"
+        return f"Followup {self.id} - {self.status}"
 
+    class Meta:
+        verbose_name_plural = "3. Followups"
 
+class Meeting(models.Model):
+    MEETING_STATUS_CHOICES = [
+        ("New Meeting", "New Meeting"),
+        ("Re Meeting", "Re Meeting"),
+        ("Cancelled", "Cancelled"),
+        ("Deal Done", "Deal Done"),
+    ]
+
+    company = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE,
+        related_name='meetings'
+    )
+    status = models.CharField(max_length=25, choices=MEETING_STATUS_CHOICES, verbose_name="Meeting Status")
+    meeting_date = models.DateTimeField(blank=True, null=True, verbose_name="Meeting Date & Time")
+
+    # 👇 FIXED: give a unique related_name
+    assigned_to = models.ForeignKey(
+        Staff,
+        related_name='business_meeting_assigned',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    comment = models.CharField(max_length=500, null=True, blank=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    created_by = models.ForeignKey(
+        User,
+        related_name='business_meeting_created',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    updated_by = models.ForeignKey(
+        User,
+        related_name='business_meeting_updated',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+
+    def __str__(self):
+        return f"Meeting {self.id} - {self.status}"
+
+    class Meta:
+        verbose_name_plural = "2. Meetings"

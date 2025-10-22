@@ -13,7 +13,7 @@ urlpatterns = [
     path('status/<str:status>/', views.ResponseStatusView.as_view(), name='response_status'),
 
     # 📅 MEETINGS
-    path('meetings/', views.ResponseMeetingsView.as_view(), name='response_meetings'),
+    path('meetings/', views.MeetingListView.as_view(), name='response_meetings'),
 
     # ⚡ AJAX ENDPOINTS
     path('<int:pk>/ajax/update-status/', views.ajax_update_status, name='ajax_update_status'),

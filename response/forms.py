@@ -1,97 +1,95 @@
 from django import forms
-from .models import Response, Meeting, Comment, VoiceRecording
-from utility.models import RequirementType
+from .models import Response, Meeting, Followup, Comment, VoiceRecording
 
 
-# =================================================================
-#  Response Form (Create / Update)
-# =================================================================
-class ResponseCreateForm(forms.ModelForm):
-    requirement_types = forms.ModelMultipleChoiceField(
-        queryset=RequirementType.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
-        label="आवश्यकता के प्रकार",
-        required=False
-    )
-
+# =======================
+#  Response Form
+# =======================
+class ResponseForm(forms.ModelForm):
     class Meta:
         model = Response
         fields = [
-            'business_name',
-            'contact_persone',
-            'contact_no',
-            'business_category',
-            'city',
-            'locality_city',
-            'requirement_types',
-            'status'
+            'status', 'contact_no', 'assigned_to', 'contact_persone',
+            'business_name', 'business_category', 'requirement_types',
+            'city', 'locality_city'
         ]
         widgets = {
-            'business_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'contact_persone': forms.TextInput(attrs={'class': 'form-control'}),
-            'contact_no': forms.TextInput(attrs={
-                'placeholder': '10 अंकों का नंबर',
-                'class': 'form-control'
-            }),
-            'business_category': forms.Select(attrs={'class': 'form-control'}),
-            'city': forms.Select(attrs={'class': 'form-control'}),
-            'locality_city': forms.Select(attrs={'class': 'form-control'}),
-            'status': forms.Select(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
+            'contact_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter contact number'}),
+            'assigned_to': forms.Select(attrs={'class': 'form-select'}),
+            'contact_persone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contact Person'}),
+            'business_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Business Name'}),
+            'business_category': forms.Select(attrs={'class': 'form-select'}),
+            'requirement_types': forms.SelectMultiple(attrs={'class': 'form-select'}),
+            'city': forms.Select(attrs={'class': 'form-select'}),
+            'locality_city': forms.Select(attrs={'class': 'form-select'}),
         }
 
-    def clean_contact_no(self):
-        """
-        ✅ Contact number ko clean kare (spaces remove)
-        """
-        contact_no = self.cleaned_data.get('contact_no', '')
-        return contact_no.replace(" ", "") if contact_no else contact_no
 
-
-# =================================================================
+# =======================
 #  Meeting Form
-# =================================================================
+# =======================
 class MeetingForm(forms.ModelForm):
     class Meta:
         model = Meeting
-        fields = ['status', 'meeting_date', 'assigned_to', 'comment']
+        fields = [
+            'response', 'status', 'meeting_date', 'assigned_to', 'comment'
+        ]
         widgets = {
-            'status': forms.Select(attrs={'class': 'form-control'}),
+            'response': forms.Select(attrs={'class': 'form-select'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
             'meeting_date': forms.DateTimeInput(attrs={
-                'type': 'datetime-local',
-                'class': 'form-control'
+                'class': 'form-control',
+                'type': 'datetime-local'
             }),
-            'assigned_to': forms.Select(attrs={'class': 'form-control'}),
-            'comment': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'assigned_to': forms.Select(attrs={'class': 'form-select'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
 
-# =================================================================
+# =======================
+#  Followup Form
+# =======================
+class FollowupForm(forms.ModelForm):
+    class Meta:
+        model = Followup
+        fields = [
+            'response', 'status', 'followup_date', 'assigned_to', 'comment'
+        ]
+        widgets = {
+            'response': forms.Select(attrs={'class': 'form-select'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
+            'followup_date': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'type': 'datetime-local'
+            }),
+            'assigned_to': forms.Select(attrs={'class': 'form-select'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
+
+
+# =======================
 #  Comment Form
-# =================================================================
+# =======================
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['comment']
+        fields = ['response', 'comment']
         widgets = {
-            'comment': forms.Textarea(attrs={
-                'rows': 3,
-                'class': 'form-control',
-                'placeholder': 'Add your comment here...'
-            }),
+            'response': forms.Select(attrs={'class': 'form-select'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Write your comment...'}),
         }
 
 
-# =================================================================
+# =======================
 #  Voice Recording Form
-# =================================================================
+# =======================
 class VoiceRecordingForm(forms.ModelForm):
     class Meta:
         model = VoiceRecording
-        fields = ['file', 'note']
+        fields = ['response', 'file', 'note']
         widgets = {
+            'response': forms.Select(attrs={'class': 'form-select'}),
             'file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'note': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Optional note (e.g. Call with client)'
-            }),
+            'note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Optional note'}),
         }

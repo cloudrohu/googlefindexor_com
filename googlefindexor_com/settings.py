@@ -20,23 +20,31 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [    
-    'jazzmin',  # 👈 Add this first
+
+    'jet.dashboard',  
+    'jet',           
+    
+    # 2. आपके बाकी Apps
     'adsrepoting.apps.AdsrepotingConfig',
-    'home.apps.HomeConfig',
+     'home.apps.HomeConfig',
     'business.apps.BusinessConfig',
     'utility.apps.UtilityConfig',
-    'user.apps.UserConfig',
     'visit.apps.VisitConfig',
     'response.apps.ResponseConfig',
     'useremail.apps.UseremailConfig',
     'crm.apps.CrmConfig',
-
-    'django.contrib.admin',
+    'user.apps.UserConfig',
+    # ... (बाकी user apps) ...
+    
+    # 3. Django के Core Apps को अब नीचे रखें
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin', # <--- इसे अब नीचे रखें
+
+
 
     'mptt',
     'ckeditor',
@@ -142,6 +150,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
 
 # ...
 SITE_ID = 1

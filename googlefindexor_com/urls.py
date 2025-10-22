@@ -5,12 +5,15 @@ from django.conf.urls.static import static
 from home import views as IndexView # केवल home के views को यहाँ इम्पोर्ट करें
 
 urlpatterns = [
+    path('jet/', include('jet.urls', 'jet')),
+    path('jet/dashboard/', include('jet.dashboard.urls', 'jet-dashboard')),
     # ------------------------------------
     # 1. DJANGO ADMIN / AUTH URLs
     # ------------------------------------
     path('accounts/', include('django.contrib.auth.urls')), 
     path('admin/', admin.site.urls),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    
     
     # ------------------------------------
     # 2. HOME App URLs (Main/Root Pages)
