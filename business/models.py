@@ -70,17 +70,18 @@ class Company(models.Model):
         return self.company_name
 
     def save(self, *args, **kwargs):
-        # First save to generate ID if new
-        if not self.id:
-            super().save(*args, **kwargs)
+        """Fixed: Save company correctly + auto-slug update."""
+        # Step 1: Normal save (always run first)
+        super().save(*args, **kwargs)
 
-        # Safe slug creation
+        # Step 2: Generate slug safely (only if needed)
         category_title = self.category.title if self.category else ''
         locality_name = str(self.locality) if self.locality else ''
         city_name = str(self.city) if self.city else ''
         base_slug = slugify(f"{category_title} {self.company_name} {locality_name} {city_name}")
         new_slug = f"{base_slug}-{self.id}"
 
+        # Step 3: Update slug if changed
         if self.slug != new_slug:
             self.slug = new_slug
             super().save(update_fields=['slug'])

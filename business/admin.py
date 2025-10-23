@@ -5,61 +5,76 @@ import admin_thumbnails
 from .models import (
     Company, Comment, VoiceRecording, Approx,
     SocialLink, Error, Images, Faq, Visit,
-    Meeting, Followup  # ✅ added new models
+    Meeting, Followup
 )
 
-# ==========================
-# INLINE FOR COMMENTS
-# ==========================
-class CommentInline(admin.TabularInline):
+# ======================================================
+# COMPANY INFO MIXIN (for inline models)
+# ======================================================
+class CompanyInfoMixin:
+    """Display Company main details inside inlines."""
+
+    def company_name(self, obj):
+        return obj.company.company_name if obj.company else None
+    company_name.short_description = "Company Name"
+
+    def company_city(self, obj):
+        return obj.company.city if obj.company else None
+    company_city.short_description = "City"
+
+    def company_locality(self, obj):
+        return obj.company.locality if obj.company else None
+    company_locality.short_description = "Locality"
+
+    def company_contact(self, obj):
+        return obj.company.contact_no if obj.company else None
+    company_contact.short_description = "Contact No"
+
+    def company_assigned_to(self, obj):
+        return obj.company.assigned_to if obj.company else None
+    company_assigned_to.short_description = "Assigned To"
+
+
+# ======================================================
+# INLINE MODELS (Company fields visible)
+# ======================================================
+class CommentInline(CompanyInfoMixin, admin.TabularInline):
     model = Comment
     extra = 1
-    fields = ('comment', 'create_at', 'update_at')
-    readonly_fields = ('create_at', 'update_at')
+    fields = ('company_name', 'company_city', 'company_locality', 'company_contact', 'comment', 'create_at', 'update_at')
+    readonly_fields = ('company_name', 'company_city', 'company_locality', 'company_contact', 'create_at', 'update_at')
     show_change_link = True
 
 
-# ==========================
-# INLINE FOR VOICE RECORDINGS
-# ==========================
-class VoiceRecordingInline(admin.TabularInline):
+class VoiceRecordingInline(CompanyInfoMixin, admin.TabularInline):
     model = VoiceRecording
     extra = 1
-    fields = ('file', 'uploaded_at')
-    readonly_fields = ('uploaded_at',)
+    fields = ('company_name', 'company_city', 'company_locality', 'company_contact', 'file', 'uploaded_at')
+    readonly_fields = ('company_name', 'company_city', 'company_locality', 'company_contact', 'uploaded_at')
     show_change_link = True
 
 
-# ==========================
-# INLINE FOR VISITS
-# ==========================
-class VisitInline(admin.TabularInline):
+class VisitInline(CompanyInfoMixin, admin.TabularInline):
     model = Visit
     extra = 1
-    fields = ('visit_type', 'visit_for', 'visit_status', 'comment', 'uploaded_by', 'uploaded_at')
-    readonly_fields = ('uploaded_at',)
+    fields = ('company_name', 'company_city', 'company_locality', 'company_contact', 'visit_type', 'visit_for', 'visit_status', 'comment', 'uploaded_by', 'uploaded_at')
+    readonly_fields = ('company_name', 'company_city', 'company_locality', 'company_contact', 'uploaded_at')
     show_change_link = True
 
 
-# ==========================
-# INLINE FOR MEETINGS
-# ==========================
-class MeetingInline(admin.TabularInline):
+class MeetingInline(CompanyInfoMixin, admin.TabularInline):
     model = Meeting
     extra = 1
-    fields = ('status', 'meeting_date', 'assigned_to', 'comment', 'create_at', 'update_at')
-    readonly_fields = ('create_at', 'update_at')
+    fields = ('company_name', 'company_city', 'company_locality', 'company_contact', 'status', 'meeting_date', 'assigned_to', 'comment', 'create_at', 'update_at')
+    readonly_fields = ('company_name', 'company_city', 'company_locality', 'company_contact', 'create_at', 'update_at')
     show_change_link = True
 
 
-# ==========================
-# INLINE FOR FOLLOWUPS
-# ==========================
-class FollowupInline(admin.TabularInline):
+class FollowupInline(CompanyInfoMixin, admin.TabularInline):
     model = Followup
     extra = 1
-    fields = ('status', 'followup_date', 'assigned_to', 'comment', 'create_at', 'update_at')
-    readonly_fields = ('create_at', 'update_at')
+    fields = ('company_name', 'company_city', 'company_locality', 'company_contact', 'status', 'followup_date', 'assigned_to', 'comment', 'create_at', 'update_at')
+    readonly_fields = ('company_name', 'company_city', 'company_locality', 'company_contact', 'create_at', 'update_at')
     show_change_link = True
 
 
@@ -68,38 +83,30 @@ class FollowupInline(admin.TabularInline):
 # ======================================================
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
+    
     list_display = (
-        "id", "company_name", "category", "city", "locality",
-        "contact_person", "contact_no", "image_tag", "create_at", "assigned_to"
+        "id", "company_name", "category", "city", "locality", 'followup_meeting',
+        "contact_person", "contact_no", 'address', 'website', 'google_map',
+        'description', "image_tag", "create_at", 'created_by', 'updated_by', 'update_at', "assigned_to"
     )
 
-    # ✅ Correct, complete, and optimized filters
     list_filter = (
-        "status",                     # choice field ✅
-        ("followup_meeting", admin.DateFieldListFilter),  # datetime field ✅
-        "find_form",                  # foreign key ✅
-        "googlemap_status",           # foreign key ✅
-        ("created_by", admin.RelatedOnlyFieldListFilter), # foreign key (user)
-        ("assigned_to", admin.RelatedOnlyFieldListFilter),# staff FK
-        ("category", admin.RelatedOnlyFieldListFilter),   # category FK
-        ("city", admin.RelatedOnlyFieldListFilter),       # city FK
-        ("locality", admin.RelatedOnlyFieldListFilter),   # locality FK
-        ("create_at", admin.DateFieldListFilter),         # datetime ✅
+        "status",
+        ("followup_meeting", admin.DateFieldListFilter),
+        "find_form",
+        "googlemap_status",
+        ("created_by", admin.RelatedOnlyFieldListFilter),
+        ("assigned_to", admin.RelatedOnlyFieldListFilter),
+        ("category", admin.RelatedOnlyFieldListFilter),
+        ("city", admin.RelatedOnlyFieldListFilter),
+        ("locality", admin.RelatedOnlyFieldListFilter),
+        ("create_at", admin.DateFieldListFilter),
     )
 
     search_fields = ("company_name", "contact_person", "contact_no", "city__name", "locality__name")
-    readonly_fields = (
-        "slug", "create_at", "update_at", "image_tag",
-        "created_by_display", "updated_by_display"
-    )
-    # ✅ added new inlines here
-    inlines = [
-        MeetingInline,
-        FollowupInline,
-        CommentInline,
-        VoiceRecordingInline,
-        VisitInline,
-    ]
+    readonly_fields = ("slug", "create_at", "update_at", "image_tag", "created_by_display", "updated_by_display")
+
+    inlines = [MeetingInline, FollowupInline, CommentInline, VoiceRecordingInline, VisitInline]
     ordering = ["-create_at"]
 
     fieldsets = (
@@ -111,26 +118,21 @@ class CompanyAdmin(admin.ModelAdmin):
         }),
         ("Follow Up & Status", {
             "fields": (
-                "status", "followup_meeting",
-                "find_form", "googlemap_status", "assigned_to"
+                "status", "followup_meeting", "find_form", "googlemap_status", "assigned_to"
             )
         }),
         ("Meta Info", {
-            "fields": (
-                "slug", "create_at", "update_at",
-                "created_by_display", "updated_by_display"
-            )
+            "fields": ("slug", "create_at", "update_at", "created_by_display", "updated_by_display")
         }),
     )
 
-    # ✅ Auto-set created_by and updated_by
+    # Auto set user fields
     def save_model(self, request, obj, form, change):
         if not obj.created_by:
             obj.created_by = request.user
         obj.updated_by = request.user
         super().save_model(request, obj, form, change)
 
-    # ✅ Auto-fill for inlines (Meeting, Followup, etc.)
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
         for obj in instances:
@@ -143,7 +145,6 @@ class CompanyAdmin(admin.ModelAdmin):
             obj.save()
         formset.save_m2m()
 
-    # ✅ Custom readonly display fields
     def created_by_display(self, obj):
         if obj.created_by:
             return obj.created_by.get_full_name() or obj.created_by.username
@@ -158,7 +159,7 @@ class CompanyAdmin(admin.ModelAdmin):
 
 
 # ======================================================
-# COMMENT ADMIN
+# OTHER ADMINS (No change needed)
 # ======================================================
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
@@ -172,9 +173,6 @@ class CommentAdmin(admin.ModelAdmin):
     short_comment.short_description = "Comment"
 
 
-# ======================================================
-# VOICE RECORDING ADMIN
-# ======================================================
 @admin.register(VoiceRecording)
 class VoiceRecordingAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "file", "uploaded_by", "uploaded_at")
@@ -183,9 +181,6 @@ class VoiceRecordingAdmin(admin.ModelAdmin):
     ordering = ["-uploaded_at"]
 
 
-# ======================================================
-# VISIT ADMIN
-# ======================================================
 @admin.register(Visit)
 class VisitAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "visit_type", "visit_for", "visit_status", "uploaded_by", "uploaded_at")
@@ -194,9 +189,6 @@ class VisitAdmin(admin.ModelAdmin):
     ordering = ["-uploaded_at"]
 
 
-# ======================================================
-# MEETING ADMIN
-# ======================================================
 @admin.register(Meeting)
 class MeetingAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "status", "meeting_date", "assigned_to", "created_by", "create_at")
@@ -205,9 +197,6 @@ class MeetingAdmin(admin.ModelAdmin):
     ordering = ["-create_at"]
 
 
-# ======================================================
-# FOLLOWUP ADMIN
-# ======================================================
 @admin.register(Followup)
 class FollowupAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "status", "followup_date", "assigned_to", "created_by", "create_at")
@@ -216,9 +205,7 @@ class FollowupAdmin(admin.ModelAdmin):
     ordering = ["-create_at"]
 
 
-# ======================================================
-# OTHER ADMINS (same as before)
-# ======================================================
+@admin.register(Approx)
 class ApproxAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "category", "city", "locality", "create_at")
     search_fields = ("title",)
@@ -226,6 +213,7 @@ class ApproxAdmin(admin.ModelAdmin):
     list_per_page = 30
 
 
+@admin.register(SocialLink)
 class SocialLinkAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "socia_site", "link")
     search_fields = ("link", "company__company_name")
@@ -234,6 +222,7 @@ class SocialLinkAdmin(admin.ModelAdmin):
     autocomplete_fields = ("company",)
 
 
+@admin.register(Error)
 class ErrorAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "title", "error")
     search_fields = ("title", "error", "company__company_name")
@@ -242,6 +231,7 @@ class ErrorAdmin(admin.ModelAdmin):
 
 
 @admin_thumbnails.thumbnail("image")
+@admin.register(Images)
 class ImagesAdmin(admin.ModelAdmin):
     list_display = ("id", "product", "title", "image_thumbnail")
     search_fields = ("title", "product__company_name")
@@ -249,18 +239,9 @@ class ImagesAdmin(admin.ModelAdmin):
     autocomplete_fields = ("product",)
 
 
+@admin.register(Faq)
 class FaqAdmin(admin.ModelAdmin):
     list_display = ("id", "company", "questions")
     search_fields = ("questions", "company__company_name")
     list_per_page = 30
     autocomplete_fields = ("company",)
-
-
-# ======================================================
-# REGISTER ALL MODELS
-# ======================================================
-admin.site.register(Approx, ApproxAdmin)
-admin.site.register(SocialLink, SocialLinkAdmin)
-admin.site.register(Error, ErrorAdmin)
-admin.site.register(Images, ImagesAdmin)
-admin.site.register(Faq, FaqAdmin)

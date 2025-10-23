@@ -30,6 +30,7 @@ class Response(models.Model):
         ("Fake_lead", "Fake Lead"),
         ("Deal_close", "Deal Close"),
     ]
+    
 
     status = models.CharField(
         max_length=25,
