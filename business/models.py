@@ -70,6 +70,14 @@ class Company(models.Model):
         return self.company_name
 
     def save(self, *args, **kwargs):
+        if self.contact_no:
+            self.contact_no = self.contact_no.replace(" ", "")
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"BC{str(self.id).zfill(3)} -- {self.contact_no or 'No Number'}"
+
+    def save(self, *args, **kwargs):
         """Fixed: Save company correctly + auto-slug update."""
         # Step 1: Normal save (always run first)
         super().save(*args, **kwargs)

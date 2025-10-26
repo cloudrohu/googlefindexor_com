@@ -113,11 +113,16 @@ class VoiceRecordingInline(ResponseInfoMixin, admin.TabularInline):
 class ResponseAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     ...
     list_display = (
-        'id', 'contact_no', 'contact_persone', 'business_name',
+        'get_mr_id', 'contact_no', 'contact_persone', 'business_name',
         'business_category', 'get_requirement_types',  # ✅ fixed here
         'status', 'city', 'locality_city', 'assigned_to',
         'create_at', 'created_by', 'update_at', 'updated_by'
     )
+
+    def get_mr_id(self, obj):
+        """Display MR + zero-padded ID."""
+        return f"MR{str(obj.id).zfill(3)}"
+    get_mr_id.short_description = "Response ID"  # 👈 Column header name
 
     def get_requirement_types(self, obj):
         """Display comma-separated requirement types."""
@@ -166,6 +171,10 @@ class ResponseAdmin(AutoUserAdminMixin, admin.ModelAdmin):
         '💬 Comments': 'fas fa-comments',
         '🎤 Voice Recordings': 'fas fa-microphone'
     }
+
+
+
+    
 
 
 # ===========================
