@@ -194,7 +194,7 @@ class CompanyAdmin(AutoUserAdminMixin, admin.ModelAdmin):
         '👣 Visits': 'fas fa-walking'
     }
 
-
+    list_per_page = 20
 # ============================================================
 # Sub Admins
 # ============================================================
@@ -208,6 +208,8 @@ class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     def company_contact(self, obj):
         return obj.company.contact_no if obj.company else None
     company_contact.short_description = "Contact No"
+    list_per_page = 20
+
 
 
 @admin.register(Followup)
@@ -221,6 +223,8 @@ class FollowupAdmin(AutoUserAdminMixin, admin.ModelAdmin):
         return obj.company.contact_no if obj.company else None
     company_contact.short_description = "Contact No"
 
+    list_per_page = 20
+
 
 @admin.register(Comment)
 class CommentAdmin(AutoUserAdminMixin, admin.ModelAdmin):
@@ -231,6 +235,9 @@ class CommentAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     def company_contact(self, obj):
         return obj.company.contact_no if obj.company else None
     company_contact.short_description = "Contact No"
+
+    list_per_page = 20
+
 
 
 @admin.register(VoiceRecording)
