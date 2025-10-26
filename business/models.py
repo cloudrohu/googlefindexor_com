@@ -13,10 +13,6 @@ from utility.models import Find_Form, Call_Status, SocialSite, Googlemap_Status,
 from response.models import Staff
 
 
-
-# ============================================================
-# COMPANY MODEL
-# ============================================================
 class Company(models.Model):
 
     STATUS_CHOICES = [
@@ -32,13 +28,7 @@ class Company(models.Model):
         ("Invalid Number Off", "Invalid Number"),
     ]
 
-    status = models.CharField(
-        max_length=25,
-        choices=STATUS_CHOICES,
-        default="New",
-        verbose_name="Company Status"
-    )
-
+    status = models.CharField(max_length=25, choices=STATUS_CHOICES, default="New", verbose_name="Company Status")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     followup_meeting = models.DateTimeField(null=True, blank=True)
     find_form = models.ForeignKey(Find_Form, on_delete=models.CASCADE, null=True, blank=True)
@@ -49,7 +39,6 @@ class Company(models.Model):
     address = models.CharField(max_length=500, null=True, blank=True)
     contact_no = models.CharField(max_length=255, null=True, blank=True)
     contact_person = models.CharField(max_length=255, null=True, blank=True)
-    
     website = models.CharField(max_length=255, null=True, blank=True)
     google_map = models.CharField(max_length=1000, null=True, blank=True)
     description = models.CharField(max_length=1000, null=True, blank=True)
@@ -67,29 +56,25 @@ class Company(models.Model):
         ordering = ['-create_at']
 
     def __str__(self):
-        return self.company_name
+        return f"BC{str(self.id).zfill(3)} - {self.company_name}"
 
     def save(self, *args, **kwargs):
+        """Clean contact number + auto slug"""
+        # ✅ 1. Remove spaces from contact number
         if self.contact_no:
-            self.contact_no = self.contact_no.replace(" ", "")
+            self.contact_no = self.contact_no.replace(" ", "").strip()
+
+        # ✅ 2. Save object normally
         super().save(*args, **kwargs)
 
-    def __str__(self):
-        return f"BC{str(self.id).zfill(3)} -- {self.contact_no or 'No Number'}"
-
-    def save(self, *args, **kwargs):
-        """Fixed: Save company correctly + auto-slug update."""
-        # Step 1: Normal save (always run first)
-        super().save(*args, **kwargs)
-
-        # Step 2: Generate slug safely (only if needed)
+        # ✅ 3. Generate slug after object has ID
         category_title = self.category.title if self.category else ''
         locality_name = str(self.locality) if self.locality else ''
         city_name = str(self.city) if self.city else ''
         base_slug = slugify(f"{category_title} {self.company_name} {locality_name} {city_name}")
         new_slug = f"{base_slug}-{self.id}"
 
-        # Step 3: Update slug if changed
+        # ✅ 4. Update slug only if changed
         if self.slug != new_slug:
             self.slug = new_slug
             super().save(update_fields=['slug'])
@@ -102,7 +87,6 @@ class Company(models.Model):
             return mark_safe(f'<img src="{self.image.url}" width="50" height="50" />')
         return ""
     image_tag.short_description = 'Image'
-
 
 # ============================================================
 # COMMENT MODEL
