@@ -23,6 +23,7 @@ INSTALLED_APPS = [
 
     'jet.dashboard',  
     'jet',           
+    'rangefilter',
     
     # 2. आपके बाकी Apps
     'adsrepoting.apps.AdsrepotingConfig',

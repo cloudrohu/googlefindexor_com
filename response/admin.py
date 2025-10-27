@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Staff, Response, Meeting, Followup, Comment, VoiceRecording
-
+from rangefilter.filters import DateRangeFilter
 
 # ===========================
 #  Auto Set User Mixin
@@ -184,11 +184,13 @@ class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     list_filter = (
         'status',
         'assigned_to',
-        ('meeting_date', DateFieldListFilter),  # ✅ Date filter enabled
+        ('meeting_date', DateRangeFilter),  # ✅ Custom date range picker
         ('response__city', admin.RelatedOnlyFieldListFilter),
         ('response__locality_city', admin.RelatedOnlyFieldListFilter),
         ('response__business_category', admin.RelatedOnlyFieldListFilter),
     )
+
+    
     search_fields = (
         'response__business_name',
         'response__contact_no',
@@ -236,14 +238,16 @@ class FollowupAdmin(AutoUserAdminMixin, admin.ModelAdmin):
         'response_category', 'response_city', 'response_locality', 'response_requirement_types',
         'status', 'followup_date', 'assigned_to', 'comment', 'create_at'
     )
+    
     list_filter = (
         'status',
         'assigned_to',
-        ('followup_date', DateFieldListFilter),  # ✅ Date filter enabled
+        ('followup_date', DateRangeFilter),  # ✅ Custom date range picker
         ('response__city', admin.RelatedOnlyFieldListFilter),
         ('response__locality_city', admin.RelatedOnlyFieldListFilter),
         ('response__business_category', admin.RelatedOnlyFieldListFilter),
     )
+
     search_fields = (
         'response__business_name',
         'response__contact_no',
