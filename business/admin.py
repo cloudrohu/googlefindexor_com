@@ -146,7 +146,7 @@ class CompanyAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     get_bc_id.short_description = "Company ID"  # 👈 Column header name
 
     list_filter = ('status', 'city', 'assigned_to', 'category','locality','status','followup_meeting',)
-    search_fields = ('company_name', 'contact_person', 'contact_no', 'city__name', 'locality__name')
+    search_fields = ('company_name', 'contact_person', 'contact_no',)
     list_editable = ('status','followup_meeting')
     readonly_fields = ('create_at', 'update_at', 'slug', 'image_tag')
 
