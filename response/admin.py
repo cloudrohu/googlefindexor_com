@@ -177,8 +177,8 @@ from django.contrib.admin import DateFieldListFilter
 @admin.register(Meeting)
 class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     list_display = (
-        'id', 'response', 'response_contact', 'response_business',
-        'response_category', 'response_city', 'response_locality', 'response_requirement_types',
+        'id', 'response','response_business',
+        'response_category',  'response_locality','response_city', 'response_requirement_types',
         'status', 'meeting_date', 'assigned_to', 'comment', 'create_at'
     )
     list_filter = (
@@ -193,9 +193,9 @@ class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     
     search_fields = (
         'response__business_name',
-        'response__contact_no',
-        'response__city',
         'response__locality_city',
+
+        'response__city',
         'response__requirement_types__name',
         'comment'
     )
@@ -234,7 +234,7 @@ class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
 @admin.register(Followup)
 class FollowupAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     list_display = (
-        'id', 'response', 'response_contact', 'response_business',
+        'id', 'response', 'response_business',
         'response_category', 'response_city', 'response_locality', 'response_requirement_types',
         'status', 'followup_date', 'assigned_to', 'comment', 'create_at'
     )
