@@ -200,31 +200,84 @@ class CompanyAdmin(AutoUserAdminMixin, admin.ModelAdmin):
 # ============================================================
 @admin.register(Meeting)
 class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'company', 'company_contact', 'status', 'meeting_date', 'assigned_to', 'create_at')
-    list_filter = ('status', 'assigned_to')
-    search_fields = ('company__company_name', 'comment')
+    list_display = (
+        'id', 'company', 'company_contact',
+        'company_category', 'company_city', 'company_locality', 'company_address',
+        'status', 'meeting_date', 'assigned_to', 'create_at'
+    )
+    list_filter = ('status', 'assigned_to', 'company__city', 'company__category')
+    search_fields = (
+        'company__company_name',
+        'company__contact_no',
+        'company__city',
+        'company__locality',
+        'company__address',
+        'comment'
+    )
     readonly_fields = ('create_at', 'update_at', 'created_by', 'updated_by')
-
-    def company_contact(self, obj):
-        return obj.company.contact_no if obj.company else None
-    company_contact.short_description = "Contact No"
     list_per_page = 20
 
+    # 🔹 Related fields from Company
+    def company_contact(self, obj):
+        return obj.company.contact_no if obj.company else "-"
+    company_contact.short_description = "Contact No"
+
+    def company_category(self, obj):
+        return obj.company.category if obj.company else "-"
+    company_category.short_description = "Category"
+
+    def company_city(self, obj):
+        return obj.company.city if obj.company else "-"
+    company_city.short_description = "City"
+
+    def company_locality(self, obj):
+        return obj.company.locality if obj.company else "-"
+    company_locality.short_description = "Locality"
+
+    def company_address(self, obj):
+        return obj.company.address if obj.company else "-"
+    company_address.short_description = "Address"
 
 
 @admin.register(Followup)
 class FollowupAdmin(AutoUserAdminMixin, admin.ModelAdmin):
-    list_display = ('id', 'company', 'company_contact', 'status', 'followup_date', 'assigned_to', 'create_at')
-    list_filter = ('status', 'assigned_to')
-    search_fields = ('company__company_name', 'comment')
+    list_display = (
+        'id', 'company', 'company_contact',
+        'company_category', 'company_city', 'company_locality', 'company_address',
+        'status', 'followup_date', 'assigned_to', 'create_at'
+    )
+    list_filter = ('status', 'assigned_to', 'company__city', 'company__category')
+    search_fields = (
+        'company__company_name',
+        'company__contact_no',
+        'company__city',
+        'company__locality',
+        'company__address',
+        'comment'
+    )
     readonly_fields = ('create_at', 'update_at', 'created_by', 'updated_by')
-
-    def company_contact(self, obj):
-        return obj.company.contact_no if obj.company else None
-    company_contact.short_description = "Contact No"
-
     list_per_page = 20
 
+    # 🔹 Related fields from Company
+    def company_contact(self, obj):
+        return obj.company.contact_no if obj.company else "-"
+    company_contact.short_description = "Contact No"
+
+    def company_category(self, obj):
+        return obj.company.category if obj.company else "-"
+    company_category.short_description = "Category"
+
+    def company_city(self, obj):
+        return obj.company.city if obj.company else "-"
+    company_city.short_description = "City"
+
+    def company_locality(self, obj):
+        return obj.company.locality if obj.company else "-"
+    company_locality.short_description = "Locality"
+
+    def company_address(self, obj):
+        return obj.company.address if obj.company else "-"
+    company_address.short_description = "Address"
 
 @admin.register(Comment)
 class CommentAdmin(AutoUserAdminMixin, admin.ModelAdmin):

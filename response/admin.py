@@ -174,22 +174,24 @@ class ResponseAdmin(AutoUserAdminMixin, admin.ModelAdmin):
 
 
 
-    
-
-
-# ===========================
-#  Sub Models Admins
-# ===========================
 @admin.register(Meeting)
 class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     list_display = (
         'id', 'response', 'response_contact', 'response_business',
+        'response_category', 'response_locality', 'response_requirement_types',
         'status', 'meeting_date', 'assigned_to', 'create_at'
     )
     list_filter = ('status', 'assigned_to')
-    search_fields = ('response__contact_no', 'response__business_name')
+    search_fields = (
+        'response__contact_no',
+        'response__business_name',
+        'response__business_category',
+        'response__locality_city',
+        'response__requirement_types__name'
+    )
     readonly_fields = ('create_at', 'update_at', 'created_by', 'updated_by')
 
+    # --- Existing ---
     def response_contact(self, obj):
         return obj.response.contact_no if obj.response else None
     response_contact.short_description = "Contact No"
@@ -198,6 +200,20 @@ class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
         return obj.response.business_name if obj.response else None
     response_business.short_description = "Business"
 
+    # --- ✅ New additions ---
+    def response_category(self, obj):
+        return obj.response.business_category if obj.response else None
+    response_category.short_description = "Category"
+
+    def response_locality(self, obj):
+        return obj.response.locality_city if obj.response else None
+    response_locality.short_description = "Locality"
+
+    def response_requirement_types(self, obj):
+        if obj.response and obj.response.requirement_types.exists():
+            return ", ".join([r.name for r in obj.response.requirement_types.all()])
+        return "-"
+    response_requirement_types.short_description = "Requirement Type(s)"
 
 @admin.register(Followup)
 class FollowupAdmin(AutoUserAdminMixin, admin.ModelAdmin):
