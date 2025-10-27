@@ -172,41 +172,54 @@ class ResponseAdmin(AutoUserAdminMixin, admin.ModelAdmin):
         '🎤 Voice Recordings': 'fas fa-microphone'
     }
 
-
+from django.contrib.admin import DateFieldListFilter
 
 @admin.register(Meeting)
 class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     list_display = (
         'id', 'response', 'response_contact', 'response_business',
-        'response_category', 'response_locality', 'response_requirement_types',
-        'status', 'meeting_date', 'assigned_to', 'create_at'
+        'response_category', 'response_city', 'response_locality', 'response_requirement_types',
+        'status', 'meeting_date', 'assigned_to', 'comment', 'create_at'
     )
-    list_filter = ('status', 'assigned_to')
+    list_filter = (
+        'status',
+        'assigned_to',
+        ('meeting_date', DateFieldListFilter),  # ✅ Date filter enabled
+        ('response__city', admin.RelatedOnlyFieldListFilter),
+        ('response__locality_city', admin.RelatedOnlyFieldListFilter),
+        ('response__business_category', admin.RelatedOnlyFieldListFilter),
+    )
     search_fields = (
-        'response__contact_no',
         'response__business_name',
-        'response__business_category',
+        'response__contact_no',
+        'response__city',
         'response__locality_city',
-        'response__requirement_types__name'
+        'response__requirement_types__name',
+        'comment'
     )
     readonly_fields = ('create_at', 'update_at', 'created_by', 'updated_by')
+    list_per_page = 25
+    ordering = ('-create_at',)
 
-    # --- Existing ---
+    # ====== Related Response Fields ======
     def response_contact(self, obj):
-        return obj.response.contact_no if obj.response else None
+        return obj.response.contact_no if obj.response else "-"
     response_contact.short_description = "Contact No"
 
     def response_business(self, obj):
-        return obj.response.business_name if obj.response else None
+        return obj.response.business_name if obj.response else "-"
     response_business.short_description = "Business"
 
-    # --- ✅ New additions ---
     def response_category(self, obj):
-        return obj.response.business_category if obj.response else None
+        return obj.response.business_category if obj.response else "-"
     response_category.short_description = "Category"
 
+    def response_city(self, obj):
+        return obj.response.city if obj.response else "-"
+    response_city.short_description = "City"
+
     def response_locality(self, obj):
-        return obj.response.locality_city if obj.response else None
+        return obj.response.locality_city if obj.response else "-"
     response_locality.short_description = "Locality"
 
     def response_requirement_types(self, obj):
@@ -215,24 +228,60 @@ class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
         return "-"
     response_requirement_types.short_description = "Requirement Type(s)"
 
+
 @admin.register(Followup)
 class FollowupAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     list_display = (
         'id', 'response', 'response_contact', 'response_business',
-        'status', 'followup_date', 'assigned_to', 'create_at'
+        'response_category', 'response_city', 'response_locality', 'response_requirement_types',
+        'status', 'followup_date', 'assigned_to', 'comment', 'create_at'
     )
-    list_filter = ('status', 'assigned_to')
-    search_fields = ('response__contact_no', 'response__business_name')
+    list_filter = (
+        'status',
+        'assigned_to',
+        ('followup_date', DateFieldListFilter),  # ✅ Date filter enabled
+        ('response__city', admin.RelatedOnlyFieldListFilter),
+        ('response__locality_city', admin.RelatedOnlyFieldListFilter),
+        ('response__business_category', admin.RelatedOnlyFieldListFilter),
+    )
+    search_fields = (
+        'response__business_name',
+        'response__contact_no',
+        'response__city',
+        'response__locality_city',
+        'response__requirement_types__name',
+        'comment'
+    )
     readonly_fields = ('create_at', 'update_at', 'created_by', 'updated_by')
+    list_per_page = 25
+    ordering = ('-create_at',)
 
+    # ====== Related Response Fields ======
     def response_contact(self, obj):
-        return obj.response.contact_no if obj.response else None
+        return obj.response.contact_no if obj.response else "-"
     response_contact.short_description = "Contact No"
 
     def response_business(self, obj):
-        return obj.response.business_name if obj.response else None
+        return obj.response.business_name if obj.response else "-"
     response_business.short_description = "Business"
 
+    def response_category(self, obj):
+        return obj.response.business_category if obj.response else "-"
+    response_category.short_description = "Category"
+
+    def response_city(self, obj):
+        return obj.response.city if obj.response else "-"
+    response_city.short_description = "City"
+
+    def response_locality(self, obj):
+        return obj.response.locality_city if obj.response else "-"
+    response_locality.short_description = "Locality"
+
+    def response_requirement_types(self, obj):
+        if obj.response and obj.response.requirement_types.exists():
+            return ", ".join([r.name for r in obj.response.requirement_types.all()])
+        return "-"
+    response_requirement_types.short_description = "Requirement Type(s)"
 
 @admin.register(Comment)
 class CommentAdmin(AutoUserAdminMixin, admin.ModelAdmin):
