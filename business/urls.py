@@ -1,3 +1,4 @@
+
 from django.urls import path
 from . import views
 
@@ -14,4 +15,12 @@ urlpatterns = [
     path('<int:pk>/ajax/add-voice/', views.ajax_add_voice, name='company_ajax_add_voice'),
     path('<int:pk>/ajax/update-status/', views.ajax_update_status, name='company_ajax_update_status'),
     path('<int:pk>/ajax/add-visit/', views.ajax_add_visit, name='company_ajax_add_visit'),
+
+
+    # 📅 COMPANY MEETINGS
+    path('company/meetings/', views.CompanyMeetingListView.as_view(), name='company_meetings'),
+
+
+
 ]
+

@@ -231,10 +231,9 @@
   {% for m in meetings %}
   <div class="card mb-3 shadow-sm">
     <div class="card-body p-2 small">
-      <h6>🗓 Meeting #{{ m.id }}</h6>
+      <h6>🗓 #{{ m.id }} Meeting --  <strong>{{ m.meeting_date|date:"d M Y H:i" }}</strong></h6>
       <strong>Status:</strong> {{ m.status }}<br>
       {% if m.meeting_date %}
-        <strong>Date:</strong> {{ m.meeting_date|date:"d M Y H:i" }}<br>
       {% endif %}
       {% if m.comment %}
         <strong>Comment:</strong> {{ m.comment }}<br>
@@ -250,6 +249,7 @@
         <strong>Business:</strong> {{ m.response.business_name|default:"-" }}<br>
         <strong>Person:</strong> {{ m.response.contact_persone|default:"-" }}<br>
         <strong>Phone:</strong> {{ m.response.contact_no|default:"-" }}<br>
+        <strong>Locality:</strong> {{ m.response.locality_city|default:"-" }}<br>
         <strong>City:</strong> {{ m.response.city|default:"-" }}<br>
         <strong>Category:</strong> {{ m.response.business_category|default:"-" }}<br>
         <strong>Req:</strong>

@@ -184,9 +184,6 @@ class VoiceRecording(models.Model):
     def __str__(self):
         return f"Voice Recording for {self.company} ({self.uploaded_at.strftime('%d-%m-%Y %H:%M')})"
 
-
-
-
 class Visit(models.Model):
     VISIT_FOR_CHOICES = [
         ("Telling Meeting", "Telling Meeting"),
@@ -261,7 +258,6 @@ class Visit(models.Model):
 
     def __str__(self):
         return f"{self.company.company_name} - {self.visit_type} ({self.visit_status})"
-
 
 # ============================================================
 # APPROX MODEL

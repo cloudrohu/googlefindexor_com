@@ -17,8 +17,6 @@ from utility.models import City, Locality,  Category
 
 
 
-
-
 import os
 
 from .models import Response, Meeting, Followup, Comment, VoiceRecording

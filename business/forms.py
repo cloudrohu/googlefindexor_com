@@ -1,5 +1,5 @@
 from django import forms
-from .models import Company, Comment, VoiceRecording, Visit
+from .models import Company, Comment, VoiceRecording, Visit,Meeting
 
 
 class CompanyForm(forms.ModelForm):
@@ -24,3 +24,16 @@ class VisitForm(forms.ModelForm):
     class Meta:
         model = Visit
         fields = ['company', 'visit_for', 'visit_type', 'visit_status', 'comment']
+
+
+
+class MeetingForm(forms.ModelForm):
+    class Meta:
+        model = Meeting
+        fields = ['status', 'meeting_date', 'assigned_to', 'comment']
+        widgets = {
+            'meeting_date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
+            'assigned_to': forms.Select(attrs={'class': 'form-control'}),
+            'comment': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Meeting comment'}),
+        }

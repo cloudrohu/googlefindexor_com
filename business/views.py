@@ -12,8 +12,16 @@ from django.contrib.auth.models import User
 from django.core.files import File
 import os
 
+from datetime import datetime
+from .forms import MeetingForm
+from django.utils.timezone import now
+
+
+
 # 🎯 Import models and forms
-from .models import Company, Comment, VoiceRecording, Visit
+from .models import Company, Comment, VoiceRecording, Visit, Meeting
+from response.models import Staff
+
 from .forms import CompanyForm, CommentForm, VoiceRecordingForm, VisitForm
 from utility.models import (
     Find_Form, Call_Status, SocialSite,
@@ -271,3 +279,122 @@ def ajax_add_visit(request, pk):
             'uploaded_at': visit.uploaded_at.strftime('%d %b %Y %H:%M')
         })
     return JsonResponse({'success': False, 'errors': form.errors})
+
+
+
+# =================================================================
+# 📅 COMPANY MEETING VIEW (Full Filter + Table)
+# =================================================================
+from datetime import datetime
+
+class CompanyMeetingListView(LoginRequiredMixin, ListView):
+    model = Meeting
+    template_name = 'dashboard/meeting/company_meeting_list.html'
+    context_object_name = 'meetings'
+    paginate_by = 20
+    ordering = ['-create_at']
+
+    def get_queryset(self):
+        qs = (
+            Meeting.objects.select_related(
+                'company', 'company__city', 'company__locality',
+                'company__category', 'assigned_to'
+            )
+            .order_by('-create_at')
+        )
+
+        # --- Filters ---
+        date_from = self.request.GET.get('date_from')
+        date_to = self.request.GET.get('date_to')
+        city = self.request.GET.get('city')
+        locality = self.request.GET.get('locality')
+        status = self.request.GET.get('status')
+        assigned = self.request.GET.get('assigned_to')
+        category = self.request.GET.get('category')
+
+        if date_from:
+            try:
+                qs = qs.filter(meeting_date__date__gte=datetime.strptime(date_from, "%Y-%m-%d"))
+            except ValueError:
+                pass
+        if date_to:
+            try:
+                qs = qs.filter(meeting_date__date__lte=datetime.strptime(date_to, "%Y-%m-%d"))
+            except ValueError:
+                pass
+        if city:
+            qs = qs.filter(company__city_id=city)
+        if locality:
+            qs = qs.filter(company__locality_id=locality)
+        if status:
+            qs = qs.filter(status=status)
+        if assigned:
+            qs = qs.filter(assigned_to_id=assigned)
+        if category:
+            qs = qs.filter(company__category_id=category)
+
+        return qs.distinct()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['cities'] = City.objects.all()
+        ctx['localities'] = Locality.objects.all()
+        ctx['staff_list'] = Staff.objects.all()
+        ctx['categories'] = Category.objects.all()
+        ctx['statuses'] = [s[0] for s in Meeting.MEETING_STATUS_CHOICES]
+        return ctx
+
+    model = Meeting
+    template_name = 'business/company_meeting_list.html'
+    context_object_name = 'meetings'
+    paginate_by = 20
+    ordering = ['-create_at']
+
+    def get_queryset(self):
+        qs = (
+            Meeting.objects.select_related(
+                'company', 'company__city', 'company__locality', 'company__category', 'assigned_to'
+            ).order_by('-create_at')
+        )
+
+        # --- Filters ---
+        date_from = self.request.GET.get('date_from')
+        date_to = self.request.GET.get('date_to')
+        city = self.request.GET.get('city')
+        locality = self.request.GET.get('locality')
+        status = self.request.GET.get('status')
+        assigned = self.request.GET.get('assigned_to')
+        category = self.request.GET.get('category')
+
+        if date_from:
+            try:
+                qs = qs.filter(meeting_date__date__gte=datetime.strptime(date_from, "%Y-%m-%d"))
+            except ValueError:
+                pass
+        if date_to:
+            try:
+                qs = qs.filter(meeting_date__date__lte=datetime.strptime(date_to, "%Y-%m-%d"))
+            except ValueError:
+                pass
+
+        if city:
+            qs = qs.filter(company__city_id=city)
+        if locality:
+            qs = qs.filter(company__locality_id=locality)
+        if status:
+            qs = qs.filter(status=status)
+        if assigned:
+            qs = qs.filter(assigned_to_id=assigned)
+        if category:
+            qs = qs.filter(company__category_id=category)
+
+        return qs.distinct()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['cities'] = City.objects.all()
+        ctx['localities'] = Locality.objects.all()
+        ctx['staff_list'] = Staff.objects.all()
+        ctx['categories'] = Category.objects.all()
+        ctx['statuses'] = [s[0] for s in Meeting.MEETING_STATUS_CHOICES]
+        return ctx
