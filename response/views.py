@@ -10,6 +10,14 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.core.files import File
+from django.db.models import Q
+from datetime import datetime
+from .models import Meeting, City, Locality, Staff, Category, RequirementType
+from utility.models import City, Locality,  Category
+
+
+
+
 
 import os
 
@@ -151,13 +159,68 @@ class ResponseDeleteView(LoginRequiredMixin, DeleteView):
 # =================================================================
 #                       MEETING VIEWS
 # =================================================================
-
 class MeetingListView(LoginRequiredMixin, ListView):
     model = Meeting
-    template_name = 'dashboard/meeting/meeting_list.html'
+    template_name = 'dashboard/meeting/response_meeting_list.html'
     context_object_name = 'meetings'
     paginate_by = 20
+    ordering = ['-create_at']
 
+    def get_queryset(self):
+        qs = (
+            Meeting.objects.select_related(
+                'response', 'response__city', 'response__locality_city',
+                'response__business_category', 'assigned_to'
+            )
+            .prefetch_related('response__requirement_types')
+            .order_by('-create_at')
+        )
+
+        # --- Filters ---
+        date_from = self.request.GET.get('date_from')
+        date_to = self.request.GET.get('date_to')
+        city = self.request.GET.get('city')
+        locality = self.request.GET.get('locality')
+        status = self.request.GET.get('status')
+        assigned = self.request.GET.get('assigned_to')
+        category = self.request.GET.get('category')
+        requirement = self.request.GET.get('requirement')
+
+        if date_from:
+            try:
+                qs = qs.filter(meeting_date__date__gte=datetime.strptime(date_from, "%Y-%m-%d"))
+            except ValueError:
+                pass
+        if date_to:
+            try:
+                qs = qs.filter(meeting_date__date__lte=datetime.strptime(date_to, "%Y-%m-%d"))
+            except ValueError:
+                pass
+
+        if city:
+            qs = qs.filter(response__city_id=city)
+        if locality:
+            qs = qs.filter(response__locality_city_id=locality)
+        if status:
+            qs = qs.filter(status=status)
+        if assigned:
+            qs = qs.filter(assigned_to_id=assigned)
+        if category:
+            qs = qs.filter(response__business_category_id=category)
+        if requirement:
+            qs = qs.filter(response__requirement_types__id=requirement)
+
+        return qs.distinct()
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['cities'] = City.objects.all()
+        ctx['localities'] = Locality.objects.all()
+        ctx['staff_list'] = Staff.objects.all()
+        ctx['categories'] = Category.objects.all()
+        ctx['requirements'] = RequirementType.objects.all()
+        ctx['statuses'] = [s[0] for s in Meeting.MEETING_STATUS_CHOICES]
+        return ctx
 
 class MeetingCreateView(LoginRequiredMixin, CreateView):
     model = Meeting
