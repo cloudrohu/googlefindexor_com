@@ -2,7 +2,85 @@
 {% block title %}All Companies{% endblock %}
 {% load static %}
 {% block content %}
-<h4 class="mb-3">All Companies</h4>
+
+<!-- 🔍 FILTER BAR -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+
+  <!-- 🔹 Title with Count -->
+  <h4 class="mb-2 d-flex align-items-center" style="gap:8px;">
+    <span>All Companies</span>
+    <span class="text-muted">—</span>
+    <span class="badge bg-primary" style="font-size:0.9rem;">
+      {{ page_obj.paginator.count }}
+    </span>
+  </h4>
+
+  <!-- 🔹 Filters -->
+  <form method="get" class="d-flex flex-wrap align-items-center gap-2">
+    <!-- Category -->
+    <select name="category" class="form-select form-select-sm" style="min-width:130px;">
+      <option value="">All Categories</option>
+      {% for cat in categories %}
+        <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.title }}</option>
+      {% endfor %}
+    </select>
+
+    <!-- Status -->
+    <select name="status" class="form-select form-select-sm" style="min-width:130px;">
+      <option value="">All Status</option>
+      {% if companies %}
+        {% for key, label in companies.first.STATUS_CHOICES %}
+          <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      {% endif %}
+    </select>
+
+   <!-- City -->
+<select name="city" class="form-select form-select-sm" style="min-width:130px;">
+  <option value="">All Cities</option>
+  {% for city in cities %}
+    <option value="{{ city.id }}" {% if request.GET.city == city.id|stringformat:"s" %}selected{% endif %}>
+      {{ city.title|default_if_none:"" }}
+    </option>
+  {% endfor %}
+</select>
+
+<!-- Locality -->
+<select name="locality" class="form-select form-select-sm" style="min-width:130px;">
+  <option value="">All Localities</option>
+  {% for loc in localities %}
+    <option value="{{ loc.id }}" {% if request.GET.locality == loc.id|stringformat:"s" %}selected{% endif %}>
+      {{ loc.title|default_if_none:"" }}
+    </option>
+  {% endfor %}
+</select>
+
+
+    <!-- Created By -->
+    <select name="created_by" class="form-select form-select-sm" style="min-width:130px;">
+      <option value="">All Users</option>
+      {% for user in users %}
+        <option value="{{ user.id }}" {% if request.GET.created_by == user.id|stringformat:"s" %}selected{% endif %}>{{ user.username }}</option>
+      {% endfor %}
+    </select>
+
+    <!-- Follow-up Date Range -->
+    <input type="date" name="followup_from" value="{{ request.GET.followup_from }}" class="form-control form-control-sm" style="min-width:140px;">
+    <input type="date" name="followup_to" value="{{ request.GET.followup_to }}" class="form-control form-control-sm" style="min-width:140px;">
+
+    <!-- Buttons -->
+    <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+    <a href="{% url 'company_list' %}" class="btn btn-sm btn-secondary">Reset</a>
+  </form>
+</div>
+
+
+<h4 class="mb-3 d-flex align-items-center">
+  All Companies&nbsp;&nbsp;—&nbsp;&nbsp;
+  <span class="badge bg-primary" style="font-size:0.9rem; padding:0.4em 0.7em;">
+    {{ page_obj.paginator.count }}
+  </span>
+</h4>
 
 <!-- 🖥 DESKTOP TABLE -->
 <div class="table-responsive d-none d-md-block">
@@ -11,10 +89,17 @@
       <tr>
         <th>ID</th>
         <th>Company</th>
+        <th>Category</th>
         <th>Person</th>
         <th>Phone</th>
         <th>Status</th>
-        <th>City</th>
+        <th>Locality</th>
+        <th>Address</th>
+        <th>Follow-up / Meeting</th>
+        <th>Created By</th>
+        <th>Updated By</th>
+        <th>Created</th>
+        <th>Updated</th>
         <th style="min-width:300px;">Comments / Voice</th>
       </tr>
     </thead>
@@ -34,10 +119,16 @@
           </div>
         </td>
 
+        <!-- 🏷 Category -->
+        <td>{{ c.category.title|default:"-" }}</td>
+
+        <!-- 👤 Contact Person -->
         <td>{{ c.contact_person|default:"-" }}</td>
+
+        <!-- 📞 Phone -->
         <td>{{ c.contact_no|default:"-" }}</td>
 
-        <!-- ⚡ STATUS DROPDOWN -->
+        <!-- ⚡ STATUS -->
         <td>
           <select class="form-control form-control-sm status-select" data-id="{{ c.id }}">
             {% for key, label in c.STATUS_CHOICES %}
@@ -46,10 +137,31 @@
           </select>
         </td>
 
-        <td>{{ c.city|default:"-" }}</td>
+        <!-- 📍 Locality -->
+        <td>{{ c.locality|default:"-" }}</td>
 
+        <!-- 🏠 Address -->
+        <td class="text-muted small">{{ c.address|default:"-" }}</td>
+
+        <!-- 📅 Follow-up / Meeting -->
         <td>
-          <!-- 💬 Show only latest comment -->
+          {% if c.followup_meeting %}
+            {{ c.followup_meeting|date:"d M Y H:i" }}
+          {% else %}
+            <span class="text-muted small">No schedule</span>
+          {% endif %}
+        </td>
+
+        <!-- 👩‍💼 Created & Updated -->
+        <td>{{ c.created_by|default:"-" }}</td>
+        <td>{{ c.updated_by|default:"-" }}</td>
+
+        <!-- 🕒 Dates -->
+        <td>{{ c.create_at|date:"d M Y H:i" }}</td>
+        <td>{{ c.update_at|date:"d M Y H:i" }}</td>
+
+        <!-- 💬 Comments / Voice -->
+        <td>
           {% with latest_comment=c.comments.last %}
           {% if latest_comment %}
             <div class="small text-muted border-bottom py-1">
@@ -74,33 +186,33 @@
             </div>
           </form>
 
-          <!-- 🎤 Voice Recordings (Only Latest One) -->
+          <!-- 🎤 Voice -->
           <div id="voiceList{{ c.id }}" class="mt-1">
-          {% with latest_voice=c.voice_recordings.last %}
+            {% with latest_voice=c.voice_recordings.last %}
               {% if latest_voice %}
               <div class="mb-1" id="latest-voice-{{ c.id }}">
                   <audio controls preload="none" class="w-100">
-                  <source src="{{ latest_voice.file.url }}" type="audio/mpeg">
+                    <source src="{{ latest_voice.file.url }}" type="audio/mpeg">
                   </audio>
                   <div class="text-muted small">
-                  {{ latest_voice.uploaded_at|date:"d M Y H:i" }} — {{ latest_voice.uploaded_by|default:"User" }}
+                    {{ latest_voice.uploaded_at|date:"d M Y H:i" }} — {{ latest_voice.uploaded_by|default:"User" }}
                   </div>
               </div>
               {% else %}
               <div class="text-muted small">No voice yet.</div>
               {% endif %}
-          {% endwith %}
+            {% endwith %}
           </div>
 
           <!-- 📤 Upload Voice -->
           <form class="voiceForm mt-1" data-id="{{ c.id }}" enctype="multipart/form-data">
-          {% csrf_token %}
-          <div class="input-group input-group-sm">
+            {% csrf_token %}
+            <div class="input-group input-group-sm">
               <input type="file" name="file" accept="audio/*" class="form-control p-1">
               <div class="input-group-append">
-              <button class="btn btn-success btn-sm" type="submit">🎤</button>
+                <button class="btn btn-success btn-sm" type="submit">🎤</button>
               </div>
-          </div>
+            </div>
           </form>
         </td>
       </tr>
@@ -109,13 +221,13 @@
   </table>
 </div>
 
-<!-- 📱 MOBILE CARD VIEW -->
+<!-- 📱 MOBILE CARD VIEW (FULL VERSION WITH ALL FIELDS) -->
 <div class="d-md-none">
   {% for c in companies %}
-  <div class="card mb-3 shadow-sm">
+  <div class="card mb-3 shadow-sm border-0" style="border-left: 4px solid #007bff;">
     <div class="card-body p-2">
 
-      <!-- 🖼 Company Thumbnail + Name (Mobile) -->
+      <!-- 🖼 Company Thumbnail + Name -->
       <div class="d-flex align-items-center mb-2">
         <img src="{% if c.image %}{{ c.image.url }}{% else %}{% static 'images/no-image.png' %}{% endif %}"
              alt="{{ c.company_name }}"
@@ -123,12 +235,15 @@
              style="width:40px; height:40px; object-fit:cover; border:1px solid #ddd;">
         <div>
           <strong>{{ c.company_name|default:"-" }}</strong><br>
-          <span class="text-muted small">{{ c.city|default:"-" }}</span>
+          <span class="text-muted small">{{ c.locality|default:"-" }}, {{ c.city|default:"-" }}</span>
         </div>
       </div>
-
-      <!-- ⚡ STATUS DROPDOWN (MOBILE) -->
-      <div class="d-flex justify-content-between mb-1">
+      <!-- 📋 DETAILS -->
+      <div class="small text-muted mb-2">
+        <div><strong>Category:</strong> {{ c.category.title|default:"-" }}</div>
+      </div>  
+      <!-- ⚡ STATUS -->
+      <div class="d-flex justify-content-between mb-2">
         <strong>CO{{ c.id|stringformat:"03d" }}</strong>
         <select class="form-control form-control-sm status-select" data-id="{{ c.id }}">
           {% for key, label in c.STATUS_CHOICES %}
@@ -136,13 +251,30 @@
           {% endfor %}
         </select>
       </div>
+      
+          <span class="text-muted small">{{ c.address|default:"-" }}</span>
 
-      <div class="small text-muted">
+      <br><br>
+      <!-- 📋 DETAILS -->
+      <div class="small text-muted mb-2">
         <div><strong>Person:</strong> {{ c.contact_person|default:"-" }}</div>
         <div><strong>Phone:</strong> {{ c.contact_no|default:"-" }}</div>
+
+        <div><strong>Follow-up:</strong>
+          {% if c.followup_meeting %}
+            {{ c.followup_meeting|date:"d M Y H:i" }}
+          {% else %}
+            <span class="text-muted small">No schedule</span>
+          {% endif %}
+        </div>
+
+        <hr class="my-1">
+
+        <div><strong>Created:</strong> {{ c.create_at|date:"d M Y H:i" }}/{{ c.created_by|default:"-" }} </div>
+        <div><strong>Updated:</strong> {{ c.update_at|date:"d M Y H:i" }}/{{ c.updated_by|default:"-" }}</div>
       </div>
 
-      <!-- 💬 Comments -->
+      <!-- 💬 COMMENTS -->
       <div id="commentList{{ c.id }}_mobile" class="mt-2">
         {% for comment in c.comments.all %}
         <div class="small text-muted border-bottom py-1">
@@ -156,7 +288,7 @@
         {% endfor %}
       </div>
 
-      <!-- ➕ Add Comment -->
+      <!-- ➕ ADD COMMENT -->
       <form class="commentForm mt-1" data-id="{{ c.id }}">
         {% csrf_token %}
         <div class="input-group input-group-sm">
@@ -167,8 +299,8 @@
         </div>
       </form>
 
-      <!-- 🎤 Voice -->
-      <div id="voiceList{{ c.id }}" class="mt-1">
+      <!-- 🎤 VOICE SECTION -->
+      <div id="voiceList{{ c.id }}" class="mt-2">
         {% with latest_voice=c.voice_recordings.last %}
           {% if latest_voice %}
             <div class="mb-1" id="latest-voice-{{ c.id }}">
@@ -185,7 +317,7 @@
         {% endwith %}
       </div>
 
-      <!-- 📤 Upload Voice -->
+      <!-- 📤 UPLOAD VOICE -->
       <form class="voiceForm mt-1" data-id="{{ c.id }}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="input-group input-group-sm">
@@ -195,10 +327,14 @@
           </div>
         </div>
       </form>
+
     </div>
   </div>
   {% endfor %}
 </div>
+
+
+
 
 {% if is_paginated %}
 <nav aria-label="Page navigation" class="mt-3">

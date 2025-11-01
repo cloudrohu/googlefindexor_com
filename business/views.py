@@ -7,30 +7,76 @@ from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.utils.dateparse import parse_date
+from django.contrib.auth.models import User
+from django.core.files import File
+import os
 
+# 🎯 Import models and forms
 from .models import Company, Comment, VoiceRecording, Visit
 from .forms import CompanyForm, CommentForm, VoiceRecordingForm, VisitForm
-
-# Optional audio compression
-import os
-from django.core.files import File
-
+from utility.models import (
+    Find_Form, Call_Status, SocialSite,
+    Googlemap_Status, City, Locality, Category
+)
 
 # =====================================================
-# 📄 COMPANY LIST VIEW  (Business List)
+# 📄 COMPANY LIST VIEW (with Filters)
 # =====================================================
 class CompanyListView(LoginRequiredMixin, ListView):
     model = Company
     template_name = 'business/company_list.html'
     context_object_name = 'companies'
-    paginate_by = 5
+    paginate_by = 10
 
     def get_queryset(self):
-        return Company.objects.select_related('city', 'locality', 'category').order_by('-create_at')
+        qs = Company.objects.select_related('city', 'locality', 'category').order_by('-create_at')
+
+        # 🔍 Filters
+        category = self.request.GET.get('category')
+        status = self.request.GET.get('status')
+        city = self.request.GET.get('city')
+        locality = self.request.GET.get('locality')
+        created_by = self.request.GET.get('created_by')
+        followup_from = self.request.GET.get('followup_from')
+        followup_to = self.request.GET.get('followup_to')
+
+        if category:
+            qs = qs.filter(category_id=category)
+        if status:
+            qs = qs.filter(status=status)
+        if city:
+            qs = qs.filter(city_id=city)
+        if locality:
+            qs = qs.filter(locality_id=locality)
+        if created_by:
+            qs = qs.filter(created_by_id=created_by)
+        if followup_from:
+            qs = qs.filter(followup_meeting__date__gte=parse_date(followup_from))
+        if followup_to:
+            qs = qs.filter(followup_meeting__date__lte=parse_date(followup_to))
+
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # 🧩 City/Locality sorted alphabetically (fix for missing dropdown items)
+        context['categories'] = Category.objects.all().order_by('title')
+        context['cities'] = City.objects.all().order_by('title')
+        context['localities'] = Locality.objects.all().order_by('title')
+        context['users'] = User.objects.all().order_by('username')
+
+        # Preserve filters during pagination
+        context['querystring'] = "&".join(
+            [f"{k}={v}" for k, v in self.request.GET.items() if k != 'page']
+        )
+
+        return context
 
 
 # =====================================================
-# 📄 COMPANY STATUS FILTER VIEW (optional like response/status/<status>/)
+# 📄 COMPANY STATUS FILTER VIEW (optional: /status/<status>/)
 # =====================================================
 class CompanyStatusListView(LoginRequiredMixin, ListView):
     model = Company
@@ -40,7 +86,11 @@ class CompanyStatusListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         status = self.kwargs.get('status')
-        return Company.objects.filter(status=status).select_related('city', 'locality', 'category').order_by('-create_at')
+        return (
+            Company.objects.filter(status=status)
+            .select_related('city', 'locality', 'category')
+            .order_by('-create_at')
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -154,6 +204,7 @@ def ajax_add_voice(request, pk):
     compressed_path = original_path.rsplit('.', 1)[0] + "_compressed.mp3"
 
     try:
+        from pydub import AudioSegment
         audio = AudioSegment.from_file(original_path)
         audio = audio.set_frame_rate(22050).set_channels(1)
         audio.export(compressed_path, format="mp3", bitrate="64k")
