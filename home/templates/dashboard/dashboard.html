@@ -1,55 +1,215 @@
 {% extends 'dashboard/base.html' %}
-
 {% block title %}Dashboard - My Project{% endblock %}
-
 {% block content %}
-<div class="row">
-  <div class="col-lg-3 col-6">
-    <div class="small-box bg-info">
-      <div class="inner">
-        <h3>150</h3>
-        <p>New Orders</p>
-      </div>
-      <div class="icon">
-        <i class="ion ion-bag"></i>
-      </div>
-    </div>
-  </div>
 
-  <div class="col-lg-3 col-6">
-    <div class="small-box bg-success">
-      <div class="inner">
-        <h3>53<sup style="font-size: 20px">%</sup></h3>
-        <p>Bounce Rate</p>
-      </div>
-      <div class="icon">
-        <i class="ion ion-stats-bars"></i>
-      </div>
-    </div>
-  </div>
+<!-- 🏢 COMPANY MEETINGS SECTION -->
+<div class="section-header mt-3 mb-3">
+  <h4 class="text-primary fw-bold border-bottom pb-2 text-center text-md-start">🏢 Company Meetings Overview</h4>
+</div>
 
-  <div class="col-lg-3 col-6">
-    <div class="small-box bg-warning">
-      <div class="inner">
-        <h3>44</h3>
-        <p>User Registrations</p>
+<div class="row text-center text-md-start">
+  <div class="col-12 col-sm-6 col-lg-3 mb-3">
+    <a href="{% url 'company_meetings' %}">
+      <div class="small-box bg-info rounded-3 p-3 shadow-sm">
+        <div class="inner">
+          <h3 class="fs-2 fw-bold">{{ total_company_meetings }}</h3>
+          <p class="mb-0 fw-semibold">Total Company Meetings</p>
+        </div>
+        <div class="icon"><i class="ion ion-bag fs-3 opacity-75"></i></div>
       </div>
-      <div class="icon">
-        <i class="ion ion-person-add"></i>
-      </div>
-    </div>
+    </a>
   </div>
+</div>
 
-  <div class="col-lg-3 col-6">
-    <div class="small-box bg-danger">
-      <div class="inner">
-        <h3>65</h3>
-        <p>Unique Visitors</p>
-      </div>
-      <div class="icon">
-        <i class="ion ion-pie-graph"></i>
-      </div>
+<!-- 📅 COMPANY MEETING MANAGEMENT -->
+<div class="mt-4">
+  <h5 class="fw-bold text-primary border-bottom pb-2 text-center text-md-start">Company Meetings - Management</h5>
+
+  <div class="row g-3 mt-2">
+    <!-- ❌ Not Managed -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{% url 'company_meeting_list' 'not-managed' %}" class="text-decoration-none text-dark">
+        <div class="card border-danger shadow-sm hover-shadow h-100">
+          <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+            <span>❌ Not Managed</span>
+            <span class="badge bg-light text-danger">{{ company_not_managed|length }}</span>
+          </div>
+          <div class="card-body small">
+            {% for m in company_not_managed %}
+              <p class="mb-1">{{ m.company.company_name }} — {{ m.meeting_date|date:"d M" }}</p>
+            {% empty %}
+              <p class="text-muted">No Not Managed Meetings</p>
+            {% endfor %}
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- 📅 Today -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{% url 'company_meeting_list' 'today' %}" class="text-decoration-none text-dark">
+        <div class="card border-primary shadow-sm hover-shadow h-100">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span>📅 Today</span>
+            <span class="badge bg-light text-primary">{{ company_today|length }}</span>
+          </div>
+          <div class="card-body small">
+            {% for m in company_today %}
+              <p class="mb-1">{{ m.company.company_name }} — {{ m.meeting_date|time:"H:i" }}</p>
+            {% empty %}
+              <p class="text-muted">No Meetings Today</p>
+            {% endfor %}
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- 🌤️ Tomorrow -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{% url 'company_meeting_list' 'tomorrow' %}" class="text-decoration-none text-dark">
+        <div class="card border-info shadow-sm hover-shadow h-100">
+          <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <span>🌤️ Tomorrow</span>
+            <span class="badge bg-light text-info">{{ company_tomorrow|length }}</span>
+          </div>
+          <div class="card-body small">
+            {% for m in company_tomorrow %}
+              <p class="mb-1">{{ m.company.company_name }} — {{ m.meeting_date|date:"d M" }}</p>
+            {% empty %}
+              <p class="text-muted">No Meetings Tomorrow</p>
+            {% endfor %}
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- 🚀 Upcoming -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{% url 'company_meeting_list' 'upcoming' %}" class="text-decoration-none text-dark">
+        <div class="card border-success shadow-sm hover-shadow h-100">
+          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <span>🚀 Upcoming</span>
+            <span class="badge bg-light text-success">{{ company_upcoming|length }}</span>
+          </div>
+          <div class="card-body small">
+            {% for m in company_upcoming %}
+              <p class="mb-1">{{ m.company.company_name }} — {{ m.meeting_date|date:"d M" }}</p>
+            {% empty %}
+              <p class="text-muted">No Upcoming Meetings</p>
+            {% endfor %}
+          </div>
+        </div>
+      </a>
     </div>
   </div>
 </div>
+
+<!-- 📊 RESPONSE MEETINGS MANAGEMENT -->
+<div class="mt-5">
+  <h5 class="fw-bold text-success border-bottom pb-2 text-center text-md-start">Response Meetings - Management</h5>
+
+  <div class="row g-3 mt-2">
+    <!-- ❌ Not Managed -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{% url 'response_meeting_list' 'not-managed' %}" class="text-decoration-none text-dark">
+        <div class="card border-danger shadow-sm hover-shadow h-100">
+          <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+            <span>❌ Not Managed</span>
+            <span class="badge bg-light text-danger">{{ response_not_managed|length }}</span>
+          </div>
+          <div class="card-body small">
+            {% for m in response_not_managed %}
+              <p class="mb-1">{{ m.response.business_name }} — {{ m.meeting_date|date:"d M" }}</p>
+            {% empty %}
+              <p class="text-muted">No Not Managed Meetings</p>
+            {% endfor %}
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- 📅 Today -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{% url 'response_meeting_list' 'today' %}" class="text-decoration-none text-dark">
+        <div class="card border-primary shadow-sm hover-shadow h-100">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span>📅 Today</span>
+            <span class="badge bg-light text-primary">{{ response_today|length }}</span>
+          </div>
+          <div class="card-body small">
+            {% for m in response_today %}
+              <p class="mb-1">{{ m.response.business_name }} — {{ m.meeting_date|time:"H:i" }}</p>
+            {% empty %}
+              <p class="text-muted">No Meetings Today</p>
+            {% endfor %}
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- 🌤️ Tomorrow -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{% url 'response_meeting_list' 'tomorrow' %}" class="text-decoration-none text-dark">
+        <div class="card border-info shadow-sm hover-shadow h-100">
+          <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <span>🌤️ Tomorrow</span>
+            <span class="badge bg-light text-info">{{ response_tomorrow|length }}</span>
+          </div>
+          <div class="card-body small">
+            {% for m in response_tomorrow %}
+              <p class="mb-1">{{ m.response.business_name }} — {{ m.meeting_date|date:"d M" }}</p>
+            {% empty %}
+              <p class="text-muted">No Meetings Tomorrow</p>
+            {% endfor %}
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- 🚀 Upcoming -->
+    <div class="col-12 col-sm-6 col-md-3">
+      <a href="{% url 'response_meeting_list' 'upcoming' %}" class="text-decoration-none text-dark">
+        <div class="card border-success shadow-sm hover-shadow h-100">
+          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <span>🚀 Upcoming</span>
+            <span class="badge bg-light text-success">{{ response_upcoming|length }}</span>
+          </div>
+          <div class="card-body small">
+            {% for m in response_upcoming %}
+              <p class="mb-1">{{ m.response.business_name }} — {{ m.meeting_date|date:"d M" }}</p>
+            {% empty %}
+              <p class="text-muted">No Upcoming Meetings</p>
+            {% endfor %}
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
+
+<style>
+.hover-shadow:hover {
+  transform: translateY(-4px);
+  transition: 0.3s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+@media (max-width: 768px) {
+  .card-header {
+    font-size: 0.95rem;
+  }
+  .card-body {
+    font-size: 0.85rem;
+  }
+  .small-box {
+    padding: 1rem;
+  }
+  .small-box h3 {
+    font-size: 1.8rem;
+  }
+  .small-box p {
+    font-size: 0.9rem;
+  }
+}
+</style>

@@ -2,6 +2,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone 
+
 from django.utils.text import slugify
 from utility.models import Category, City, Locality, RequirementType # मान लीजिए ये मॉडल मौजूद हैं
 

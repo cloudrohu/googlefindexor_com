@@ -19,8 +19,5 @@ urlpatterns = [
 
     # 📅 COMPANY MEETINGS
     path('company/meetings/', views.CompanyMeetingListView.as_view(), name='company_meetings'),
-
-
-
 ]
 

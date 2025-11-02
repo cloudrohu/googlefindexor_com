@@ -1,0 +1,47 @@
+{% extends 'dashboard/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <h4 class="fw-bold mb-3 border-bottom pb-2">{{ title }}</h4>
+
+  {% if meetings %}
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Meeting Date</th>
+            <th>Status</th>
+            <th>{% if type == 'company' %}Company{% else %}Response{% endif %} Name</th>
+            <th>Assigned To</th>
+            <th>Comment</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in meetings %}
+          <tr>
+            <td>{{ m.id }}</td>
+            <td>{{ m.meeting_date|date:"d M Y, h:i A" }}</td>
+            <td>{{ m.status }}</td>
+            <td>
+              {% if type == 'company' %}
+                {{ m.company.company_name }}
+              {% else %}
+                {{ m.response.business_name }}
+              {% endif %}
+            </td>
+            <td>{{ m.assigned_to }}</td>
+            <td>{{ m.comment|default:"—" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-muted">No records found for this filter.</p>
+  {% endif %}
+
+  <a href="{% url 'dashboard' %}" class="btn btn-secondary mt-3">← Back to Dashboard</a>
+</div>
+{% endblock %}

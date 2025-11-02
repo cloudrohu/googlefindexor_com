@@ -58,15 +58,15 @@
     </a>
 
     <div class="sidebar">
-      <nav class="mt-2">
-  <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-    <!-- Dashboard -->
-    <li class="nav-item">
-      <a href="{% url 'dashboard' %}" class="nav-link active">
-        <i class="nav-icon fas fa-tachometer-alt"></i>
-        <p> Dashboard </p>
-      </a>
-    </li>
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Dashboard -->
+        <li class="nav-item">
+          <a href="{% url 'dashboard' %}" class="nav-link active">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p> Dashboard </p>
+          </a>
+        </li>
 
     
     <li class="nav-item">
@@ -142,122 +142,118 @@
       </ul>
     </li>
 
-<li class="nav-item">
-  <a href="#" class="nav-link">
-    <i class="nav-icon fas fa-building"></i>
-    <p>
-      Companies
-      <i class="fas fa-angle-left right"></i>
-    </p>
-  </a>
-  <ul class="nav nav-treeview">
-
-    <!-- 📋 All Companies -->
-    <li class="nav-item">
-      <a href="{% url 'company_list' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>All Companies</p>
-      </a>
-    </li>
-
-    <!-- 🟢 Status: New -->
-    <li class="nav-item">
-      <a href="{% url 'company_status' 'New' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>New</p>
-      </a>
-    </li>
-
-    <!-- 🟡 Status: Follow Up -->
-    <li class="nav-item">
-      <a href="{% url 'company_status' 'Follow_Up' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Follow Up</p>
-      </a>
-    </li>
-
-    <!-- 📅 Status: Meeting -->
-    <li class="nav-item">
-      <a href="{% url 'company_status' 'Meeting' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Meeting</p>
-      </a>
-    </li>
-
-    <!-- ❌ Status: Not Received -->
-    <li class="nav-item">
-      <a href="{% url 'company_status' 'Not_received' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Not Received</p>
-      </a>
-    </li>
-
-    <!-- 🕓 Status: Call later -->
-    <li class="nav-item">
-      <a href="{% url 'company_status' 'Call later' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Call Later</p>
-      </a>
-    </li>
-
-    <!-- 📞 Status: Call Tomorrow -->
-    <li class="nav-item">
-      <a href="{% url 'company_status' 'Call Tomorrow' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Call Tomorrow</p>
-      </a>
-    </li>
-
-    <!-- 📴 Status: Switched Off -->
-    <li class="nav-item">
-      <a href="{% url 'company_status' 'Switched Off' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Switched Off</p>
-      </a>
-    </li>
-
-    <!-- 🚫 Status: Not Interested -->
-    <li class="nav-item">
-      <a href="{% url 'company_status' 'Not Interested' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Not Interested</p>
-      </a>
-    </li>
-
-    <!-- ⚠️ Status: Invalid Number -->
-    <li class="nav-item">
-      <a href="{% url 'company_status' 'Invalid Number Off' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>Invalid Number</p>
-      </a>
-    </li>
-
-    <!-- ⏳ Status: They Will Connect -->
-    <li class="nav-item">
-      <a href="{% url 'company_status' 'They Will Connect' %}" class="nav-link">
-        <i class="far fa-circle nav-icon"></i>
-        <p>They Will Connect</p>
-      </a>
-    </li>
-
-  </ul>
-</li>
-
     <li class="nav-item">
       <a href="#" class="nav-link">
-          <i class="far fa-calendar-check nav-icon"></i>
-
+        <i class="nav-icon fas fa-building"></i>
         <p>
-          Meeting
-
+          Companies
           <i class="fas fa-angle-left right"></i>
         </p>
       </a>
       <ul class="nav nav-treeview">
+
+        <!-- 📋 All Companies -->
+        <li class="nav-item">
+          <a href="{% url 'company_list' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>All Companies</p>
+          </a>
+        </li>
+
+        <!-- 🟢 Status: New -->
+        <li class="nav-item">
+          <a href="{% url 'company_status' 'New' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>New</p>
+          </a>
+        </li>
+
+        <!-- 🟡 Status: Follow Up -->
+        <li class="nav-item">
+          <a href="{% url 'company_status' 'Follow_Up' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Follow Up</p>
+          </a>
+        </li>
+
+        <!-- 📅 Status: Meeting -->
+        <li class="nav-item">
+          <a href="{% url 'company_status' 'Meeting' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Meeting</p>
+          </a>
+        </li>
+
+        <!-- ❌ Status: Not Received -->
+        <li class="nav-item">
+          <a href="{% url 'company_status' 'Not_received' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Not Received</p>
+          </a>
+        </li>
+
+        <!-- 🕓 Status: Call later -->
+        <li class="nav-item">
+          <a href="{% url 'company_status' 'Call later' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Call Later</p>
+          </a>
+        </li>
+
+        <!-- 📞 Status: Call Tomorrow -->
+        <li class="nav-item">
+          <a href="{% url 'company_status' 'Call Tomorrow' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Call Tomorrow</p>
+          </a>
+        </li>
+
+        <!-- 📴 Status: Switched Off -->
+        <li class="nav-item">
+          <a href="{% url 'company_status' 'Switched Off' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Switched Off</p>
+          </a>
+        </li>
+
+        <!-- 🚫 Status: Not Interested -->
+        <li class="nav-item">
+          <a href="{% url 'company_status' 'Not Interested' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Not Interested</p>
+          </a>
+        </li>
+
+        <!-- ⚠️ Status: Invalid Number -->
+        <li class="nav-item">
+          <a href="{% url 'company_status' 'Invalid Number Off' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Invalid Number</p>
+          </a>
+        </li>
+
+        <!-- ⏳ Status: They Will Connect -->
+        <li class="nav-item">
+          <a href="{% url 'company_status' 'They Will Connect' %}" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>They Will Connect</p>
+          </a>
+        </li>
+
+      </ul>
+    </li>
+
+    <li class="nav-item">
+      <a href="#" class="nav-link">
+          <i class="far fa-calendar-check nav-icon"></i>
+        <p>Meeting<i class="fas fa-angle-left right"></i></p>
+      </a>
+
+      <ul class="nav nav-treeview">
         <li class="nav-item">
           <a href="{% url 'company_meetings' %}" class="nav-link">
             <i class="far fa-calendar-check nav-icon"></i>
-            <p>Company Meetings</p>
+            <p>Company</p>
           </a>
         </li>
         <li class="nav-item">
