@@ -1,12 +1,67 @@
-from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from datetime import timedelta
 # ✅ Import both Meeting models correctly
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from business.models import Meeting as CompanyMeeting
 from response.models import Meeting as ResponseMeeting
+from business.forms import MeetingForm as BusinessMeetingForm
+from response.forms import MeetingForm as ResponseMeetingForm
+
+
+# 🏢 Company (Business) Meeting Edit View
+@login_required
+def edit_company_meeting(request, pk):
+    meeting = get_object_or_404(CompanyMeeting, pk=pk)
+    if request.method == 'POST':
+        form = BusinessMeetingForm(request.POST, instance=meeting)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.updated_by = request.user
+            obj.save()
+            messages.success(request, f"✅ Company Meeting #{meeting.id} updated successfully!")
+            return redirect('company_meetings')  # Change this to your list view URL name
+    else:
+        form = BusinessMeetingForm(instance=meeting)
+
+    return render(request, 'business/edit_meeting.html', {
+        'form': form,
+        'title': f"Edit Company Meeting #{meeting.id}",
+        'meeting': meeting,
+        'type': 'company'
+    })
+
+
+# 📊 Response Meeting Edit View
+@login_required
+def edit_response_meeting(request, pk):
+    meeting = get_object_or_404(ResponseMeeting, pk=pk)
+    if request.method == 'POST':
+        form = ResponseMeetingForm(request.POST, instance=meeting)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.updated_by = request.user
+            obj.save()
+            messages.success(request, f"✅ Response Meeting #{meeting.id} updated successfully!")
+            return redirect('response_meetings')
+    else:
+        form = ResponseMeetingForm(instance=meeting)
+
+    return render(request, 'dashboard/response/edit_meeting.html', {
+        'form': form,
+        'title': f"Edit Response Meeting #{meeting.id}",
+        'meeting': meeting,
+        'type': 'response'
+    })
+
+
+
+
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):

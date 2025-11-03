@@ -13,5 +13,8 @@ urlpatterns = [
 
     # 📊 Response Meetings Filter Views
     path('response-meetings/<str:filter_type>/', response_meeting_list, name='response_meeting_list'),
+
+    path('company-meetings/edit/<int:pk>/', views.edit_company_meeting, name='edit_company_meeting'),
+    path('response-meetings/edit/<int:pk>/', views.edit_response_meeting, name='edit_response_meeting'),
     
 ]
