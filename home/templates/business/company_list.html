@@ -244,7 +244,7 @@
       </div>  
       <!-- ⚡ STATUS -->
       <div class="d-flex justify-content-between mb-2">
-        <strong>CO{{ c.id|stringformat:"03d" }}</strong>
+        <strong>BC{{ c.id|stringformat:"03d" }}</strong>
         <select class="form-control form-control-sm status-select" data-id="{{ c.id }}">
           {% for key, label in c.STATUS_CHOICES %}
             <option value="{{ key }}" {% if c.status == key %}selected{% endif %}>{{ label }}</option>

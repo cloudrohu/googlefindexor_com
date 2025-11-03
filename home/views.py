@@ -52,7 +52,7 @@ def edit_response_meeting(request, pk):
     else:
         form = ResponseMeetingForm(instance=meeting)
 
-    return render(request, 'dashboard/response/edit_meeting.html', {
+    return render(request, 'response/edit_meeting.html', {
         'form': form,
         'title': f"Edit Response Meeting #{meeting.id}",
         'meeting': meeting,
@@ -148,7 +148,7 @@ def company_meeting_list(request, filter_type):
         meetings = CompanyMeeting.objects.none()
         title = "No Meetings Found"
 
-    return render(request, 'dashboard/meeting_list.html', {
+    return render(request, 'business/meeting_list.html', {
         'meetings': meetings,
         'title': title,
         'type': 'company',
@@ -181,7 +181,7 @@ def response_meeting_list(request, filter_type):
         meetings = ResponseMeeting.objects.none()
         title = "No Meetings Found"
 
-    return render(request, 'dashboard/response/meeting_list.html', {
+    return render(request, 'response/meeting_list.html', {
         'meetings': meetings,
         'title': title,
         'type': 'response',

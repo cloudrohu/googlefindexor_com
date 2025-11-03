@@ -184,16 +184,31 @@
              alt="{{ m.company.company_name }}"
              class="me-2 rounded"
              style="width:40px; height:40px; object-fit:cover; border:1px solid #ddd;">
+             <br>
         <div>
-          <strong>#{{ m.id }} {{ m.company.company_name|default:"-" }}</strong><br>
+
+          <strong> {{ m.id }}.  {{ m.company.company_name|default:"-" }}</strong><br>  
           {% if m.meeting_date %}
-            <span class="text-muted">{{ m.meeting_date|date:"d M Y H:i" }}</span>
+            <span class="text-muted"> {{ m.meeting_date|date:"d M Y H:i" }}</span>
           {% endif %}
         </div>
       </div>
+      <div>
+
+        <strong> BC{{ m.company.id|default:"-" }}</strong>
+        <strong>&nbsp;&nbsp;—&nbsp;&nbsp;{{ m.status|default:"-" }}</strong> 
+      </div>
+       
+
+       <div class="border-top border-bottom py-2 mb-2">
+        <strong>Address: </Address>:</strong> {{ m.company.address|default:"-" }}<br>
+        <strong>Locality:</strong> {{ m.company.locality|default:"-" }}<br>
+        <strong>City:</strong> {{ m.company.city|default:"-" }}<br>
+        
+      </div>
+        <strong>Phone:</strong> <a href="tel:{{ m.company.contact_no }}">{{ m.company.contact_no|default:"-" }}  {{ m.company.contact_person|default:"-" }} </a>
 
       <div class="border-top border-bottom py-2 mb-2">
-        <strong>Status:</strong> {{ m.status|default:"-" }}<br>
         {% if m.comment %}
           <strong>Comment:</strong> {{ m.comment }}<br>
         {% endif %}
@@ -203,14 +218,11 @@
         {% else %}
           -
         {% endif %}
-      </div>
+        <br>
+          <strong>Created:</strong> {{ m.create_at }} {{ m.created_by }}<br>
+          <strong>Updated:</strong> {{ m.update_at }} {{ m.updated_by }}<br>
 
-      <div class="small mb-2">
-        <strong>City:</strong> {{ m.company.city|default:"-" }}<br>
-        <strong>Locality:</strong> {{ m.company.locality|default:"-" }}<br>
-        <strong>Phone:</strong> <a href="tel:{{ m.company.contact_no }}">{{ m.company.contact_no|default:"-" }}</a>
       </div>
-
       <div class="text-end">
         <a href="{% url 'edit_company_meeting' m.id %}" 
            class="btn btn-sm btn-outline-primary">
