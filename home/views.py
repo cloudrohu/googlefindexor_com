@@ -126,7 +126,7 @@ def response_meeting_list(request, filter_type):
         meetings = ResponseMeeting.objects.none()
         title = "No Meetings Found"
 
-    return render(request, 'dashboard/meeting_list.html', {
+    return render(request, 'dashboard/response/meeting_list.html', {
         'meetings': meetings,
         'title': title,
         'type': 'response',

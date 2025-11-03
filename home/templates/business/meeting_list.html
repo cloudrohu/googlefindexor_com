@@ -172,15 +172,36 @@
 
     
     <div class="card-body p-3 small">
-      <h6 class="fw-bold mb-2">
-        🏢 #{{ m.id }} — {{ m.company.company_name|default:"Unnamed Company" }}
-      </h6>
+        <div class="d-flex align-items-center mb-2">
+        <img src="{% if m.company.image %}{{ m.company.image.url }}{% else %}{% static 'images/no-image.png' %}{% endif %}"
+             alt="{{ c.company_name }}"
+             class="mr-2 rounded"
+             style="width:40px; height:40px; object-fit:cover; border:1px solid #ddd;">
+        <div>
+          <strong>{{ m.id }}. {{ m.company.company_name|default:"-" }}</strong>
+          {% if m.meeting_date %}
+          <br>
+          <strong> {{ m.meeting_date|date:"d M Y H:i" }}</strong> <br>
+        {% endif %}
+        </div>
+      </div>
+      <div class="d-flex justify-content-between mb-2">
+        <strong>BC{{ m.company.id|stringformat:"03d" }} &nbsp;&nbsp;—&nbsp;&nbsp;{{ m.company.category|default:"-" }} </strong>
+        <br>
+      </div>
+        <strong>Address:</strong> {{ m.company.address|default:"-" }}<br>
+        <strong>{{ m.company.locality|default:"-" }}, {{ m.company.city|default:"-" }}</strong> <br>
 
       <div class="mb-2 border-bottom pb-2">
-        <strong>Status:</strong> {{ m.status|default:"-" }}<br>
-        {% if m.meeting_date %}
-          <strong>Meeting Date:</strong> {{ m.meeting_date|date:"d M Y H:i" }}<br>
-        {% endif %}
+        
+      </div>
+
+      <div class="mb-2 border-bottom pb-2">
+        
+        <strong>Person:</strong> {{ m.company.contact_person|default:"-" }}<br>
+        <strong>Phone:</strong> <a href="tel:{{ m.company.contact_no }}">{{ m.company.contact_no|default:"-" }}</a><br>
+        <strong>Status:</strong> {{ m.status|default:"-" }}
+        <br>
         {% if m.comment %}
           <strong>Comment:</strong> {{ m.comment }}<br>
         {% endif %}
@@ -190,25 +211,13 @@
         {% else %}
           -
         {% endif %}
-      </div>
 
-      <div class="mb-2 border-bottom pb-2">
-        <strong>Company ID:</strong> BC{{ m.company.id|stringformat:"03d" }}<br>
-        <strong>Status:</strong> {{ m.company.status|default:"-" }}<br>
-        <strong>Category:</strong> {{ m.company.category|default:"-" }}<br>
-        <strong>Person:</strong> {{ m.company.contact_person|default:"-" }}<br>
-        <strong>Phone:</strong> <a href="tel:{{ m.company.contact_no }}">{{ m.company.contact_no|default:"-" }}</a><br>
-        <strong>City:</strong> {{ m.company.city|default:"-" }}<br>
-        <strong>Locality:</strong> {{ m.company.locality|default:"-" }}<br>
-        <strong>Address:</strong> {{ m.company.address|default:"-" }}<br>
       </div>
 
       <div>
-        <strong>Created By:</strong> {{ m.company.created_by|default:"-" }}<br>
-        <strong>Created On:</strong> {{ m.company.create_at|date:"d M Y H:i" }}<br>
+        <strong>Created By:</strong> {{ m.company.created_by|default:"-" }} - {{ m.company.create_at|date:"d M Y H:i" }}<br>
         {% if m.updated_by %}
-          <strong>Updated By:</strong> {{ m.updated_by|default:"-" }}<br>
-          <strong>Updated On:</strong> {{ m.update_at|date:"d M Y H:i" }}
+          <strong>Updated By:</strong> {{ m.updated_by|default:"-" }} - {{ m.update_at|date:"d M Y H:i" }}<br>
         {% endif %}
       </div>
     </div>
