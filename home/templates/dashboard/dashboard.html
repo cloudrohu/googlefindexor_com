@@ -3,21 +3,6 @@
 {% block content %}
 
 
-<div class="row text-center text-md-start">
-  <div class="col-12 col-sm-6 col-lg-3 mb-3">
-    <a href="{% url 'company_meetings' %}">
-      <div class="small-box bg-info rounded-3 p-3 shadow-sm">
-        <div class="inner">
-          <h3 class="fs-2 fw-bold">{{ total_company_meetings }}</h3>
-          <p class="mb-0 fw-semibold">Total Company Meetings</p>
-        </div>
-        <div class="icon">
-          <i class="ion ion-bag fs-3 opacity-75"></i>
-        </div>
-      </div>
-    </a>
-  </div>
-</div>
 
 <!-- 📅 COMPANY MEETING MANAGEMENT -->
 <div class="mt-4 mb-4">
@@ -34,13 +19,7 @@
             <span >❌ Not Managed</span>
             <span class="badge bg-light text-danger">{{ company_not_managed|length }}</span>
           </div>
-          <div class="card-body small">
-            {% for m in company_not_managed %}
-              <p class="mb-1">{{ m.company.company_name }} — {{ m.meeting_date|date:"d M" }}</p>
-            {% empty %}
-              <p class="text-muted">No Not Managed Meetings</p>
-            {% endfor %}
-          </div>
+         
         </div>
       </a>
     </div>
@@ -53,13 +32,7 @@
             <span>📅 Today</span>
             <span class="badge bg-light text-primary">{{ company_today|length }}</span>
           </div>
-          <div class="card-body small">
-            {% for m in company_today %}
-              <p class="mb-1">{{ m.company.company_name }} — {{ m.meeting_date|time:"H:i" }}</p>
-            {% empty %}
-              <p class="text-muted">No Meetings Today</p>
-            {% endfor %}
-          </div>
+          
         </div>
       </a>
     </div>
@@ -72,13 +45,7 @@
             <span>🌤️ Tomorrow</span>
             <span class="badge bg-light text-info">{{ company_tomorrow|length }}</span>
           </div>
-          <div class="card-body small">
-            {% for m in company_tomorrow %}
-              <p class="mb-1">{{ m.company.company_name }} — {{ m.meeting_date|date:"d M" }}</p>
-            {% empty %}
-              <p class="text-muted">No Meetings Tomorrow</p>
-            {% endfor %}
-          </div>
+          
         </div>
       </a>
     </div>
@@ -91,13 +58,7 @@
             <span>🚀 Upcoming</span>
             <span class="badge bg-light text-success">{{ company_upcoming|length }}</span>
           </div>
-          <div class="card-body small">
-            {% for m in company_upcoming %}
-              <p class="mb-1">{{ m.company.company_name }} — {{ m.meeting_date|date:"d M" }}</p>
-            {% empty %}
-              <p class="text-muted">No Upcoming Meetings</p>
-            {% endfor %}
-          </div>
+          
         </div>
       </a>
     </div>
@@ -119,13 +80,7 @@
             <span>❌ Not Managed</span>
             <span class="badge bg-light text-danger">{{ response_not_managed|length }}</span>
           </div>
-          <div class="card-body small">
-            {% for m in response_not_managed %}
-              <p class="mb-1">{{ m.response.business_name }} — {{ m.meeting_date|date:"d M" }}</p>
-            {% empty %}
-              <p class="text-muted">No Not Managed Meetings</p>
-            {% endfor %}
-          </div>
+          
         </div>
       </a>
     </div>
@@ -138,13 +93,7 @@
             <span>📅 Today</span>
             <span class="badge bg-light text-primary">{{ response_today|length }}</span>
           </div>
-          <div class="card-body small">
-            {% for m in response_today %}
-              <p class="mb-1">{{ m.response.business_name }} — {{ m.meeting_date|time:"H:i" }}</p>
-            {% empty %}
-              <p class="text-muted">No Meetings Today</p>
-            {% endfor %}
-          </div>
+          
         </div>
       </a>
     </div>
@@ -157,13 +106,7 @@
             <span>🌤️ Tomorrow</span>
             <span class="badge bg-light text-info">{{ response_tomorrow|length }}</span>
           </div>
-          <div class="card-body small">
-            {% for m in response_tomorrow %}
-              <p class="mb-1">{{ m.response.business_name }} — {{ m.meeting_date|date:"d M" }}</p>
-            {% empty %}
-              <p class="text-muted">No Meetings Tomorrow</p>
-            {% endfor %}
-          </div>
+          
         </div>
       </a>
     </div>
@@ -176,13 +119,7 @@
             <span>🚀 Upcoming</span>
             <span class="badge bg-light text-success">{{ response_upcoming|length }}</span>
           </div>
-          <div class="card-body small">
-            {% for m in response_upcoming %}
-              <p class="mb-1">{{ m.response.business_name }} — {{ m.meeting_date|date:"d M" }}</p>
-            {% empty %}
-              <p class="text-muted">No Upcoming Meetings</p>
-            {% endfor %}
-          </div>
+          
         </div>
       </a>
     </div>
