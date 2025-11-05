@@ -2,68 +2,55 @@
 {% block title %}Dashboard - My Project{% endblock %}
 {% block content %}
 
-
-
 <!-- 📅 COMPANY MEETING MANAGEMENT -->
 <div class="mt-4 mb-4">
   <h5 class="fw-bold text-primary border-bottom pb-2 text-center text-md-start">
     Company Meetings - Management
   </h5>
 
-  <div class="row g-3 mt-2">
+  <div class="row g-3 mt-3 text-center">
     <!-- ❌ Not Managed -->
     <div class="col-6 col-sm-6 col-md-3 mb-3">
-      <a href="{% url 'company_meeting_list' 'not-managed' %}" class="text-decoration-none text-dark">
-        <div class="card border-danger shadow-sm hover-shadow h-100">
-          <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-            <span >❌ Not Managed</span>
-            <span class="badge bg-light text-danger">{{ company_not_managed|length }}</span>
-          </div>
-         
-        </div>
+      <a href="{% url 'company_meeting_list' 'not-managed' %}" 
+         class="btn w-100 py-3 fw-semibold text-white rounded-pill shadow-sm"
+         style="background: linear-gradient(135deg, #dc3545, #b21f2d); transition: 0.3s ease;">
+        ❌ Not Managed
+        <span class="badge bg-light text-danger ms-2">{{ company_not_managed|length }}</span>
       </a>
     </div>
 
     <!-- 📅 Today -->
     <div class="col-6 col-sm-6 col-md-3 mb-3">
-      <a href="{% url 'company_meeting_list' 'today' %}" class="text-decoration-none text-dark">
-        <div class="card border-primary shadow-sm hover-shadow h-100">
-          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <span>📅 Today</span>
-            <span class="badge bg-light text-primary">{{ company_today|length }}</span>
-          </div>
-          
-        </div>
+      <a href="{% url 'company_meeting_list' 'today' %}" 
+         class="btn w-100 py-3 fw-semibold text-white rounded-pill shadow-sm"
+         style="background: linear-gradient(135deg, #007bff, #004085); transition: 0.3s ease;">
+        📅 Today
+        <span class="badge bg-light text-primary ms-2">{{ company_today|length }}</span>
       </a>
     </div>
 
     <!-- 🌤️ Tomorrow -->
     <div class="col-6 col-sm-6 col-md-3 mb-3">
-      <a href="{% url 'company_meeting_list' 'tomorrow' %}" class="text-decoration-none text-dark">
-        <div class="card border-info shadow-sm hover-shadow h-100">
-          <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-            <span>🌤️ Tomorrow</span>
-            <span class="badge bg-light text-info">{{ company_tomorrow|length }}</span>
-          </div>
-          
-        </div>
+      <a href="{% url 'company_meeting_list' 'tomorrow' %}" 
+         class="btn w-100 py-3 fw-semibold text-white rounded-pill shadow-sm"
+         style="background: linear-gradient(135deg, #17a2b8, #007bff); transition: 0.3s ease;">
+        🌤️ Tomorrow
+        <span class="badge bg-light text-info ms-2">{{ company_tomorrow|length }}</span>
       </a>
     </div>
 
     <!-- 🚀 Upcoming -->
     <div class="col-6 col-sm-6 col-md-3 mb-3">
-      <a href="{% url 'company_meeting_list' 'upcoming' %}" class="text-decoration-none text-dark">
-        <div class="card border-success shadow-sm hover-shadow h-100">
-          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-            <span>🚀 Upcoming</span>
-            <span class="badge bg-light text-success">{{ company_upcoming|length }}</span>
-          </div>
-          
-        </div>
+      <a href="{% url 'company_meeting_list' 'upcoming' %}" 
+         class="btn w-100 py-3 fw-semibold text-white rounded-pill shadow-sm"
+         style="background: linear-gradient(135deg, #28a745, #1e7e34); transition: 0.3s ease;">
+        🚀 Upcoming
+        <span class="badge bg-light text-success ms-2">{{ company_upcoming|length }}</span>
       </a>
     </div>
   </div>
 </div>
+
 
 <!-- 📊 RESPONSE MEETINGS MANAGEMENT -->
 <div class="mt-5 mb-4">
@@ -71,56 +58,44 @@
     Response Meetings - Management
   </h5>
 
-  <div class="row g-3 mt-2">
+  <div class="row g-3 mt-3 text-center">
     <!-- ❌ Not Managed -->
     <div class="col-6 col-sm-6 col-md-3 mb-3">
-      <a href="{% url 'response_meeting_list' 'not-managed' %}" class="text-decoration-none text-dark">
-        <div class="card border-danger shadow-sm hover-shadow h-100">
-          <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-            <span>❌ Not Managed</span>
-            <span class="badge bg-light text-danger">{{ response_not_managed|length }}</span>
-          </div>
-          
-        </div>
+      <a href="{% url 'response_meeting_list' 'not-managed' %}" 
+         class="btn w-100 py-3 fw-semibold text-white rounded-pill shadow-sm"
+         style="background: linear-gradient(135deg, #dc3545, #b21f2d); transition: 0.3s ease;">
+        ❌ Not Managed
+        <span class="badge bg-light text-danger ms-2">{{ response_not_managed|length }}</span>
       </a>
     </div>
 
     <!-- 📅 Today -->
     <div class="col-6 col-sm-6 col-md-3 mb-3">
-      <a href="{% url 'response_meeting_list' 'today' %}" class="text-decoration-none text-dark">
-        <div class="card border-primary shadow-sm hover-shadow h-100">
-          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <span>📅 Today</span>
-            <span class="badge bg-light text-primary">{{ response_today|length }}</span>
-          </div>
-          
-        </div>
+      <a href="{% url 'response_meeting_list' 'today' %}" 
+         class="btn w-100 py-3 fw-semibold text-white rounded-pill shadow-sm"
+         style="background: linear-gradient(135deg, #007bff, #004085); transition: 0.3s ease;">
+        📅 Today
+        <span class="badge bg-light text-primary ms-2">{{ response_today|length }}</span>
       </a>
     </div>
 
     <!-- 🌤️ Tomorrow -->
     <div class="col-6 col-sm-6 col-md-3 mb-3">
-      <a href="{% url 'response_meeting_list' 'tomorrow' %}" class="text-decoration-none text-dark">
-        <div class="card border-info shadow-sm hover-shadow h-100">
-          <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-            <span>🌤️ Tomorrow</span>
-            <span class="badge bg-light text-info">{{ response_tomorrow|length }}</span>
-          </div>
-          
-        </div>
+      <a href="{% url 'response_meeting_list' 'tomorrow' %}" 
+         class="btn w-100 py-3 fw-semibold text-white rounded-pill shadow-sm"
+         style="background: linear-gradient(135deg, #17a2b8, #007bff); transition: 0.3s ease;">
+        🌤️ Tomorrow
+        <span class="badge bg-light text-info ms-2">{{ response_tomorrow|length }}</span>
       </a>
     </div>
 
     <!-- 🚀 Upcoming -->
     <div class="col-6 col-sm-6 col-md-3 mb-3">
-      <a href="{% url 'response_meeting_list' 'upcoming' %}" class="text-decoration-none text-dark">
-        <div class="card border-success shadow-sm hover-shadow h-100">
-          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
-            <span>🚀 Upcoming</span>
-            <span class="badge bg-light text-success">{{ response_upcoming|length }}</span>
-          </div>
-          
-        </div>
+      <a href="{% url 'response_meeting_list' 'upcoming' %}" 
+         class="btn w-100 py-3 fw-semibold text-white rounded-pill shadow-sm"
+         style="background: linear-gradient(135deg, #28a745, #1e7e34); transition: 0.3s ease;">
+        🚀 Upcoming
+        <span class="badge bg-light text-success ms-2">{{ response_upcoming|length }}</span>
       </a>
     </div>
   </div>
@@ -129,78 +104,17 @@
 {% endblock %}
 
 <style>
-.hover-shadow:hover {
-  transform: translateY(-4px);
-  transition: 0.3s ease;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+a.btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  filter: brightness(1.1);
+  transition: all 0.3s ease;
 }
 
-/* ✨ Card Header - Proper Alignment + Small Text */
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.55rem 0.8rem;
-  font-size: 0.88rem;
-  font-weight: 600;
-  border-radius: 6px 6px 0 0;
-}
-
-/* 🩵 First text (❌ Not Managed, 📅 Today, etc.) */
-.card-header span:first-child {
-  font-size: 0.85rem;
-  display: flex;
-  align-items: center;
-  gap: 4px; /* Emoji spacing */
-  line-height: 1.2;
-}
-
-/* 🎯 Badge alignment */
-.card-header .badge {
-  font-size: 0.75rem;
-  padding: 0.35em 0.55em;
-  border-radius: 8px;
-}
-
-/* 🧊 Card hover */
-.card {
-  transition: all 0.35s ease;
-  border-radius: 10px;
-}
-.card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
-}
-
-/* ✅ Mobile spacing & layout fix */
 @media (max-width: 768px) {
-  .col-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
-    padding: 0 6px;
-  }
-  .row.g-3 {
-    margin-left: -6px;
-    margin-right: -6px;
-  }
-  .card {
-    margin-bottom: 0.8rem;
-  }
-  .card-body {
-    font-size: 0.85rem;
-    padding: 0.8rem;
-  }
-  .small-box {
-    padding: 1rem;
-  }
-  .small-box h3 {
-    font-size: 1.8rem;
-  }
-  .small-box p {
+  .btn {
     font-size: 0.9rem;
+    padding: 0.75rem;
   }
 }
-
 </style>
-
-
