@@ -2,10 +2,6 @@
 {% block title %}Dashboard - My Project{% endblock %}
 {% block content %}
 
-<!-- 🏢 COMPANY MEETINGS SECTION -->
-<div class="section-header mt-3 mb-3">
-  <h4 class="text-primary fw-bold border-bottom pb-2 text-center text-md-start">🏢 Company Meetings Overview</h4>
-</div>
 
 <div class="row text-center text-md-start">
   <div class="col-12 col-sm-6 col-lg-3 mb-3">
@@ -15,23 +11,27 @@
           <h3 class="fs-2 fw-bold">{{ total_company_meetings }}</h3>
           <p class="mb-0 fw-semibold">Total Company Meetings</p>
         </div>
-        <div class="icon"><i class="ion ion-bag fs-3 opacity-75"></i></div>
+        <div class="icon">
+          <i class="ion ion-bag fs-3 opacity-75"></i>
+        </div>
       </div>
     </a>
   </div>
 </div>
 
 <!-- 📅 COMPANY MEETING MANAGEMENT -->
-<div class="mt-4">
-  <h5 class="fw-bold text-primary border-bottom pb-2 text-center text-md-start">Company Meetings - Management</h5>
+<div class="mt-4 mb-4">
+  <h5 class="fw-bold text-primary border-bottom pb-2 text-center text-md-start">
+    Company Meetings - Management
+  </h5>
 
   <div class="row g-3 mt-2">
     <!-- ❌ Not Managed -->
-    <div class="col-12 col-sm-6 col-md-3">
+    <div class="col-6 col-sm-6 col-md-3 mb-3">
       <a href="{% url 'company_meeting_list' 'not-managed' %}" class="text-decoration-none text-dark">
         <div class="card border-danger shadow-sm hover-shadow h-100">
           <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
-            <span>❌ Not Managed</span>
+            <span >❌ Not Managed</span>
             <span class="badge bg-light text-danger">{{ company_not_managed|length }}</span>
           </div>
           <div class="card-body small">
@@ -46,7 +46,7 @@
     </div>
 
     <!-- 📅 Today -->
-    <div class="col-12 col-sm-6 col-md-3">
+    <div class="col-6 col-sm-6 col-md-3 mb-3">
       <a href="{% url 'company_meeting_list' 'today' %}" class="text-decoration-none text-dark">
         <div class="card border-primary shadow-sm hover-shadow h-100">
           <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
@@ -65,7 +65,7 @@
     </div>
 
     <!-- 🌤️ Tomorrow -->
-    <div class="col-12 col-sm-6 col-md-3">
+    <div class="col-6 col-sm-6 col-md-3 mb-3">
       <a href="{% url 'company_meeting_list' 'tomorrow' %}" class="text-decoration-none text-dark">
         <div class="card border-info shadow-sm hover-shadow h-100">
           <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
@@ -84,7 +84,7 @@
     </div>
 
     <!-- 🚀 Upcoming -->
-    <div class="col-12 col-sm-6 col-md-3">
+    <div class="col-6 col-sm-6 col-md-3 mb-3">
       <a href="{% url 'company_meeting_list' 'upcoming' %}" class="text-decoration-none text-dark">
         <div class="card border-success shadow-sm hover-shadow h-100">
           <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
@@ -105,12 +105,14 @@
 </div>
 
 <!-- 📊 RESPONSE MEETINGS MANAGEMENT -->
-<div class="mt-5">
-  <h5 class="fw-bold text-success border-bottom pb-2 text-center text-md-start">Response Meetings - Management</h5>
+<div class="mt-5 mb-4">
+  <h5 class="fw-bold text-success border-bottom pb-2 text-center text-md-start">
+    Response Meetings - Management
+  </h5>
 
   <div class="row g-3 mt-2">
     <!-- ❌ Not Managed -->
-    <div class="col-12 col-sm-6 col-md-3">
+    <div class="col-6 col-sm-6 col-md-3 mb-3">
       <a href="{% url 'response_meeting_list' 'not-managed' %}" class="text-decoration-none text-dark">
         <div class="card border-danger shadow-sm hover-shadow h-100">
           <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
@@ -129,7 +131,7 @@
     </div>
 
     <!-- 📅 Today -->
-    <div class="col-12 col-sm-6 col-md-3">
+    <div class="col-6 col-sm-6 col-md-3 mb-3">
       <a href="{% url 'response_meeting_list' 'today' %}" class="text-decoration-none text-dark">
         <div class="card border-primary shadow-sm hover-shadow h-100">
           <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
@@ -148,7 +150,7 @@
     </div>
 
     <!-- 🌤️ Tomorrow -->
-    <div class="col-12 col-sm-6 col-md-3">
+    <div class="col-6 col-sm-6 col-md-3 mb-3">
       <a href="{% url 'response_meeting_list' 'tomorrow' %}" class="text-decoration-none text-dark">
         <div class="card border-info shadow-sm hover-shadow h-100">
           <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
@@ -167,7 +169,7 @@
     </div>
 
     <!-- 🚀 Upcoming -->
-    <div class="col-12 col-sm-6 col-md-3">
+    <div class="col-6 col-sm-6 col-md-3 mb-3">
       <a href="{% url 'response_meeting_list' 'upcoming' %}" class="text-decoration-none text-dark">
         <div class="card border-success shadow-sm hover-shadow h-100">
           <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
@@ -195,12 +197,61 @@
   transition: 0.3s ease;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
+
+/* ✨ Card Header - Proper Alignment + Small Text */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 6px 6px 0 0;
+}
+
+/* 🩵 First text (❌ Not Managed, 📅 Today, etc.) */
+.card-header span:first-child {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 4px; /* Emoji spacing */
+  line-height: 1.2;
+}
+
+/* 🎯 Badge alignment */
+.card-header .badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.55em;
+  border-radius: 8px;
+}
+
+/* 🧊 Card hover */
+.card {
+  transition: all 0.35s ease;
+  border-radius: 10px;
+}
+.card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+}
+
+/* ✅ Mobile spacing & layout fix */
 @media (max-width: 768px) {
-  .card-header {
-    font-size: 0.95rem;
+  .col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 0 6px;
+  }
+  .row.g-3 {
+    margin-left: -6px;
+    margin-right: -6px;
+  }
+  .card {
+    margin-bottom: 0.8rem;
   }
   .card-body {
     font-size: 0.85rem;
+    padding: 0.8rem;
   }
   .small-box {
     padding: 1rem;
@@ -212,4 +263,7 @@
     font-size: 0.9rem;
   }
 }
+
 </style>
+
+
