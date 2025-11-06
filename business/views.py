@@ -11,8 +11,8 @@ from django.utils.dateparse import parse_date
 from django.contrib.auth.models import User
 from django.core.files import File
 import os
-
 from datetime import datetime
+
 from .forms import MeetingForm
 from django.utils.timezone import now
 
@@ -285,7 +285,6 @@ def ajax_add_visit(request, pk):
 # =================================================================
 # 📅 COMPANY MEETING VIEW (Full Filter + Table)
 # =================================================================
-from datetime import datetime
 
 class CompanyMeetingListView(LoginRequiredMixin, ListView):
     model = Meeting

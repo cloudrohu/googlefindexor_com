@@ -8,81 +8,147 @@
 <form method="get" class="mb-4 bg-light p-3 rounded shadow-sm">
   <div class="row g-2 align-items-end">
 
+    <!-- FROM DATE -->
     <div class="col-md-2 col-6">
       <label class="small fw-bold">From Date</label>
       <input type="date" name="date_from" class="form-control form-control-sm"
              value="{{ request.GET.date_from }}">
     </div>
 
+    <!-- TO DATE -->
     <div class="col-md-2 col-6">
       <label class="small fw-bold">To Date</label>
       <input type="date" name="date_to" class="form-control form-control-sm"
              value="{{ request.GET.date_to }}">
     </div>
 
-    <div class="col-md-2 col-6">
+    <!-- CITY -->
+    <div class="col-md-2 col-6 filter-field">
       <label class="small fw-bold">City</label>
-      <select name="city" class="form-control form-control-sm">
-        <option value="">All</option>
-        {% for c in cities %}
-          <option value="{{ c.id }}" {% if request.GET.city == c.id|stringformat:'s' %}selected{% endif %}>{{ c }}</option>
-        {% endfor %}
-      </select>
+      <div class="jet-filter">
+        <input type="text" class="jet-input" id="cityFilter" placeholder="Type or select city">
+        <div class="jet-dropdown" id="cityDropdown">
+          <div class="jet-option" data-value="">All</div>
+          {% for city in cities %}
+            <div class="jet-option" data-value="{{ city.id }}">{{ city }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      <input type="hidden" name="city" id="cityHidden" value="{{ request.GET.city }}">
     </div>
 
-    <div class="col-md-2 col-6">
+    <!-- LOCALITY -->
+    <div class="col-md-2 col-6 filter-field">
       <label class="small fw-bold">Locality</label>
-      <select name="locality" class="form-control form-control-sm">
-        <option value="">All</option>
-        {% for l in localities %}
-          <option value="{{ l.id }}" {% if request.GET.locality == l.id|stringformat:'s' %}selected{% endif %}>{{ l }}</option>
-        {% endfor %}
-      </select>
+      <div class="jet-filter">
+        <input type="text" class="jet-input" id="localityFilter" placeholder="Type or select locality">
+        <div class="jet-dropdown" id="localityDropdown">
+          <div class="jet-option" data-value="">All</div>
+          {% for l in localities %}
+            <div class="jet-option" data-value="{{ l.id }}">{{ l }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      <input type="hidden" name="locality" id="localityHidden" value="{{ request.GET.locality }}">
     </div>
 
-    <div class="col-md-2 col-6">
+    <!-- MEETING STATUS -->
+    <div class="col-md-2 col-6 filter-field">
       <label class="small fw-bold">Meeting Status</label>
-      <select name="status" class="form-control form-control-sm">
-        <option value="">All</option>
-        {% for s in statuses %}
-          <option value="{{ s }}" {% if request.GET.status == s %}selected{% endif %}>{{ s }}</option>
-        {% endfor %}
-      </select>
+      <div class="jet-filter">
+        <input type="text" class="jet-input" id="statusFilter" placeholder="Type or select status">
+        <div class="jet-dropdown" id="statusDropdown">
+          <div class="jet-option" data-value="">All</div>
+          {% for s in statuses %}
+            <div class="jet-option" data-value="{{ s }}">{{ s }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      <input type="hidden" name="status" id="statusHidden" value="{{ request.GET.status }}">
     </div>
 
-    <div class="col-md-2 col-6">
+    <!-- ASSIGNED TO -->
+    <div class="col-md-2 col-6 filter-field">
       <label class="small fw-bold">Assigned To</label>
-      <select name="assigned_to" class="form-control form-control-sm">
-        <option value="">All</option>
-        {% for s in staff_list %}
-          <option value="{{ s.id }}" {% if request.GET.assigned_to == s.id|stringformat:'s' %}selected{% endif %}>{{ s }}</option>
-        {% endfor %}
-      </select>
+      <div class="jet-filter">
+        <input type="text" class="jet-input" id="assignedFilter" placeholder="Type or select staff">
+        <div class="jet-dropdown" id="assignedDropdown">
+          <div class="jet-option" data-value="">All</div>
+          {% for s in staff_list %}
+            <div class="jet-option" data-value="{{ s.id }}">{{ s }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      <input type="hidden" name="assigned_to" id="assignedHidden" value="{{ request.GET.assigned_to }}">
     </div>
 
-    <div class="col-md-2 col-6">
+    <!-- CATEGORY -->
+    <div class="col-md-2 col-6 filter-field">
       <label class="small fw-bold">Category</label>
-      <select name="category" class="form-control form-control-sm">
-        <option value="">All</option>
-        {% for c in categories %}
-          <option value="{{ c.id }}" {% if request.GET.category == c.id|stringformat:'s' %}selected{% endif %}>{{ c }}</option>
-        {% endfor %}
-      </select>
+      <div class="jet-filter">
+        <input type="text" class="jet-input" id="categoryFilter" placeholder="Type or select category">
+        <div class="jet-dropdown" id="categoryDropdown">
+          <div class="jet-option" data-value="">All</div>
+          {% for c in categories %}
+            <div class="jet-option" data-value="{{ c.id }}">{{ c }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      <input type="hidden" name="category" id="categoryHidden" value="{{ request.GET.category }}">
     </div>
 
+    <!-- FILTER BUTTON -->
     <div class="col-md-2 col-12 mt-2 mt-md-0">
       <button type="submit" class="btn btn-sm btn-primary w-100">
         <i class="fas fa-filter me-1"></i> Filter
       </button>
     </div>
 
+    <!-- RESET BUTTON -->
     <div class="col-md-2 col-12 mt-2 mt-md-0">
       <a href="{% url 'company_meetings' %}" class="btn btn-sm btn-secondary w-100">
         <i class="fas fa-undo me-1"></i> Reset
       </a>
     </div>
+
   </div>
 </form>
+
+
+
+<script>
+function jetFilter(inputId, dropdownId, hiddenId) {
+  const input = document.getElementById(inputId);
+  const dropdown = document.getElementById(dropdownId);
+  const hidden = document.getElementById(hiddenId);
+
+  input.addEventListener('focus', () => dropdown.style.display = 'block');
+  input.addEventListener('blur', () => {
+    setTimeout(() => dropdown.style.display = 'none', 200);
+  });
+
+  input.addEventListener('keyup', () => {
+    const val = input.value.toLowerCase();
+    dropdown.querySelectorAll('.jet-option').forEach(opt => {
+      opt.style.display = opt.textContent.toLowerCase().includes(val) ? 'block' : 'none';
+    });
+  });
+
+  dropdown.querySelectorAll('.jet-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      input.value = opt.textContent;
+      hidden.value = opt.dataset.value;
+      dropdown.style.display = 'none';
+    });
+  });
+}
+
+jetFilter('cityFilter', 'cityDropdown', 'cityHidden');
+jetFilter('localityFilter', 'localityDropdown', 'localityHidden');
+jetFilter('statusFilter', 'statusDropdown', 'statusHidden');
+jetFilter('assignedFilter', 'assignedDropdown', 'assignedHidden');
+jetFilter('categoryFilter', 'categoryDropdown', 'categoryHidden');
+</script>
 
 
 <h5 class="mb-3">🗓 Total {{ page_obj.paginator.count }} Meetings</h5>
@@ -262,5 +328,52 @@
   </ul>
 </nav>
 {% endif %}
+
+<style>
+
+
+  .jet-filter {
+  position: relative;
+}
+.jet-input {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #d0d5dc;
+  border-radius: 4px;
+  font-size: 13px;
+  background: #fff;
+  transition: border 0.2s;
+}
+.jet-input:focus {
+  outline: none;
+  border-color: #58b3e7;
+  box-shadow: 0 0 0 2px rgba(88, 179, 231, 0.2);
+}
+.jet-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid #d0d5dc;
+  border-top: none;
+  display: none;
+  z-index: 100;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+.jet-option {
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+}
+.jet-option:hover {
+  background: #e9f4fb;
+}
+
+</style>
+
 
 {% endblock %}
