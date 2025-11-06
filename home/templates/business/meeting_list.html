@@ -114,21 +114,22 @@
   </div>
 </form>
 
-
-
 <script>
 function jetFilter(inputId, dropdownId, hiddenId) {
   const input = document.getElementById(inputId);
   const dropdown = document.getElementById(dropdownId);
   const hidden = document.getElementById(hiddenId);
+  let selected = false;
 
   input.addEventListener('focus', () => dropdown.style.display = 'block');
   input.addEventListener('blur', () => {
     setTimeout(() => dropdown.style.display = 'none', 200);
+    if (!selected && input.value === '') hidden.value = '';
   });
 
   input.addEventListener('keyup', () => {
     const val = input.value.toLowerCase();
+    selected = false;
     dropdown.querySelectorAll('.jet-option').forEach(opt => {
       opt.style.display = opt.textContent.toLowerCase().includes(val) ? 'block' : 'none';
     });
@@ -136,20 +137,19 @@ function jetFilter(inputId, dropdownId, hiddenId) {
 
   dropdown.querySelectorAll('.jet-option').forEach(opt => {
     opt.addEventListener('click', () => {
-      input.value = opt.textContent;
+      input.value = opt.textContent.trim();
       hidden.value = opt.dataset.value;
+      selected = true;
       dropdown.style.display = 'none';
     });
   });
 }
-
 jetFilter('cityFilter', 'cityDropdown', 'cityHidden');
 jetFilter('localityFilter', 'localityDropdown', 'localityHidden');
 jetFilter('statusFilter', 'statusDropdown', 'statusHidden');
 jetFilter('assignedFilter', 'assignedDropdown', 'assignedHidden');
 jetFilter('categoryFilter', 'categoryDropdown', 'categoryHidden');
 </script>
-
 
 <h5 class="mb-3">🗓 Total {{ page_obj.paginator.count }} Meetings</h5>
 

@@ -135,73 +135,58 @@ def company_meeting_list(request, filter_type=None):
     valid_status = ['New Meeting', 'Re Meeting']
 
     # --- Base queryset based on filter_type ---
+    qs = CompanyMeeting.objects.filter(status__in=valid_status)
+    title = "All Company Meetings"
+
     if filter_type == 'not-managed':
-        meetings = CompanyMeeting.objects.filter(meeting_date__lt=today, status__in=valid_status)
+        qs = qs.filter(meeting_date__lt=today)
         title = "❌ Not Managed Company Meetings"
-
     elif filter_type == 'today':
-        meetings = CompanyMeeting.objects.filter(meeting_date__date=today, status__in=valid_status)
+        qs = qs.filter(meeting_date__date=today)
         title = "📅 Today's Company Meetings"
-
     elif filter_type == 'tomorrow':
-        meetings = CompanyMeeting.objects.filter(meeting_date__date=tomorrow, status__in=valid_status)
+        qs = qs.filter(meeting_date__date=tomorrow)
         title = "🌤️ Tomorrow's Company Meetings"
-
     elif filter_type == 'upcoming':
-        meetings = CompanyMeeting.objects.filter(meeting_date__date__gt=tomorrow, status__in=valid_status)
+        qs = qs.filter(meeting_date__date__gt=tomorrow)
         title = "🚀 Upcoming Company Meetings"
 
-    else:
-        meetings = CompanyMeeting.objects.filter(status__in=valid_status)
-        title = "All Company Meetings"
-
-    # --- Additional filters from GET form ---
+    # --- GET Filters ---
     date_from = request.GET.get("date_from")
     date_to = request.GET.get("date_to")
     city = request.GET.get("city")
     locality = request.GET.get("locality")
-    status = request.GET.get("status")
-    assigned_to = request.GET.get("assigned_to")
     category = request.GET.get("category")
+    assigned_to = request.GET.get("assigned_to")
+    status = request.GET.get("status")
 
-    # DATE FILTERS
     if date_from:
         try:
-            meetings = meetings.filter(meeting_date__date__gte=datetime.strptime(date_from, "%Y-%m-%d"))
+            qs = qs.filter(meeting_date__date__gte=datetime.strptime(date_from, "%Y-%m-%d"))
         except ValueError:
             pass
 
     if date_to:
         try:
-            meetings = meetings.filter(meeting_date__date__lte=datetime.strptime(date_to, "%Y-%m-%d"))
+            qs = qs.filter(meeting_date__date__lte=datetime.strptime(date_to, "%Y-%m-%d"))
         except ValueError:
             pass
 
-    # CITY FILTER
     if city:
-        meetings = meetings.filter(company__city_id=city)
-
-    # LOCALITY FILTER
+        qs = qs.filter(company__city_id=city)
     if locality:
-        meetings = meetings.filter(company__locality_id=locality)
-
-    # CATEGORY FILTER
+        qs = qs.filter(company__locality_id=locality)
     if category:
-        meetings = meetings.filter(company__category_id=category)
-
-    # ASSIGNED TO FILTER
+        qs = qs.filter(company__category_id=category)
     if assigned_to:
-        meetings = meetings.filter(assigned_to_id=assigned_to)
-
-    # STATUS FILTER
+        qs = qs.filter(assigned_to_id=assigned_to)
     if status:
-        meetings = meetings.filter(status=status)
+        qs = qs.filter(status=status)
 
-    # Remove duplicates (safety)
-    meetings = meetings.distinct()
+    qs = qs.select_related('company', 'company__city', 'company__locality', 'company__category', 'assigned_to').distinct()
 
     return render(request, 'business/meeting_list.html', {
-        "meetings": meetings,
+        "meetings": qs,
         "title": title,
         "type": "company",
         "cities": City.objects.all(),
@@ -210,7 +195,6 @@ def company_meeting_list(request, filter_type=None):
         "staff_list": Staff.objects.all(),
         "statuses": [s[0] for s in CompanyMeeting.MEETING_STATUS_CHOICES],
     })
-
 
 # 📊 Filtered Response Meetings Page
 def response_meeting_list(request, filter_type):
