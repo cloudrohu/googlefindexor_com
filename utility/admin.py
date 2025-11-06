@@ -11,8 +11,19 @@ from import_export.widgets import ForeignKeyWidget
 from .models import (
     City, Locality,
     Find_Form, Call_Status, SocialSite,
-    Googlemap_Status, Response_Status, RequirementType,Category
+    Googlemap_Status, Response_Status, RequirementType,Category,Sub_Locality
 )
+
+@admin.register(Sub_Locality)
+class SubLocalityAdmin(admin.ModelAdmin):
+    list_display = ('title', 'locality', 'create_at', 'update_at')
+    list_filter = ('locality', 'create_at')
+    search_fields = ('title', 'locality__title')
+    prepopulated_fields = {'slug': ('title',)}
+    ordering = ('-create_at',)
+    date_hierarchy = 'create_at'
+
+    # Optional: to auto-fill locality for b
 
 # ------------------------------
 # Resources for Import/Export

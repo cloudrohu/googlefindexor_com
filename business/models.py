@@ -9,7 +9,22 @@ from django.utils.text import slugify
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 
-from utility.models import Find_Form, Call_Status, SocialSite, Googlemap_Status, City, Locality,Category
+from utility.models import Find_Form, Call_Status, SocialSite, Googlemap_Status, City, Locality,Category,Sub_Locality
+from response.models import Staff
+
+from ckeditor_uploader.fields import RichTextUploadingField
+from django.contrib.auth.models import User
+from django.db import models
+from django.utils.html import mark_safe
+from django.urls import reverse
+from django.utils.text import slugify
+from mptt.fields import TreeForeignKey
+from mptt.models import MPTTModel
+
+from utility.models import (
+    Find_Form, Call_Status, SocialSite, Googlemap_Status,
+    City, Locality, Category, Sub_Locality
+)
 from response.models import Staff
 
 
@@ -33,9 +48,12 @@ class Company(models.Model):
     followup_meeting = models.DateTimeField(null=True, blank=True)
     find_form = models.ForeignKey(Find_Form, on_delete=models.CASCADE, null=True, blank=True)
     googlemap_status = models.ForeignKey(Googlemap_Status, on_delete=models.CASCADE, null=True, blank=True)
+
     company_name = models.CharField(max_length=50)
     city = models.ForeignKey(City, on_delete=models.CASCADE, null=True, blank=True)
     locality = models.ForeignKey(Locality, on_delete=models.CASCADE, null=True, blank=True)
+    sub_locality = models.ForeignKey(Sub_Locality, on_delete=models.CASCADE, null=True, blank=True)  # ✅ Added field
+
     address = models.CharField(max_length=500, null=True, blank=True)
     contact_no = models.CharField(max_length=255, null=True, blank=True)
     contact_person = models.CharField(max_length=255, null=True, blank=True)
@@ -60,21 +78,19 @@ class Company(models.Model):
 
     def save(self, *args, **kwargs):
         """Clean contact number + auto slug"""
-        # ✅ 1. Remove spaces from contact number
         if self.contact_no:
             self.contact_no = self.contact_no.replace(" ", "").strip()
 
-        # ✅ 2. Save object normally
         super().save(*args, **kwargs)
 
-        # ✅ 3. Generate slug after object has ID
         category_title = self.category.title if self.category else ''
         locality_name = str(self.locality) if self.locality else ''
+        sub_locality_name = str(self.sub_locality) if self.sub_locality else ''
         city_name = str(self.city) if self.city else ''
-        base_slug = slugify(f"{category_title} {self.company_name} {locality_name} {city_name}")
+
+        base_slug = slugify(f"{category_title} {self.company_name} {locality_name} {sub_locality_name} {city_name}")
         new_slug = f"{base_slug}-{self.id}"
 
-        # ✅ 4. Update slug only if changed
         if self.slug != new_slug:
             self.slug = new_slug
             super().save(update_fields=['slug'])
@@ -87,6 +103,8 @@ class Company(models.Model):
             return mark_safe(f'<img src="{self.image.url}" width="50" height="50" />')
         return ""
     image_tag.short_description = 'Image'
+
+
 
 # ============================================================
 # COMMENT MODEL

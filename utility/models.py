@@ -179,3 +179,24 @@ class Category(MPTTModel):
         return ""
     image_tag.short_description = 'Image'
 
+
+# ============================================================
+# Sub_Locality MODEL
+# ============================================================
+class Sub_Locality((models.Model)):
+    locality = models.ForeignKey(Locality, on_delete=models.CASCADE, null=True, blank=True)
+    title = models.CharField(max_length=50)
+    slug = models.SlugField(unique=True, null=True, blank=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title   
+
+    class Meta:
+        verbose_name_plural = "Sub Locality"
+
+    def get_absolute_url(self):
+        return reverse('sub_locality_detail', kwargs={'slug': self.slug})
+
+
