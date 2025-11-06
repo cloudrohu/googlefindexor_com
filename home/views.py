@@ -122,12 +122,19 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         return context
 
 
-# 🏢 Filtered Company Meetings Page
-def company_meeting_list(request, filter_type):
+from django.utils import timezone
+from datetime import timedelta, datetime
+from django.shortcuts import render
+from business.models import Meeting as CompanyMeeting
+from utility.models import City, Locality, Category  # adjust imports as per your app
+from response.models import Staff  # adjust if your staff model is different
+
+def company_meeting_list(request, filter_type=None):
     today = timezone.localdate()
     tomorrow = today + timedelta(days=1)
     valid_status = ['New Meeting', 'Re Meeting']
 
+    # --- Base queryset based on filter_type ---
     if filter_type == 'not-managed':
         meetings = CompanyMeeting.objects.filter(meeting_date__lt=today, status__in=valid_status)
         title = "❌ Not Managed Company Meetings"
@@ -145,13 +152,63 @@ def company_meeting_list(request, filter_type):
         title = "🚀 Upcoming Company Meetings"
 
     else:
-        meetings = CompanyMeeting.objects.none()
-        title = "No Meetings Found"
+        meetings = CompanyMeeting.objects.filter(status__in=valid_status)
+        title = "All Company Meetings"
+
+    # --- Additional filters from GET form ---
+    date_from = request.GET.get("date_from")
+    date_to = request.GET.get("date_to")
+    city = request.GET.get("city")
+    locality = request.GET.get("locality")
+    status = request.GET.get("status")
+    assigned_to = request.GET.get("assigned_to")
+    category = request.GET.get("category")
+
+    # DATE FILTERS
+    if date_from:
+        try:
+            meetings = meetings.filter(meeting_date__date__gte=datetime.strptime(date_from, "%Y-%m-%d"))
+        except ValueError:
+            pass
+
+    if date_to:
+        try:
+            meetings = meetings.filter(meeting_date__date__lte=datetime.strptime(date_to, "%Y-%m-%d"))
+        except ValueError:
+            pass
+
+    # CITY FILTER
+    if city:
+        meetings = meetings.filter(company__city_id=city)
+
+    # LOCALITY FILTER
+    if locality:
+        meetings = meetings.filter(company__locality_id=locality)
+
+    # CATEGORY FILTER
+    if category:
+        meetings = meetings.filter(company__category_id=category)
+
+    # ASSIGNED TO FILTER
+    if assigned_to:
+        meetings = meetings.filter(assigned_to_id=assigned_to)
+
+    # STATUS FILTER
+    if status:
+        meetings = meetings.filter(status=status)
+
+    # Remove duplicates (safety)
+    meetings = meetings.distinct()
 
     return render(request, 'business/meeting_list.html', {
-        'meetings': meetings,
-        'title': title,
-        'type': 'company',
+        "meetings": meetings,
+        "title": title,
+        "type": "company",
+        "cities": City.objects.all(),
+        "localities": Locality.objects.all(),
+        "categories": Category.objects.all(),
+        "staff_list": Staff.objects.all(),
+        "statuses": [s[0] for s in CompanyMeeting.MEETING_STATUS_CHOICES],
     })
 
 
