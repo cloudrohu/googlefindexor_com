@@ -12,8 +12,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.files import File
 from django.db.models import Q
 from datetime import datetime
-from .models import Meeting,Staff
-from utility.models import City, Locality,  Category,Sub_Locality,RequirementType
+from .models import Meeting, City, Locality, Staff, Category, RequirementType
+from utility.models import City, Locality,  Category,Sub_Locality
 
 
 

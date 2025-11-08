@@ -16,8 +16,5 @@ urlpatterns = [
 
     path('company-meetings/edit/<int:pk>/', views.edit_company_meeting, name='edit_company_meeting'),
     path('response-meetings/edit/<int:pk>/', views.edit_response_meeting, name='edit_response_meeting'),
-
-    path('ajax/get-localities/', views.get_localities, name='get_localities'),
-    path('ajax/get-sub-localities/', views.get_sub_localities, name='get_sub_localities'),
     
 ]

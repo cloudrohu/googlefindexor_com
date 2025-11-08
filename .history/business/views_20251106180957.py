@@ -16,19 +16,6 @@ from datetime import datetime
 from .forms import MeetingForm
 from django.utils.timezone import now
 
-from django.http import JsonResponse
-from utility.models import Locality, Sub_Locality
-
-def get_localities(request):
-    city_id = request.GET.get("city_id")
-    localities = Locality.objects.filter(city_id=city_id).values("id", "title")
-    return JsonResponse(list(localities), safe=False)
-
-def get_sub_localities(request):
-    locality_id = request.GET.get("locality_id")
-    sub_localities = Sub_Locality.objects.filter(locality_id=locality_id).values("id", "title")
-    return JsonResponse(list(sub_localities), safe=False)
-
 
 
 # 🎯 Import models and forms

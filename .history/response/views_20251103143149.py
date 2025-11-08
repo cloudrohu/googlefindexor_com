@@ -12,29 +12,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.files import File
 from django.db.models import Q
 from datetime import datetime
-from .models import Meeting,Staff
-from utility.models import City, Locality,  Category,Sub_Locality,RequirementType
+from .models import Meeting, City, Locality, Staff, Category, RequirementType
+from utility.models import City, Locality,  Category
 
 
 
 import os
-
-
-
-from django.http import JsonResponse
-
-def get_localities(request):
-    city_id = request.GET.get("city_id")
-    localities = Locality.objects.filter(city_id=city_id).values("id", "title")
-    return JsonResponse(list(localities), safe=False)
-
-def get_sub_localities(request):
-    locality_id = request.GET.get("locality_id")
-    sub_localities = Sub_Locality.objects.filter(locality_id=locality_id).values("id", "title")
-    return JsonResponse(list(sub_localities), safe=False)
-
-
-
 
 from .models import Response, Meeting, Followup, Comment, VoiceRecording
 from .forms import (

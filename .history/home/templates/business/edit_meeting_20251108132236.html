@@ -115,33 +115,6 @@
     font-size: 0.8rem;
   }
 
-  /* ✅ Hide Django default file input texts (Currently / Clear) */
-  .clearable-file-input,
-  a[href*="company_images"],
-  label[for$="-clear_id"],
-  input[type="checkbox"][name$="-clear"],
-  span:has(> a[href*="company_images"]) {
-    display: none !important;
-  }
-
-  /* ✅ Custom File Input Style */
-  .custom-file-upload input[type="file"] {
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 8px;
-    background: #fff;
-    width: 100%;
-    max-width: 300px;
-    display: inline-block;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .custom-file-upload input[type="file"]:hover {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-  }
-
   @media (max-width: 992px) {
     .form-section {
       padding: 20px;
@@ -208,17 +181,13 @@
                 <label class="form-label">{{ field.label }}</label>
 
                 {% if field.name == 'image' %}
-                  <div class="text-center mb-3">
-                    {% if company.image %}
-                      <img id="companyImagePreview" src="{{ company.image.url }}" class="image-preview shadow-sm">
-                    {% else %}
-                      <img id="companyImagePreview" src="{% static 'images/no-image.png' %}" class="image-preview shadow-sm">
-                    {% endif %}
-                  </div>
-                  <div class="custom-file-upload text-center">
-                    {{ field }}
-                    <small class="text-muted d-block mt-1">Upload a new image (optional)</small>
-                  </div>
+                  {% if company.image %}
+                    <img id="companyImagePreview" src="{{ company.image.url }}" class="image-preview">
+                  {% else %}
+                    <img id="companyImagePreview" src="{% static 'images/no-image.png' %}" class="image-preview">
+                  {% endif %}
+                  {{ field }}
+                  <small class="text-muted d-block text-center">Upload a new image (optional)</small>
                 {% else %}
                   {{ field }}
                 {% endif %}
@@ -287,70 +256,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
-
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // 🏙️ Elements
-  const citySelect = document.querySelector("select[name='company-city']");
-  const localitySelect = document.querySelector("select[name='company-locality']");
-  const subLocalitySelect = document.querySelector("select[name='company-sub_locality']");
-
-  // 🧹 Initially hide dependent dropdowns
-  if (!citySelect.value) {
-    localitySelect.closest(".col-md-6").style.display = "none";
-    subLocalitySelect.closest(".col-md-6").style.display = "none";
-  } else if (!localitySelect.value) {
-    subLocalitySelect.closest(".col-md-6").style.display = "none";
-  }
-
-  // 🌆 When City changes → Load Localities
-  citySelect.addEventListener("change", function () {
-    const cityId = this.value;
-    localitySelect.innerHTML = '<option value="">Select Locality</option>';
-    subLocalitySelect.innerHTML = '<option value="">Select Sub Locality</option>';
-    subLocalitySelect.closest(".col-md-6").style.display = "none";
-
-    if (cityId) {
-      fetch(`/ajax/get-localities/?city_id=${cityId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          data.forEach((item) => {
-            const opt = document.createElement("option");
-            opt.value = item.id;
-            opt.textContent = item.title;
-            localitySelect.appendChild(opt);
-          });
-          localitySelect.closest(".col-md-6").style.display = "block";
-        });
-    } else {
-      localitySelect.closest(".col-md-6").style.display = "none";
-    }
-  });
-
-  // 📍 When Locality changes → Load Sub Localities
-  localitySelect.addEventListener("change", function () {
-    const localityId = this.value;
-    subLocalitySelect.innerHTML = '<option value="">Select Sub Locality</option>';
-
-    if (localityId) {
-      fetch(`/ajax/get-sub-localities/?locality_id=${localityId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          data.forEach((item) => {
-            const opt = document.createElement("option");
-            opt.value = item.id;
-            opt.textContent = item.title;
-            subLocalitySelect.appendChild(opt);
-          });
-          subLocalitySelect.closest(".col-md-6").style.display = "block";
-        });
-    } else {
-      subLocalitySelect.closest(".col-md-6").style.display = "none";
-    }
-  });
-});
-</script>
-
 
 {% endblock %}
