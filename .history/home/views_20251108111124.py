@@ -1,68 +1,46 @@
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
-from datetime import timedelta, datetime
+from datetime import timedelta
+# ✅ Import both Meeting models correctly
+
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
-# ✅ Models and Forms
-from business.models import Meeting as CompanyMeeting, Company
-from business.forms import MeetingForm as BusinessMeetingForm, CompanyForm
-from response.models import Meeting as ResponseMeeting, Staff
+from business.models import Meeting as CompanyMeeting
+from response.models import Meeting as ResponseMeeting
+from business.forms import MeetingForm as BusinessMeetingForm
 from response.forms import MeetingForm as ResponseMeetingForm
-from utility.models import City, Locality, Category
 
 
-# 🏢 Edit Company Meeting (Business)
+# 🏢 Company (Business) Meeting Edit View
 @login_required
 def edit_company_meeting(request, pk):
-    """Edit both the Company and its linked Meeting in one page."""
     meeting = get_object_or_404(CompanyMeeting, pk=pk)
-    company = meeting.company
-
     if request.method == 'POST':
-        # ✅ Use prefixes to prevent field name clashes
-        meeting_form = BusinessMeetingForm(request.POST, prefix='meeting', instance=meeting)
-        company_form = CompanyForm(request.POST, request.FILES, prefix='company', instance=company)
-
-        if meeting_form.is_valid() and company_form.is_valid():
-            # --- Save Company ---
-            company_obj = company_form.save(commit=False)
-            company_obj.updated_by = request.user
-            company_obj.save()
-
-            # --- Save Meeting ---
-            meeting_obj = meeting_form.save(commit=False)
-            meeting_obj.updated_by = request.user
-            meeting_obj.company = company_obj
-            meeting_obj.save()
-
-            messages.success(
-                request,
-                f"✅ Meeting #{meeting.id} and Company '{company.company_name}' updated successfully!"
-            )
-            return redirect('company_meetings')
-        else:
-            messages.error(request, "❌ Please fix the form errors below.")
+        form = BusinessMeetingForm(request.POST, instance=meeting)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.updated_by = request.user
+            obj.save()
+            messages.success(request, f"✅ Company Meeting #{meeting.id} updated successfully!")
+            return redirect('company_meetings')  # Change this to your list view URL name
     else:
-        meeting_form = BusinessMeetingForm(instance=meeting, prefix='meeting')
-        company_form = CompanyForm(instance=company, prefix='company')
+        form = BusinessMeetingForm(instance=meeting)
 
     return render(request, 'business/edit_meeting.html', {
-        'meeting_form': meeting_form,
-        'company_form': company_form,
-        'meeting': meeting,
-        'company': company,
+        'form': form,
         'title': f"Edit Company Meeting #{meeting.id}",
+        'meeting': meeting,
+        'type': 'company'
     })
 
 
-# 📊 Edit Response Meeting
+# 📊 Response Meeting Edit View
 @login_required
 def edit_response_meeting(request, pk):
     meeting = get_object_or_404(ResponseMeeting, pk=pk)
-
     if request.method == 'POST':
         form = ResponseMeetingForm(request.POST, instance=meeting)
         if form.is_valid():
@@ -71,8 +49,6 @@ def edit_response_meeting(request, pk):
             obj.save()
             messages.success(request, f"✅ Response Meeting #{meeting.id} updated successfully!")
             return redirect('response_meetings')
-        else:
-            messages.error(request, "❌ Please fix the form errors below.")
     else:
         form = ResponseMeetingForm(instance=meeting)
 
@@ -84,47 +60,81 @@ def edit_response_meeting(request, pk):
     })
 
 
-# 📊 Dashboard View
+
+
+
+
 class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'dashboard/dashboard.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Summary Cards
-        context.update({
-            'total_company_meetings': CompanyMeeting.objects.count(),
-            'total_response_meetings': ResponseMeeting.objects.count(),
-            'total_leads': 5240,
-            'completed_responses': 1280,
-            'pending_followups': 48,
-            'total_revenue': "5.6M",
-        })
+        # Total counts for dashboard summary
+        context['total_company_meetings'] = CompanyMeeting.objects.count()
+        context['total_response_meetings'] = ResponseMeeting.objects.count()
+        context['total_leads'] = 5240
+        context['completed_responses'] = 1280
+        context['pending_followups'] = 48
+        context['total_revenue'] = "5.6M"
 
-        # Meeting Grouping by Date
+        # ✅ Meeting management data
         today = timezone.localdate()
         tomorrow = today + timedelta(days=1)
         valid_statuses = ['New Meeting', 'Re Meeting']
 
-        context['company_not_managed'] = CompanyMeeting.objects.filter(meeting_date__lt=today, status__in=valid_statuses)
-        context['company_today'] = CompanyMeeting.objects.filter(meeting_date__date=today, status__in=valid_statuses)
-        context['company_tomorrow'] = CompanyMeeting.objects.filter(meeting_date__date=tomorrow, status__in=valid_statuses)
-        context['company_upcoming'] = CompanyMeeting.objects.filter(meeting_date__date__gt=tomorrow, status__in=valid_statuses)
+        # --- Company Meetings ---
+        context['company_not_managed'] = CompanyMeeting.objects.filter(
+            meeting_date__lt=today,
+            status__in=valid_statuses
+        )
+        context['company_today'] = CompanyMeeting.objects.filter(
+            meeting_date__date=today,
+            status__in=valid_statuses
+        )
+        context['company_tomorrow'] = CompanyMeeting.objects.filter(
+            meeting_date__date=tomorrow,
+            status__in=valid_statuses
+        )
+        context['company_upcoming'] = CompanyMeeting.objects.filter(
+            meeting_date__date__gt=tomorrow,
+            status__in=valid_statuses
+        )
 
-        context['response_not_managed'] = ResponseMeeting.objects.filter(meeting_date__lt=today, status__in=valid_statuses)
-        context['response_today'] = ResponseMeeting.objects.filter(meeting_date__date=today, status__in=valid_statuses)
-        context['response_tomorrow'] = ResponseMeeting.objects.filter(meeting_date__date=tomorrow, status__in=valid_statuses)
-        context['response_upcoming'] = ResponseMeeting.objects.filter(meeting_date__date__gt=tomorrow, status__in=valid_statuses)
+        # --- Response Meetings ---
+        context['response_not_managed'] = ResponseMeeting.objects.filter(
+            meeting_date__lt=today,
+            status__in=valid_statuses
+        )
+        context['response_today'] = ResponseMeeting.objects.filter(
+            meeting_date__date=today,
+            status__in=valid_statuses
+        )
+        context['response_tomorrow'] = ResponseMeeting.objects.filter(
+            meeting_date__date=tomorrow,
+            status__in=valid_statuses
+        )
+        context['response_upcoming'] = ResponseMeeting.objects.filter(
+            meeting_date__date__gt=tomorrow,
+            status__in=valid_statuses
+        )
 
         return context
 
 
-# 📋 Company Meeting List View
+from django.utils import timezone
+from datetime import timedelta, datetime
+from django.shortcuts import render
+from business.models import Meeting as CompanyMeeting
+from utility.models import City, Locality, Category  # adjust imports as per your app
+from response.models import Staff  # adjust if your staff model is different
+
 def company_meeting_list(request, filter_type=None):
     today = timezone.localdate()
     tomorrow = today + timedelta(days=1)
     valid_status = ['New Meeting', 'Re Meeting']
 
+    # --- Base queryset based on filter_type ---
     qs = CompanyMeeting.objects.filter(status__in=valid_status)
     title = "All Company Meetings"
 
@@ -141,7 +151,7 @@ def company_meeting_list(request, filter_type=None):
         qs = qs.filter(meeting_date__date__gt=tomorrow)
         title = "🚀 Upcoming Company Meetings"
 
-    # Filters
+    # --- GET Filters ---
     date_from = request.GET.get("date_from")
     date_to = request.GET.get("date_to")
     city = request.GET.get("city")
@@ -186,7 +196,6 @@ def company_meeting_list(request, filter_type=None):
         "statuses": [s[0] for s in CompanyMeeting.MEETING_STATUS_CHOICES],
     })
 
-
 # 📊 Filtered Response Meetings Page
 def response_meeting_list(request, filter_type):
     today = timezone.localdate()
@@ -196,15 +205,19 @@ def response_meeting_list(request, filter_type):
     if filter_type == 'not-managed':
         meetings = ResponseMeeting.objects.filter(meeting_date__lt=today, status__in=valid_status)
         title = "❌ Not Managed Response Meetings"
+
     elif filter_type == 'today':
         meetings = ResponseMeeting.objects.filter(meeting_date__date=today, status__in=valid_status)
         title = "📅 Today's Response Meetings"
+
     elif filter_type == 'tomorrow':
         meetings = ResponseMeeting.objects.filter(meeting_date__date=tomorrow, status__in=valid_status)
         title = "🌤️ Tomorrow's Response Meetings"
+
     elif filter_type == 'upcoming':
         meetings = ResponseMeeting.objects.filter(meeting_date__date__gt=tomorrow, status__in=valid_status)
         title = "🚀 Upcoming Response Meetings"
+
     else:
         meetings = ResponseMeeting.objects.none()
         title = "No Meetings Found"
@@ -215,17 +228,28 @@ def response_meeting_list(request, filter_type):
         'type': 'response',
     })
 
-
-# 🏠 Optional: Dashboard Index
+# ✅ Optional: Separate IndexView if you need landing dashboard
 class IndexView(LoginRequiredMixin, TemplateView):
+    """
+    Displays summarized key performance indicators (KPIs)
+    on the main index (home) page.
+    """
     template_name = 'index.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Dummy data until models are ready
         context.update({
             'total_leads': 5240,
             'completed_responses': 1280,
             'pending_followups': 48,
             'total_revenue': "5.6M",
         })
+
+        # Example: when CRM models are connected
+        # from crm.models import Lead, Response
+        # context['total_leads'] = Lead.objects.count()
+        # context['completed_responses'] = Response.objects.filter(status='completed').count()
+
         return context

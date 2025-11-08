@@ -396,7 +396,6 @@ class Followup(models.Model):
     class Meta:
         verbose_name_plural = "3. Followups"
 
-
 class Meeting(models.Model):
     MEETING_STATUS_CHOICES = [
         ("New Meeting", "New Meeting"),
