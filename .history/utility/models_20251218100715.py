@@ -10,6 +10,7 @@ from django.utils.safestring import mark_safe
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from django.utils.text import slugify
+from mptt.admin import DraggableMPTTAdmin
 
 class Find_Form(models.Model):    
     title = models.CharField(max_length=500,blank=True, null=True,)
@@ -139,63 +140,33 @@ class Response_Status(models.Model):
 # ============================================================
 # CATEGORY MODEL
 # ============================================================
-class Category(MPTTModel):
 
-    parent = TreeForeignKey(
-        'self',
-        blank=True,
-        null=True,
-        related_name='children',
-        on_delete=models.CASCADE
+class CategoryAdmin(DraggableMPTTAdmin):
+    mptt_indent_field = "title"
+
+    list_display = (
+        "tree_actions",
+        "indented_title",
+        "icon_tag",
+        "is_featured",
+        "slug",
+        "create_at",
     )
 
-    title = models.CharField(max_length=50)
+    list_display_links = ("indented_title",)
 
-    icon = models.ImageField(
-        upload_to='category/icons/',
-        blank=True,
-        null=True
-    )
+    # ❌ keywords hata diya (exist nahi karta)
+    search_fields = ("title",)
 
-    is_featured = models.BooleanField(default=False)
+    prepopulated_fields = {"slug": ("title",)}
 
-    slug = models.SlugField(unique=True, blank=True, null=True)
+    list_filter = ("is_featured", "create_at")
 
-    create_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
+    readonly_fields = ("icon_tag",)
 
-    class MPTTMeta:
-        order_insertion_by = ['title']
+    list_per_page = 30
 
-    class Meta:
-        verbose_name_plural = "Categories"
-
-    def __str__(self):
-        full_path = [self.title]
-        parent = self.parent
-        while parent:
-            full_path.append(parent.title)
-            parent = parent.parent
-        return " / ".join(full_path[::-1])
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
-
-    # ✅ URL (namespace-based)
-    def get_absolute_url(self):
-        return reverse('category_detail', kwargs={'slug': self.slug})
-
-    # ✅ Admin preview
-    def icon_tag(self):
-        if self.icon:
-            return mark_safe(
-                f'<img src="{self.icon.url}" style="height:40px;width:40px;object-fit:contain;" />'
-            )
-        return "—"
-
-    icon_tag.short_description = "Icon"
+    ordering = ("title",)
 
 # ============================================================
 # Sub_Locality MODEL

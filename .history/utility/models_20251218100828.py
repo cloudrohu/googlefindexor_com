@@ -139,28 +139,24 @@ class Response_Status(models.Model):
 # ============================================================
 # CATEGORY MODEL
 # ============================================================
-class Category(MPTTModel):
 
-    parent = TreeForeignKey(
-        'self',
-        blank=True,
-        null=True,
-        related_name='children',
-        on_delete=models.CASCADE
+
+class Category(MPTTModel):
+    STATUS = (
+        ('True', 'True'),
+        ('False', 'False'),
     )
 
+    parent = TreeForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
-
     icon = models.ImageField(
         upload_to='category/icons/',
         blank=True,
         null=True
     )
-
     is_featured = models.BooleanField(default=False)
 
-    slug = models.SlugField(unique=True, blank=True, null=True)
-
+    slug = models.SlugField(unique=True, null=True, blank=True)
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)
 
@@ -172,30 +168,27 @@ class Category(MPTTModel):
 
     def __str__(self):
         full_path = [self.title]
-        parent = self.parent
-        while parent:
-            full_path.append(parent.title)
-            parent = parent.parent
-        return " / ".join(full_path[::-1])
+        k = self.parent
+        while k is not None:
+            full_path.append(k.title)
+            k = k.parent
+        return ' / '.join(full_path[::-1])
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
-        super().save(*args, **kwargs)
+        super(Category, self).save(*args, **kwargs)
 
-    # ✅ URL (namespace-based)
     def get_absolute_url(self):
         return reverse('category_detail', kwargs={'slug': self.slug})
 
-    # ✅ Admin preview
-    def icon_tag(self):
-        if self.icon:
-            return mark_safe(
-                f'<img src="{self.icon.url}" style="height:40px;width:40px;object-fit:contain;" />'
-            )
-        return "—"
+    def image_tag(self):
+        if self.image:
+            return mark_safe(f'<img src="{self.image.url}" height="50"/>')
+        return ""
+    image_tag.short_description = 'Image'
 
-    icon_tag.short_description = "Icon"
+
 
 # ============================================================
 # Sub_Locality MODEL

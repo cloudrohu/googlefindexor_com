@@ -93,43 +93,15 @@
 <!-- CATEGORIES -->
 <section class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center mb-10">Popular Categories</h2>
 
-        <h2 class="text-3xl font-bold text-center mb-10">
-            Popular Categories
-        </h2>
-
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {% for cat in categories %}
-            <a href="{{ cat.get_absolute_url }}"
-               class="bg-white p-6 rounded-xl shadow
-                      hover:shadow-lg hover:-translate-y-1
-                      transition text-center block">
-
-                {% if cat.icon %}
-                    <img src="{{ cat.icon.url }}"
-                         alt="{{ cat.title }}"
-                         class="w-12 h-12 mx-auto mb-3 object-contain">
-                {% else %}
-                    <!-- fallback icon -->
-                    <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
-                        Icon
-                    </div>
-                {% endif %}
-
-                <h3 class="font-semibold text-gray-800 text-sm">
-                    {{ cat.title }}
-                </h3>
-
-            </a>
-            {% empty %}
-            <p class="col-span-full text-center text-gray-500">
-                No categories found
-            </p>
+            <div class="bg-white p-6 rounded-xl shadow text-center">
+                <h3 class="font-semibold">{{ cat.title }}</h3>
+            </div>
             {% endfor %}
-
         </div>
-
     </div>
 </section>
 

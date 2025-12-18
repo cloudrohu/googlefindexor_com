@@ -3,7 +3,7 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from mptt.admin import DraggableMPTTAdmin
-
+from mptt.admin import MPTTModelAdmin
 from import_export import resources, fields
 from import_export.widgets import ForeignKeyWidget
 
@@ -139,31 +139,9 @@ class RequirementTypeAdmin(ImportExportModelAdmin):
 # ======================================================
 # CATEGORY ADMIN
 # ======================================================
-
-class CategoryAdmin(DraggableMPTTAdmin):
-
-    mptt_indent_field = "title"
-
-    list_display = (
-        "tree_actions",
-        "indented_title",
-        "icon_tag",
-        "is_featured",
-        "slug",
-        "create_at",
-    )
-
-    list_display_links = ("indented_title",)
-
-    search_fields = ("title",)
-
+@admin.register(Category)
+class CategoryAdmin(MPTTModelAdmin):
+    list_display = ('title', 'icon_tag', 'is_featured')
     prepopulated_fields = {"slug": ("title",)}
 
-    list_filter = ("is_featured", "create_at")
-
-    readonly_fields = ("icon_tag",)
-
-    list_per_page = 30
-
-    ordering = ("title",)
 admin.site.register(Category, CategoryAdmin)

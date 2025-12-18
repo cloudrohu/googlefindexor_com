@@ -139,8 +139,8 @@ class Response_Status(models.Model):
 # ============================================================
 # CATEGORY MODEL
 # ============================================================
-class Category(MPTTModel):
 
+class Category(MPTTModel):
     parent = TreeForeignKey(
         'self',
         blank=True,
@@ -151,6 +151,7 @@ class Category(MPTTModel):
 
     title = models.CharField(max_length=50)
 
+    # ✅ ICON (Justdial style)
     icon = models.ImageField(
         upload_to='category/icons/',
         blank=True,
@@ -183,15 +184,15 @@ class Category(MPTTModel):
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
-    # ✅ URL (namespace-based)
+    # ✅ CATEGORY PAGE URL (namespace safe)
     def get_absolute_url(self):
-        return reverse('category_detail', kwargs={'slug': self.slug})
+        return reverse('home:category_detail', kwargs={'slug': self.slug})
 
-    # ✅ Admin preview
+    # ✅ ADMIN ICON PREVIEW
     def icon_tag(self):
         if self.icon:
             return mark_safe(
-                f'<img src="{self.icon.url}" style="height:40px;width:40px;object-fit:contain;" />'
+                f'<img src="{self.icon.url}" style="height:40px; width:40px; object-fit:contain;" />'
             )
         return "—"
 

@@ -139,9 +139,7 @@ class RequirementTypeAdmin(ImportExportModelAdmin):
 # ======================================================
 # CATEGORY ADMIN
 # ======================================================
-
 class CategoryAdmin(DraggableMPTTAdmin):
-
     mptt_indent_field = "title"
 
     list_display = (
@@ -155,6 +153,7 @@ class CategoryAdmin(DraggableMPTTAdmin):
 
     list_display_links = ("indented_title",)
 
+    # ❌ keywords hata diya (exist nahi karta)
     search_fields = ("title",)
 
     prepopulated_fields = {"slug": ("title",)}
@@ -166,4 +165,5 @@ class CategoryAdmin(DraggableMPTTAdmin):
     list_per_page = 30
 
     ordering = ("title",)
+
 admin.site.register(Category, CategoryAdmin)

@@ -185,7 +185,7 @@ class Category(MPTTModel):
 
     # ✅ URL (namespace-based)
     def get_absolute_url(self):
-        return reverse('category_detail', kwargs={'slug': self.slug})
+        return reverse('home:category_detail', kwargs={'slug': self.slug})
 
     # ✅ Admin preview
     def icon_tag(self):

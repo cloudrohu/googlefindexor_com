@@ -267,8 +267,15 @@ class IndexView(TemplateView):
         if city_id:
             companies = companies.filter(city_id=city_id)
 
-        if category_id:
-            companies = companies.filter(category_id=category_id)
+        # ✅ FEATURED CATEGORIES (parents + children)
+        featured_categories = Category.objects.filter(
+            is_featured=True
+        ).select_related('parent').order_by('tree_id', 'lft')
+
+        context.update({
+            "categories": featured_categories,
+        })
+
 
         # ======================
         # CONTEXT (TEMPLATE DATA)

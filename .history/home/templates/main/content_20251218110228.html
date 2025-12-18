@@ -50,44 +50,49 @@
     </div>
 </section>
 
-{% if search_query or selected_city %}
-<section class="py-16">
+<!-- CATEGORIES -->
+<section class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-6">
 
-        {% if companies %}
-            <h2 class="text-2xl font-bold mb-6">
-                Search Results
-            </h2>
+        <h2 class="text-3xl font-bold text-center mb-10">
+            Popular Categories
+        </h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {% for company in companies %}
-                <div class="bg-white border rounded-xl p-5 shadow hover:shadow-lg transition">
-                    <h3 class="font-bold text-xl">
-                        {{ company.company_name }}
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+
+            {% for cat in categories %}
+                {% if not cat.parent %}
+                <!-- 🔹 PARENT CATEGORY -->
+                <div class="bg-white p-6 rounded-xl shadow text-center">
+
+                    {% if cat.icon %}
+                        <img src="{{ cat.icon.url }}"
+                             class="w-12 h-12 mx-auto mb-3 object-contain">
+                    {% endif %}
+
+                    <h3 class="font-semibold text-gray-800">
+                        {{ cat.title }}
                     </h3>
 
-                    <p class="text-sm text-gray-600">
-                        {{ company.locality }}, {{ company.city }}
-                    </p>
+                    <!-- 🔸 CHILD CATEGORIES -->
+                    <div class="mt-2 text-sm text-gray-500 space-y-1">
+                        {% for child in cat.children.all %}
+                            {% if child.is_featured %}
+                                <a href="{{ child.get_absolute_url }}"
+                                   class="block hover:text-indigo-600">
+                                    {{ child.title }}
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
 
-                    <a href="{{ company.get_absolute_url }}"
-                       class="inline-block mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg">
-                        View Details
-                    </a>
                 </div>
-                {% endfor %}
-            </div>
+                {% endif %}
+            {% endfor %}
 
-        {% else %}
-            <p class="text-center text-gray-500 text-lg">
-                No businesses found matching your search.
-            </p>
-        {% endif %}
-
+        </div>
     </div>
 </section>
-{% endif %}
-
 
 
 <!-- CATEGORIES -->

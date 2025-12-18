@@ -5,7 +5,7 @@ from datetime import timedelta, datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.views.generic import DetailView
+    
 # ✅ Models and Forms
 from business.models import Meeting as CompanyMeeting, Company
 from business.forms import MeetingForm as BusinessMeetingForm, CompanyForm
@@ -230,6 +230,7 @@ def response_meeting_list(request, filter_type):
 
 
 # 🏠 Optional: Dashboard Index
+
 class CategoryDetailView(DetailView):
     model = Category
     template_name = "category_detail.html"
@@ -243,11 +244,16 @@ class CategoryDetailView(DetailView):
         )
         return context
 
+
 class IndexView(TemplateView):
     template_name = "index.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # ======================
+        # BASIC SETTINGS (SEO)
+        # ======================
 
         # ======================
         # SEARCH PARAMS
@@ -274,23 +280,19 @@ class IndexView(TemplateView):
         # CONTEXT (TEMPLATE DATA)
         # ======================
         context.update({
+            # SEO
 
-            # 🔍 Search Filters
+            # Search Filters
             "cities": City.objects.all(),
+            "categories": Category.objects.all()[:12],
 
-            # ✅ ONLY FEATURED CATEGORIES (with icon)
-            "categories": Category.objects.filter(
-                is_featured=True,
-                parent__isnull=True   # optional but recommended (main categories only)
-            )[:12],
-
-            # ⭐ Featured Companies
+            # Homepage Sections
             "featured_companies": Company.objects.filter(
                 is_active=True,
                 is_featured=True
             )[:6],
 
-            # 🔎 Search Result
+            # Search Result
             "companies": companies,
             "search_query": query,
             "selected_city": city_id,
@@ -298,6 +300,7 @@ class IndexView(TemplateView):
         })
 
         return context
+
 
 
 def ajax_search_suggestions(request):

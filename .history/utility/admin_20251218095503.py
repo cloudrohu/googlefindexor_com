@@ -139,31 +139,14 @@ class RequirementTypeAdmin(ImportExportModelAdmin):
 # ======================================================
 # CATEGORY ADMIN
 # ======================================================
-
 class CategoryAdmin(DraggableMPTTAdmin):
-
     mptt_indent_field = "title"
-
-    list_display = (
-        "tree_actions",
-        "indented_title",
-        "icon_tag",
-        "is_featured",
-        "slug",
-        "create_at",
-    )
-
+    list_display = ("tree_actions", "indented_title",'icon_tag', "slug", "create_at")
     list_display_links = ("indented_title",)
-
-    search_fields = ("title",)
-
+    search_fields = ("title", "keywords")
     prepopulated_fields = {"slug": ("title",)}
-
-    list_filter = ("is_featured", "create_at")
-
-    readonly_fields = ("icon_tag",)
-
     list_per_page = 30
 
-    ordering = ("title",)
+
+
 admin.site.register(Category, CategoryAdmin)

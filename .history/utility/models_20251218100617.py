@@ -10,6 +10,7 @@ from django.utils.safestring import mark_safe
 from mptt.fields import TreeForeignKey
 from mptt.models import MPTTModel
 from django.utils.text import slugify
+from mptt.admin import DraggableMPTTAdmin
 
 class Find_Form(models.Model):    
     title = models.CharField(max_length=500,blank=True, null=True,)
@@ -139,6 +140,7 @@ class Response_Status(models.Model):
 # ============================================================
 # CATEGORY MODEL
 # ============================================================
+
 class Category(MPTTModel):
 
     parent = TreeForeignKey(
@@ -151,6 +153,7 @@ class Category(MPTTModel):
 
     title = models.CharField(max_length=50)
 
+    # ✅ ICON (Justdial style)
     icon = models.ImageField(
         upload_to='category/icons/',
         blank=True,
@@ -183,19 +186,47 @@ class Category(MPTTModel):
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
-    # ✅ URL (namespace-based)
+    # ✅ CATEGORY PAGE URL
     def get_absolute_url(self):
         return reverse('category_detail', kwargs={'slug': self.slug})
 
-    # ✅ Admin preview
+    # ✅ ADMIN ICON PREVIEW
     def icon_tag(self):
         if self.icon:
             return mark_safe(
-                f'<img src="{self.icon.url}" style="height:40px;width:40px;object-fit:contain;" />'
+                f'<img src="{self.icon.url}" style="height:40px; width:40px; object-fit:contain;" />'
             )
         return "—"
 
     icon_tag.short_description = "Icon"
+
+
+class CategoryAdmin(DraggableMPTTAdmin):
+    mptt_indent_field = "title"
+
+    list_display = (
+        "tree_actions",
+        "indented_title",
+        "icon_tag",
+        "is_featured",
+        "slug",
+        "create_at",
+    )
+
+    list_display_links = ("indented_title",)
+
+    # ❌ keywords hata diya (exist nahi karta)
+    search_fields = ("title",)
+
+    prepopulated_fields = {"slug": ("title",)}
+
+    list_filter = ("is_featured", "create_at")
+
+    readonly_fields = ("icon_tag",)
+
+    list_per_page = 30
+
+    ordering = ("title",)
 
 # ============================================================
 # Sub_Locality MODEL

@@ -230,6 +230,7 @@ def response_meeting_list(request, filter_type):
 
 
 # 🏠 Optional: Dashboard Index
+
 class CategoryDetailView(DetailView):
     model = Category
     template_name = "category_detail.html"
