@@ -282,7 +282,7 @@ class IndexView(TemplateView):
             "categories": Category.objects.filter(
                 is_featured=True,
                 parent__isnull=True   # optional but recommended (main categories only)
-            ),
+            )[:12],
 
             # ⭐ Featured Companies
             "featured_companies": Company.objects.filter(
