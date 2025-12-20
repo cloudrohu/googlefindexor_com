@@ -140,10 +140,6 @@ class RequirementTypeAdmin(ImportExportModelAdmin):
 # CATEGORY ADMIN
 # ======================================================
 
-
-from django.utils.html import format_html
-
-
 class CategoryAdmin(DraggableMPTTAdmin):
 
     mptt_indent_field = "title"
@@ -151,7 +147,7 @@ class CategoryAdmin(DraggableMPTTAdmin):
     list_display = (
         "tree_actions",
         "indented_title",
-        "safe_icon_tag",
+        "icon_tag",
         "is_featured",
         "slug",
         "create_at",
@@ -165,31 +161,9 @@ class CategoryAdmin(DraggableMPTTAdmin):
 
     list_filter = ("is_featured", "create_at")
 
-    readonly_fields = ("safe_icon_tag",)
+    readonly_fields = ("icon_tag",)
 
     list_per_page = 30
 
     ordering = ("title",)
-
-    # 🔐 FULLY SAFE ICON RENDER
-    def safe_icon_tag(self, obj):
-        """
-        Icon field ho ya na ho,
-        DB me column missing ho tab bhi
-        admin crash nahi karega
-        """
-        try:
-            if hasattr(obj, "icon") and obj.icon:
-                return format_html(
-                    '<img src="{}" style="height:30px;width:auto;border-radius:4px;" />',
-                    obj.icon.url
-                )
-        except Exception:
-            pass
-        return "—"
-
-    safe_icon_tag.short_description = "Icon"
-
-
-
 admin.site.register(Category, CategoryAdmin)

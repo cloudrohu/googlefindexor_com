@@ -139,12 +139,11 @@ class RequirementTypeAdmin(ImportExportModelAdmin):
 # ======================================================
 # CATEGORY ADMIN
 # ======================================================
-
-
 from django.utils.html import format_html
 
 
-class CategoryAdmin(DraggableMPTTAdmin):
+@admin.register(Category)
+class Category(DraggableMPTTAdmin):
 
     mptt_indent_field = "title"
 
