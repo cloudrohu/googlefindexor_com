@@ -11,7 +11,7 @@ class ResponseForm(forms.ModelForm):
         fields = [
             'status', 'contact_no', 'assigned_to', 'contact_persone',
             'business_name', 'business_category', 'requirement_types',
-            'city', 'locality'
+            'city', 'locality_city'
         ]
         widgets = {
             'status': forms.Select(attrs={'class': 'form-select'}),
@@ -22,7 +22,7 @@ class ResponseForm(forms.ModelForm):
             'business_category': forms.Select(attrs={'class': 'form-select'}),
             'requirement_types': forms.SelectMultiple(attrs={'class': 'form-select'}),
             'city': forms.Select(attrs={'class': 'form-select'}),
-            'locality': forms.Select(attrs={'class': 'form-select'}),
+            'locality_city': forms.Select(attrs={'class': 'form-select'}),
         }
 
 

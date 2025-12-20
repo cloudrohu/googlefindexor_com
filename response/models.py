@@ -51,7 +51,7 @@ class Response(models.Model):
         related_name='responses'
     )
     city = models.ForeignKey(City, blank=True, null=True, on_delete=models.CASCADE)
-    locality_city = models.ForeignKey(Locality, blank=True, null=True, on_delete=models.CASCADE)
+    locality = models.ForeignKey(Locality, blank=True, null=True, on_delete=models.CASCADE)
 
     create_at = models.DateTimeField(auto_now_add=True)
     update_at = models.DateTimeField(auto_now=True)

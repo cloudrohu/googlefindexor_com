@@ -115,7 +115,7 @@ class ResponseAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     list_display = (
         'get_mr_id', 'contact_no', 'contact_persone', 'business_name',
         'business_category', 'get_requirement_types',  # ✅ fixed here
-        'status', 'city', 'locality', 'assigned_to',
+        'status', 'city', 'locality_city', 'assigned_to',
         'create_at', 'created_by', 'update_at', 'updated_by'
     )
 
@@ -139,7 +139,7 @@ class ResponseAdmin(AutoUserAdminMixin, admin.ModelAdmin):
         ('🏢 Business Details', {
             'fields': (
                 'business_name', 'business_category', 'requirement_types',
-                'city', 'locality'
+                'city', 'locality_city'
             )
         }),
         ('🕓 Audit Trail', {
@@ -186,14 +186,14 @@ class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
         'assigned_to',
         ('meeting_date', DateRangeFilter),  # ✅ Custom date range picker
         ('response__city', admin.RelatedOnlyFieldListFilter),
-        ('response__locality', admin.RelatedOnlyFieldListFilter),
+        ('response__locality_city', admin.RelatedOnlyFieldListFilter),
         ('response__business_category', admin.RelatedOnlyFieldListFilter),
     )
 
     
     search_fields = (
         'response__business_name',
-        'response__locality',
+        'response__locality_city',
 
         'response__city',
         'response__requirement_types__name',
@@ -221,7 +221,7 @@ class MeetingAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     response_city.short_description = "City"
 
     def response_locality(self, obj):
-        return obj.response.locality if obj.response else "-"
+        return obj.response.locality_city if obj.response else "-"
     response_locality.short_description = "Locality"
 
     def response_requirement_types(self, obj):
@@ -244,7 +244,7 @@ class FollowupAdmin(AutoUserAdminMixin, admin.ModelAdmin):
         'assigned_to',
         ('followup_date', DateRangeFilter),  # ✅ Custom date range picker
         ('response__city', admin.RelatedOnlyFieldListFilter),
-        ('response__locality', admin.RelatedOnlyFieldListFilter),
+        ('response__locality_city', admin.RelatedOnlyFieldListFilter),
         ('response__business_category', admin.RelatedOnlyFieldListFilter),
     )
 
@@ -252,7 +252,7 @@ class FollowupAdmin(AutoUserAdminMixin, admin.ModelAdmin):
         'response__business_name',
         'response__contact_no',
         'response__city',
-        'response__locality',
+        'response__locality_city',
         'response__requirement_types__name',
         'comment'
     )
@@ -278,7 +278,7 @@ class FollowupAdmin(AutoUserAdminMixin, admin.ModelAdmin):
     response_city.short_description = "City"
 
     def response_locality(self, obj):
-        return obj.response.locality if obj.response else "-"
+        return obj.response.locality_city if obj.response else "-"
     response_locality.short_description = "Locality"
 
     def response_requirement_types(self, obj):
