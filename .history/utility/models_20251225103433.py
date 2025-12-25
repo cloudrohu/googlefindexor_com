@@ -160,7 +160,6 @@ class Category(MPTTModel):
 
     slug = models.SlugField(unique=True, blank=True, null=True)
 
-
     class MPTTMeta:
         order_insertion_by = ['title']
 
