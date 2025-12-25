@@ -161,7 +161,8 @@ class Category(MPTTModel):
 
     slug = models.SlugField(unique=True, blank=True, null=True)
 
-
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
 
     class MPTTMeta:
         order_insertion_by = ['title']

@@ -154,6 +154,7 @@ class CategoryAdmin(DraggableMPTTAdmin):
         "safe_icon_tag",
         "is_featured",
         "slug",
+        "create_at",
     )
 
     list_display_links = ("indented_title",)
@@ -162,7 +163,7 @@ class CategoryAdmin(DraggableMPTTAdmin):
 
     prepopulated_fields = {"slug": ("title",)}
 
-    list_filter = ("is_featured",)
+    list_filter = ("is_featured", "create_at")
 
     readonly_fields = ("safe_icon_tag",)
 
