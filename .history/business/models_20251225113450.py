@@ -18,7 +18,6 @@ from utility.models import (
     City, Locality, Category, Sub_Locality
 )
 from response.models import Staff
-
 class Company(models.Model):
 
     STATUS_CHOICES = [
