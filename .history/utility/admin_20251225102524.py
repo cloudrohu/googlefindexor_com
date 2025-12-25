@@ -166,7 +166,7 @@ class CategoryAdmin(DraggableMPTTAdmin):
 
     readonly_fields = ("safe_icon_tag",)
 
-    list_per_page = 20
+    list_per_page = 30
 
     ordering = ("title",)
 

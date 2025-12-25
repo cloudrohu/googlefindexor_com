@@ -162,11 +162,11 @@ class CategoryAdmin(DraggableMPTTAdmin):
 
     prepopulated_fields = {"slug": ("title",)}
 
-    list_filter = ("is_featured", )
+    list_filter = ("is_featured", "create_at")
 
     readonly_fields = ("safe_icon_tag",)
 
-    list_per_page = 20
+    list_per_page = 30
 
     ordering = ("title",)
 
