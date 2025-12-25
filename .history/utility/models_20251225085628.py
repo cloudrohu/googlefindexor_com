@@ -197,10 +197,6 @@ class Category(MPTTModel):
 
     icon_tag.short_description = "Icon"
 
-    class Meta:
-        verbose_name_plural = "Categories"
-        db_table = "utility_category"   # 🔥 THIS FIXES EVERYTHING
-
 # ============================================================
 # Sub_Locality MODEL
 # ============================================================
